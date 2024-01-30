@@ -1,5 +1,5 @@
 # Novelology
-A Social Media Platform for Book community
+A Social Media Platform for Book Community
 
 
 # Meetings
