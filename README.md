@@ -16,6 +16,7 @@ A Social Media Platform for Book Community
 - Nathan
 - Jad (Online)
 ## Online Meeting 1/30/2024
+### Participants
 - Rishitha
 - Mutahhara
 - Victor
