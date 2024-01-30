@@ -15,3 +15,9 @@ Rishitha
 Mutahhara 
 Nathan
 Jad (Online)
+## Online Meeting 1/30/2024
+Rishitha
+Mutahhara
+Victor
+Nathan
+Jad 
