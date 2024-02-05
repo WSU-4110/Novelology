@@ -4,6 +4,39 @@ A Social Media Platform for Book Community
 
 # Meetings
 
+## In-Person Meeting 1/19/2024
+### Participants:
+- Rishitha
+- Mutahhara
+- Nathan
+- victor
+
+## In-Person Meeting 1/19/2024
+### Participants:
+- Rishitha
+- Mutahhara
+- Nathan
+- victor
+- Jad (Online)
+
+## Online Meeting 1/19/2024
+### Participants:
+- Rishitha
+- Mutahhara
+- Nathan
+- victor
+- Jad
+
+## Online Meeting 1/19/2024
+### Participants:
+- Rishitha
+- Mutahhara
+- Nathan
+- victor
+
+
+
+
 ## Online Meeting 1/28/2024
 ### Participants:
 - Rishitha
