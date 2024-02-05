@@ -21,4 +21,16 @@ A Social Media Platform for Book Community
 - Mutahhara
 - Victor
 - Nathan
-- Jad 
+- Jad
+## Online Meeting 2/4/2024
+### Participants
+- Rishitha
+- Mutahhara
+
+## Online Meeting 2/5/2024
+### Participants
+- Rishitha
+- Mutahhara
+- Victor
+- Nathan
+- Jad (Online)
