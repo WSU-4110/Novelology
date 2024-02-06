@@ -1,7 +1,8 @@
 import React, { useState }from "react";
 import "../styles/modal.css";
 import {Registration} from './Registration.js';
-import { useAuth } from "../functions/Auth.js";
+import {useAuth } from "../functions/Auth.js";
+import Onboarding from '../components/Onboarding';
 
 export default function Modal() {
 
@@ -38,6 +39,7 @@ export default function Modal() {
                 <div className="modal-content">
                     <h2 className="font-bold text-xl pb-4">Join Novelology</h2>
                     <Registration/>
+                    <Onboarding/>
                     <button className="close-modal text-red-400"
                     onClick={toggleModal}>Close</button>
                 </div>
