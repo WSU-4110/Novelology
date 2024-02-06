@@ -1,7 +1,7 @@
 
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
-import {db,auth,storage} from '../firebase.js'
+import {auth} from '../firebase.js'
 import Modal from '../components/Modal.js';
 import React, { useState, useEffect, useRef } from 'react';
 import Searchbar from '../components/Searchbar';
@@ -51,7 +51,6 @@ export default function Home(){
           {!user ? (
               <>
                 <Modal />
-                <button className='login-button' onClick={login}>google</button>
               </>
             ) : (
               <>
