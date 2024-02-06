@@ -10,7 +10,9 @@ export default function(){
         {!user ? <Link to="/login">Login</Link>: 
             <>
                 Posts
+                <Link to="/profile">Profile</Link>
             </>
+
         }
        
     </navbar>

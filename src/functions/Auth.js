@@ -40,8 +40,8 @@ export async function signUpWithEmail(htmlEmail, htmlPass, htmlUser) {
     promise.catch(function (error) {
         var errorCode = error.code;
         console.log(`GOT ERROR: ` + errorCode)
-        if (errorCode == 'auth/weak-password') return // password to weak. Minimal 6 characters
-        if (errorCode == 'auth/email-already-in-use') return // Return a email already in use error
+        if (errorCode === 'auth/weak-password') return // password to weak. Minimal 6 characters
+        if (errorCode === 'auth/email-already-in-use') return // Return a email already in use error
     });
   
     // When no errors create the account
