@@ -1,13 +1,15 @@
+
 import { useEffect, useState } from "react";
 import { doc, setDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithPopup} from 'firebase/auth';
 import { GoogleAuthProvider, signOut} from "firebase/auth";
 import {auth, db, provider} from '../firebase';
+
  
 
 export function handleSignInWithPopup(event) {
     event.preventDefault(); // Prevent the default behavior of the button
-  
+
     signInWithPopup(auth, provider)
     .then((result) => {
       // This gives you a Google Access Token. You can use it to access the Google API.
@@ -17,6 +19,7 @@ export function handleSignInWithPopup(event) {
       const user = result.user;
       // IdP data available using getAdditionalUserInfo(result)
       // ...
+
     }).catch((error) => {
       // Handle Errors here.
       const errorCode = error.code;
@@ -37,8 +40,8 @@ export async function signUpWithEmail(htmlEmail, htmlPass, htmlUser) {
     promise.catch(function (error) {
         var errorCode = error.code;
         console.log(`GOT ERROR: ` + errorCode)
-        if (errorCode == 'auth/weak-password') return // password to weak. Minimal 6 characters
-        if (errorCode == 'auth/email-already-in-use') return // Return a email already in use error
+        if (errorCode === 'auth/weak-password') return // password to weak. Minimal 6 characters
+        if (errorCode === 'auth/email-already-in-use') return // Return a email already in use error
     });
   
     // When no errors create the account
