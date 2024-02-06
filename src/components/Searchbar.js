@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 
 function Searchbar({ onSearch }) {
   const [query, setQuery] = useState('');
@@ -16,6 +17,9 @@ function Searchbar({ onSearch }) {
     <form onSubmit={handleSubmit}>
       <input type="text" value={query} onChange={handleChange} placeholder="Search users..." />
       <button type="submit">Search</button>
+
+      {/* Add the Link to the UserPage component */}
+      
     </form>
   );
 }
