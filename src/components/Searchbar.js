@@ -9,7 +9,11 @@ function Searchbar({ onSearch }) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    if (query.length > 0) {
     onSearch(query);
+    } else {
+      console.log("Attempted empty user search.")
+    }
   };
 
   return (
