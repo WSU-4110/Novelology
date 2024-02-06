@@ -51,7 +51,9 @@ export default function Home(){
             <p>{searchStatus}</p>
             <ul>
               {searchResults.map((user) => (
-                <li key={user.id}>{user.displayName}</li>
+                <li key={user.id}>
+                  <strong>Name:</strong> {user.name} | <strong>Email:</strong> {user.email}
+                </li>
               ))}
             </ul>
           </div>
