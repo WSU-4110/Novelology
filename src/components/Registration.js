@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { signInWithPopup, GoogleAuthProvider} from "firebase/auth";
 import { auth, db, provider} from '../firebase';
-import { signUpWithEmail, handleSignInWithPopup } from "../functions/auth";
+import { signUpWithEmail, handleSignInWithPopup } from "../functions/Auth";
 
 
 
