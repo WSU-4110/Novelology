@@ -3,6 +3,7 @@ import navbar from './components/navbar';
 import Home from './pages/Home'
 import Login from './pages/Login';
 import Navbar from './components/navbar';
+import UserPage from './pages/UserPage';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Routes>
           <Route index element={<Home/>} />
           <Route path="/login" element={<Login/>} />
+          <Route path="/users/:username" element={<UserPage />} />
         </Routes>
       </BrowserRouter>
     </>
