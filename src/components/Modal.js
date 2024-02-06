@@ -1,7 +1,7 @@
 import React, { useState }from "react";
 import "../styles/modal.css";
 import {Registration} from './Registration.js';
-import { useAuth } from "../functions/Auth.js";
+import { useAuth } from "../functions/auth.js";
 
 export default function Modal() {
 
