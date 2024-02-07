@@ -7,7 +7,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Searchbar from '../components/Searchbar';
 import { searchUsers } from '../functions/userSearch';
 import { Link, useLocation } from "react-router-dom";
-
+import UploadPFP from '../components/UploadPFP.js';
 
 export default function Home(){
     const [user] = useAuthState(auth);
@@ -55,6 +55,7 @@ export default function Home(){
             ) : (
               <>
                 <h1 className='text-3xl font-bold underline'>Hello World!</h1>
+                <UploadPFP/>
                 <button className='logout-button' onClick={logout}>signoff</button>
               </>
             )}
