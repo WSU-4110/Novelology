@@ -1,53 +1,49 @@
-import React, { useState }from "react";
-import "../styles/modal.css";
-import {Registration} from './Registration.js';
-import {useAuth } from "../functions/Auth.js";
-import Onboarding from '../components/Onboarding';
+import React, { useState } from 'react';
+import {SignIn} from './SignIn';
+import {Registration} from './Registration';
+import '../styles/modal.css'; // Import the modal CSS file
 
-export default function Modal() {
-
-    const [modal, setModal] = useState(false);
+function Modal() {
+    const [showModal, setShowModal] = useState(false);
+    const [mode, setMode] = useState('sign-in'); // Initial mode is sign-in
 
     const toggleModal = () => {
-        setModal(!modal)
-    }
-
-    if (modal) {
-        document.body.classList.add('active-modal');
-    } else {
-        document.body.classList.remove('active-modal');
-    }
-
-    const closeModal = (event) => {
-        if (event.target.classList.contains("overlay")) {
-            toggleModal();
+        setShowModal(!showModal);
+        if (!showModal) {
+            document.body.classList.add('active-modal'); // Add 'active-modal' class to body when modal is shown
+        } else {
+            document.body.classList.remove('active-modal'); // Remove 'active-modal' class from body when modal is closed
         }
     };
 
+    const handleModeChange = (newMode) => {
+        setMode(newMode);
+    };
+
     return (
-        <>
-        
-        <button 
-        onClick={toggleModal}
-        >
-            Sign Up!
-        </button>
-
-        {modal && (
-            <div className="modal">
-            <div onClick={closeModal} className="overlay">
-                <div className="modal-content">
-                    <h2 className="font-bold text-xl pb-4">Join Novelology</h2>
-                    <Registration/>
-                    <Onboarding/>
-                    <button className="close-modal text-red-400"
-                    onClick={toggleModal}>Close</button>
+        <div>
+            <button onClick={toggleModal}>Open Modal</button>
+            {showModal && (
+                <div className="modal">
+                    <div className="overlay" onClick={toggleModal}></div> {/* Overlay */}
+                    <div className="modal-content">
+                        <button className="close-modal text-red-400" onClick={toggleModal}>Close</button> {/* Close Modal button */}
+                        <div className="mode-switch">
+                            {mode !== 'sign-in' && (
+                                <button onClick={() => handleModeChange('sign-in')}>Sign In</button>
+                            )}
+                            {mode !== 'sign-up' && (
+                                <button onClick={() => handleModeChange('sign-up')}>Sign Up</button>
+                            )}
+                        </div>
+                        <div className="modal-body">
+                            {mode === 'sign-in' ? <SignIn /> : <Registration />}
+                        </div>
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
-        )}
-        
-
-        </>
     );
 }
+
+export default Modal;

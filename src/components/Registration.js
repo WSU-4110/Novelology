@@ -28,9 +28,9 @@ export function Registration() {
     return (
       <div>
         <form>
-          <input ref={emailRef} placeholder="E-Mail Address"/>
-          <input ref={passwordRef} type="password" placeholder="password"/>
-          <input ref={usernameRef} placeholder="username"/>
+          <input className="mt-1 mb-1 rounded-md p-0.5" ref={emailRef} placeholder="E-Mail Address"/>
+          <input className="mt-1 mb-1 rounded-md p-0.5" ref={passwordRef} type="password" placeholder="password"/>
+          <input className="mt-1 mb-1 rounded-md p-0.5" ref={usernameRef} placeholder="username"/>
           <button type="button" disabled={loading} onClick={handleSignUpWithEmail}>Sign Up</button>
         </form>
         <button className="flex items-center bg-white dark:bg-gray-900 border border-gray-300 rounded-lg shadow-md px-6 py-2 text-sm font-medium text-gray-800 dark:text-white hover:bg-gray-200 " id="register" onClick={(event) => handleSignInWithPopup(event)}>

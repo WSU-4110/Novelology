@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import { Link } from 'react-router-dom';
 import { searchUsers } from '../functions/userSearch';
 
 function Searchbar({ onSearch }) {
@@ -11,8 +11,8 @@ function Searchbar({ onSearch }) {
         setQuery(value);
 
         if (value.trim() === '') {
-            setSearchResults([]); // Clear search results if the query is empty
-            return; // Exit early if the query is empty
+            setSearchResults([]);
+            return;
         }
 
         const results = await searchUsers(value);
@@ -27,13 +27,24 @@ function Searchbar({ onSearch }) {
     };
 
     return (
-        <div className="relative">
+        <div className="relative z-10">
             <form onSubmit={handleSubmit} className="flex items-center">
-                <input type="text" value={query} onChange={handleChange} placeholder="Search..." className="px-3 py-2 border rounded-l-lg mr-2 focus:outline-none focus:ring focus:border-blue-300 flex-grow" />
-                <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:bg-blue-600">Search</button>
+                <input 
+                    type="text" 
+                    value={query} 
+                    onChange={handleChange} 
+                    placeholder="Search..." 
+                    className="px-3 py-2 border rounded-l-lg mr-2 focus:outline-none focus:ring focus:border-blue-300 flex-grow" 
+                />
+                <button 
+                    type="submit" 
+                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+                >
+                    Search
+                </button>
             </form>
             {searchResults.length > 0 && (
-                <ul className="dropdown bg-white border rounded shadow-lg w-64 absolute top-0 right-0 mt-12">
+                <ul className="dropdown bg-white border rounded shadow-lg w-64 absolute top-0 right-0 mt-12 z-20">
                     {searchResults.map((user) => (
                         <li key={user.id} className="flex items-center p-2 hover:bg-gray-100">
                             <img src={user.profilePicture} alt={user.username} className="w-8 h-8 rounded-full mr-2" />
