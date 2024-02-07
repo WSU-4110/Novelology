@@ -1,8 +1,8 @@
+import React from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { auth } from '../firebase.js';
 import Modal from '../components/Modal.js';
-import React from 'react';
 import Searchbar from '../components/Searchbar';
 import UploadPFP from '../components/UploadPFP.js';
 
@@ -32,9 +32,9 @@ export default function Home() {
                 <Modal />
             ) : (
                 <>
-                    <h1 className='text-3xl font-bold underline'>Hello World!</h1>
-                    <UploadPFP />
-                    <button className='logout-button' onClick={logout}>signoff</button>
+                    <h1 className='text-3xl font-bold underline'>Welcome back, {user.displayName}!</h1>
+                    
+                    <button className='logout-button' onClick={logout}>Sign off</button>
                 </>
             )}
             <div className="mt-8">

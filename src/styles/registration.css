@@ -1,0 +1,17 @@
+.input-label {
+    position: absolute;
+    top:20%;
+    left:.5em;
+    pointer-events: none;
+    font-size: 1rem; /* Initial font size */
+    color: #6B7280; /* Initial color */
+    transition: all 0.3s ease; /* Add transition for smooth effect */
+    font-size: 1rem;
+  }
+  
+  .input-label.shrink {
+    left: 0.3rem; /* Adjust the left position as needed */
+    top:.25rem;
+    font-size: 7px; /* Reduce the font size when it shrinks */
+    color: #9CA3AF; /* Change color when it shrinks */
+  }
