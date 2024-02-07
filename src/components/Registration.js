@@ -2,6 +2,8 @@
 import { useRef, useState } from "react";
 import { signUpWithEmail, handleSignInWithPopup } from "../functions/Auth";
 import "../styles/registration.css";
+import { FaGoogle } from 'react-icons/fa';
+
 
 // Reactive input field component
 const ReactiveInputField = ({ type, placeholder, inputRef, onChange }) => {
@@ -54,13 +56,14 @@ export function Registration() {
 
   return (
     <div>
-      <button
-        className="flex items-center bg-white border border-gray-300 rounded-lg shadow-md px-6 py-2 text-sm font-medium text-gray-800 mb-4"
-        id="register"
-        onClick={(event) => handleSignInWithPopup(event)}
-      >
-        Continue with Google
-      </button>
+        <button
+          className="flex items-center bg-white border border-gray-300 rounded-lg shadow-md px-6 py-2 text-sm font-medium text-gray-800 mb-4"
+          id="register"
+          onClick={(event) => handleSignInWithPopup(event)}
+        >
+          <FaGoogle className="mr-2" /> Continue with Google
+        </button>
+
       <form className="flex flex-col">
         <ReactiveInputField
           type="text"
