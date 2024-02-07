@@ -44,7 +44,7 @@ function Searchbar({ onSearch }) {
                 </button>
             </form>
             {searchResults.length > 0 && (
-                <ul className="dropdown bg-white border rounded shadow-lg w-64 absolute top-0 right-0 mt-12 z-20">
+                <ul className="dropdown bg-white border rounded shadow-lg w-64 absolute top-0 right-0 mt-12 z-50">
                     {searchResults.map((user) => (
                         <li key={user.id} className="flex items-center p-2 hover:bg-gray-100">
                             <img src={user.profilePicture} alt={user.username} className="w-8 h-8 rounded-full mr-2" />
