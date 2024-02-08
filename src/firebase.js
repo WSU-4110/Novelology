@@ -34,30 +34,6 @@ provider.setCustomParameters({
   prompt: "select_account"
 });
 
-export const getUserByUsername = async (username) => {
-  try {
-    console.log('Fetching user data for:', username);
 
-    // Create a query to find the user document with the matching username
-    const q = query(collection(db, 'users'), where('username', '==', username));
-    
-    // Fetch the documents that match the query
-    const querySnapshot = await getDocs(q);
-    
-    // Check if any documents were found
-    if (!querySnapshot.empty) {
-      // Get the first document (assuming usernames are unique)
-      const userData = querySnapshot.docs[0].data();
-      console.log('User data:', userData);
-      return userData;
-    } else {
-      console.log('User not found');
-      return null;
-    }
-  } catch (error) {
-    console.error('Error fetching user by username:', error);
-    throw error;
-  }
-};
 
 export { provider };
