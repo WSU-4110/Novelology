@@ -7,7 +7,7 @@ import Searchbar from '../components/Searchbar';
 import UploadPFP from '../components/UploadPFP.js';
 
 export default function Home() {
-    const [user] = useAuthState(auth);
+    const [user, loading, error] = useAuthState(auth);
 
     const login = () => {
         const provider = new GoogleAuthProvider();
@@ -26,14 +26,23 @@ export default function Home() {
         console.log(query);
     };
 
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>Error: {error.message}</div>;
+    }
+
     return (
         <main>
             {!user ? (
                 <Modal />
             ) : (
                 <>
-                    <h1 className='text-3xl font-bold underline'>Welcome back, {user.displayName}!</h1>
-                    
+                    {user.displayName && (
+                        <h1 className='text-3xl font-bold underline'>Welcome back, {user.displayName}!</h1>
+                    )}
                     <button className='logout-button' onClick={logout}>Sign off</button>
                 </>
             )}
