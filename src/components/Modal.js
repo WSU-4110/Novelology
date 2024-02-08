@@ -8,7 +8,10 @@ function Modal() {
     const [mode, setMode] = useState('sign-in'); // Initial mode is sign-in
 
     const toggleModal = () => {
+        // toggle state
         setShowModal(!showModal);
+
+        // handle styling changes
         if (!showModal) {
             document.body.classList.add('active-modal'); // Add 'active-modal' class to body when modal is shown
         } else {
@@ -36,13 +39,13 @@ function Modal() {
                                 {mode !== 'sign-in' && (
                                     <>
                                         <div className='flex m-5 flex-row'>
-                                            <p className="text-xs">Don't have an account yet?</p>
-                                            <button onClick={() => handleModeChange('sign-in')} className="ml-2 text-blue-400 text-xs">Sign In</button>
+                                            <p className="text-sm">Don't have an account yet?</p>
+                                            <button onClick={() => handleModeChange('sign-in')} className=" text-blue-400 text-sm">Sign In</button>
                                         </div>
                                     </>
                                 )}
                                 {mode !== 'sign-up' && (
-                                    <button onClick={() => handleModeChange('sign-up')} className="mr-2">Sign Up</button>
+                                    <button onClick={() => handleModeChange('sign-up')} >Sign Up</button>
                                 )}
                             </div>
                         </div>

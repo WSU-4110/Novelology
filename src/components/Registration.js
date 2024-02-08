@@ -97,7 +97,13 @@ export function Registration() {
       >
         <FaGoogle className="mr-2" /> Continue with Google
       </button>
-
+      <div className="h-2 w-full flex flex-row mb-2 select-none">
+      <div className="w-[45%] h-[.05em] bg-black">
+        </div>
+        <p className="text-[.75em] relative top-[-.75em] mr-1 ml-1">OR</p>
+        <div className="w-[45%] h-[.05em] bg-black">
+        </div>
+      </div>
       <form className="flex flex-col">
         <ReactiveInputField
           type="text"
