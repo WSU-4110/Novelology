@@ -13,7 +13,7 @@ const ReactiveInputField = ({ type, placeholder, inputRef, onChange }) => {
         <span className="text-red-500">*</span> {/* Red asterisk */}
       </label>
       <input
-        className="mt-1 mb-1 rounded-md p-0.5 outline-none focus:ring focus:ring-blue-300 h-8"
+        className="mt-1 mb-1 rounded-md p-0.5 outline-none focus:ring focus:ring-blue-300 h-8 w-full"
         ref={inputRef} // Forward inputRef to the input element's ref prop
         type={type}
         required
@@ -88,10 +88,10 @@ export function Registration() {
   }
 
   return (
-    <div>
+    <div className="min-w-20 p-2">
       <h1>Sign Up</h1>
       <button
-        className="flex items-center bg-white border border-gray-300 rounded-lg shadow-md px-6 py-2 text-sm font-medium text-gray-800 mb-4"
+        className="flex items-center w-full bg-white border border-gray-300 rounded-[1rem] shadow-md px-6 py-2 text-sm font-medium text-gray-800 mt-4 mb-4"
         id="register"
         onClick={(event) => handleSignInWithPopup(event)}
       >
@@ -158,11 +158,11 @@ export function Registration() {
             type="button"
             disabled={loading}
             onClick={handleSignUpWithEmail}
+            className="shadow w-1/2 flex justify-center pt-1 pb-1 mt-2"
           >
             Sign Up
           </button>
         </form>
-        <hr />
       </div>
     );
   }
