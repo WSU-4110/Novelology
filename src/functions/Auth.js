@@ -7,7 +7,7 @@ export function signUpWithEmail(htmlEmail, htmlPass, htmlUser) {
     handleSignUpWithEmail(htmlEmail, htmlPass, htmlUser);
 }
 
-export function handleSignInWithPopup(event) {
+export function handleSignUpWithPopup(event) {
     event.preventDefault(); // Prevent the default behavior of the button
     signInWithPopup(auth, new GoogleAuthProvider())
     .then((result) => {
@@ -20,7 +20,7 @@ export function handleSignInWithPopup(event) {
 }
 
 function addUserToDatabase(uid, email, displayName) {
-    const signUpTime = new Date(); // Get current timestamp
+    const signUpTime = Date.now; // Get current timestamp
     setDoc(doc(db, "users", uid), {
         email: email,
         emailVerified: false,

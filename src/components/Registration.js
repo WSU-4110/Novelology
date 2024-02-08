@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { signUpWithEmail, handleSignInWithPopup } from "../functions/Auth";
+import { signUpWithEmail, handleSignUpWithPopup } from "../functions/Auth";
 import "../styles/registration.css";
 import { FaGoogle } from 'react-icons/fa';
 import { useEffect } from "react";
@@ -93,7 +93,7 @@ export function Registration() {
       <button
         className="flex items-center w-full bg-white border border-gray-300 rounded-[1rem] shadow-md px-6 py-2 text-sm font-medium text-gray-800 mt-4 mb-4"
         id="register"
-        onClick={(event) => handleSignInWithPopup(event)}
+        onClick={(event) => handleSignUpWithPopup(event)}
       >
         <FaGoogle className="mr-2" /> Continue with Google
       </button>
