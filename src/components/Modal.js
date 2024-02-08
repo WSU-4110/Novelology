@@ -1,27 +1,26 @@
-import React, { useState }from "react";
-import "../styles/modal.css";
-import {Registration} from './Registration.js';
-import {useAuth } from "../functions/Auth.js";
-//import Onboarding from '../components/Onboarding';
+import React, { useState } from 'react';
+import { SignIn } from './SignIn';
+import { Registration } from './Registration';
+import '../styles/modal.css'; // Import the modal CSS file
 
-export default function Modal() {
-
-    const [modal, setModal] = useState(false);
+function Modal() {
+    const [showModal, setShowModal] = useState(false);
+    const [mode, setMode] = useState('sign-in'); // Initial mode is sign-in
 
     const toggleModal = () => {
-        setModal(!modal)
-    }
+        // toggle state
+        setShowModal(!showModal);
 
-    if (modal) {
-        document.body.classList.add('active-modal');
-    } else {
-        document.body.classList.remove('active-modal');
-    }
-
-    const closeModal = (event) => {
-        if (event.target.classList.contains("overlay")) {
-            toggleModal();
+        // handle styling changes
+        if (!showModal) {
+            document.body.classList.add('active-modal'); // Add 'active-modal' class to body when modal is shown
+        } else {
+            document.body.classList.remove('active-modal'); // Remove 'active-modal' class from body when modal is closed
         }
+    };
+
+    const handleModeChange = (newMode) => {
+        setMode(newMode);
     };
 
     return (
@@ -39,7 +38,7 @@ export default function Modal() {
                 <div className="modal-content">
                     <h2 className="font-bold text-xl pb-4">Join Novelology</h2>
                     <Registration/>
-                    {/* <Onboarding/> */}
+                    <Onboarding/>
                     <button className="close-modal text-red-400"
                     onClick={toggleModal}>Close</button>
                 </div>

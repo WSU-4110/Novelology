@@ -5,17 +5,16 @@ export default function(){
     const [user] = useAuthState(auth);
     return(
        
-    <navbar>
+    <nav>
         <Link to="/"> Home</Link>
         {!user ? <Link to="/login">Login</Link>: 
             <>
-                Posts
                 <Link to="/profile">Profile</Link>
             </>
 
         }
        
-    </navbar>
+    </nav>
         
     
  
