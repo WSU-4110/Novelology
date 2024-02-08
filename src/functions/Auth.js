@@ -20,7 +20,7 @@ export function handleSignUpWithPopup(event) {
 }
 
 function addUserToDatabase(uid, email, displayName) {
-    const signUpTime = Date.now; // Get current timestamp
+    const signUpTime = Date.now(); // Get current timestamp
     setDoc(doc(db, "users", uid), {
         email: email,
         emailVerified: false,
