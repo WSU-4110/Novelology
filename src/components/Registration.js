@@ -3,6 +3,8 @@ import { signUpWithEmail, handleSignUpWithPopup } from "../functions/Auth";
 import "../styles/registration.css";
 import { FaGoogle } from 'react-icons/fa';
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 
 // Reactive input field component
 const ReactiveInputField = ({ type, placeholder, inputRef, onChange }) => {
@@ -29,6 +31,7 @@ export function Registration() {
   const [passwordValid, setPasswordValid] = useState(false);
   const [passwordConfirmed, setPasswordConfirmed] = useState(false);
   
+  const navigate = useNavigate();
   const emailRef = useRef();
   const passwordRef = useRef();
   const confirmPasswordRef = useRef();
@@ -81,6 +84,7 @@ export function Registration() {
         passwordRef.current.value.trim(),
         usernameRef.current.value.trim()
       );
+      navigate('/setup-account')
     } catch (error) {
       alert("Error signing up with email " + error.message);
     }
