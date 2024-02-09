@@ -5,7 +5,7 @@ import Navbar from './components/navbar';
 import Profile from './pages/Profile';
 import UserPage from './pages/UserPage';
 import SetUpAccount from './pages/SetUpAccount';
-
+import BookSearch from './components/BookSearch';
 function App() {
   return (
     <>
@@ -17,7 +17,9 @@ function App() {
           <Route path="/profile" element={<Profile/>} />
           <Route path="/users/:username" element={<UserPage />} />
           <Route path="/setup-account" element={<SetUpAccount />}/>
+             
         </Routes>
+        <BookSearch/> 
       </BrowserRouter>
     </>
   );
