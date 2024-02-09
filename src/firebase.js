@@ -20,10 +20,11 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
-export const auth = getAuth(app);
-export const storage = getStorage(app);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
 
+export { auth, db, storage };
 
 const provider = new GoogleAuthProvider();
 provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
@@ -33,30 +34,6 @@ provider.setCustomParameters({
   prompt: "select_account"
 });
 
-export const getUserByUsername = async (username) => {
-  try {
-    console.log('Fetching user data for:', username);
 
-    // Create a query to find the user document with the matching username
-    const q = query(collection(db, 'users'), where('username', '==', username));
-    
-    // Fetch the documents that match the query
-    const querySnapshot = await getDocs(q);
-    
-    // Check if any documents were found
-    if (!querySnapshot.empty) {
-      // Get the first document (assuming usernames are unique)
-      const userData = querySnapshot.docs[0].data();
-      console.log('User data:', userData);
-      return userData;
-    } else {
-      console.log('User not found');
-      return null;
-    }
-  } catch (error) {
-    console.error('Error fetching user by username:', error);
-    throw error;
-  }
-};
 
 export { provider };
