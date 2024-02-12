@@ -5,7 +5,7 @@ import { auth } from '../firebase.js';
 import Modal from '../components/Modal.js';
 import Searchbar from '../components/Searchbar';
 import UploadPFP from '../components/UploadPFP.js';
-
+import BookSearch from '../components/BookSearch.js';
 export default function Home() {
     const [user, loading, error] = useAuthState(auth);
 
@@ -49,6 +49,9 @@ export default function Home() {
             <div className="mt-8">
                 <h1 className="mb-4">Search Users</h1>
                 <Searchbar onSearch={handleSearch} />
+            </div>
+            <div className='bookSearch'>
+                <BookSearch/>
             </div>
         </main>
     )
