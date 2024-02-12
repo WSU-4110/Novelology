@@ -42,9 +42,9 @@ export default function Settings() {
                     localStorage.setItem('userData', JSON.stringify(userDataFromSnapshot));
 
                     // Check if genres are present in userData
-                    if (userDataFromSnapshot.genres) {
-                        setGenres(userDataFromSnapshot.genres);
-                        localStorage.setItem('genres', JSON.stringify(userDataFromSnapshot.genres));
+                    if (userDataFromSnapshot.selectedGenres) {
+                        setGenres(userDataFromSnapshot.selectedGenres); // Use selectedGenres instead of genres
+                        localStorage.setItem('genres', JSON.stringify(userDataFromSnapshot.selectedGenres)); // Update local storage
                     } else {
                         console.error('Genres data not found in userData.');
                     }
@@ -215,7 +215,7 @@ export default function Settings() {
                         <p>Email: {user.email}</p>
                         {userData && (
                             <>
-                                <h2 className="font-semibold">Bio:</h2>
+                                <h1 className='text-3xl font-bold m-4'>Your Bio:</h1>
                                 <input
                                     className="w-full p-2 mt-2 border rounded"
                                     type="text"
@@ -231,6 +231,7 @@ export default function Settings() {
                                 {showSavedMessage && (
                                     <p className="text-green-500 mt-2">Saved successfully!</p>
                                 )}
+                                <h1 className='text-3xl font-bold m-4'>Your Genres</h1>
                                 {!loadingGenres && genres && (
                                     <div className="flex flex-wrap gap-2 m-4">
                                         {genres.map((genre, index) => (
