@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import getUserByUsername from '../functions/getUserByUsername';
+import ProfilePicture from '../components/ProfilePicture';
 
 function UserPage() {
     const { username } = useParams();
@@ -18,11 +19,7 @@ function UserPage() {
                 <div>
                     <h2>Username: {username}</h2>
                     <p>Email: {userData.email}</p>
-                    {userData.profilePicture ? (
-                        <img src={userData.profilePicture} alt="Profile Picture" />
-                    ) : (
-                        <p>No profile picture found</p>
-                    )}
+                    <ProfilePicture uid={userData.uid} alt={userData.username} />
                     {userData.bio && <p>Bio: {userData.bio}</p>}
                     {/* Additional user data rendering */}
                 </div>

@@ -7,8 +7,9 @@ import PrivateRoute from './components/routing/PrivateRoute';
 import Modal from './components/Modal'; 
 import Onboarding from './components/Onboarding'; 
 import SetUpAccount from './pages/SetUpAccount';
-import Profile from './pages/Profile';
+import Settings from './pages/Settings';
 import UserPage from './pages/UserPage';
+import Profile from './pages/Profile';
 
 const App = () => {
   return (
@@ -21,7 +22,8 @@ const App = () => {
           <Route element={<PrivateRoute />} >
             <Route path="/setup-account" element={<SetUpAccount/>} /> {/* Route for Onboarding component */}
           </Route>
-          <Route path="/profile" element={<Profile/>} />
+          <Route path="/settings" element={<Settings/>} />
+          <Route path="/profile" element={<Profile/>}/>
           <Route path="/users/:username" element={<UserPage />} />
         </Routes>
         
