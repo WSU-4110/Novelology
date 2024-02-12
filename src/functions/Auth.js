@@ -11,15 +11,48 @@ export function signUpWithEmail(htmlEmail, htmlPass, htmlUser) {
 
 export function handleSignUpWithPopup(event) {
     event.preventDefault(); // Prevent the default behavior of the button
+
+    // Sign out the current user from Firebase Authentication
+    signOut(auth)
+        .then(() => {
+            // Sign in with Google using a popup
+            signInWithPopup(auth, new GoogleAuthProvider())
+                .then((result) => {
+                    // If signing up with Google, check if the user already exists in the database
+                    const userRef = db.collection("users").doc(result.user.uid);
+                    userRef.get().then((doc) => {
+                        if (doc.exists) {
+                            console.log("User already exists in the database.");
+                        } else {
+                            // User does not exist in the database, add the user data to the database
+                            addUserToDatabase(result.user.uid, result.user.email, result.user.displayName);
+                        }
+                    }).catch((error) => {
+                        console.error("Error checking user existence:", error);
+                    });
+                })
+                .catch((error) => {
+                    console.error("Google sign-in error:", error);
+                });
+        })
+        .catch((error) => {
+            console.error("Sign-out error:", error);
+        });
+}
+
+export function handleSignInWithPopup(event) {
+    event.preventDefault(); // Prevent the default behavior of the button
+
     signInWithPopup(auth, new GoogleAuthProvider())
     .then((result) => {
-        // If signing up with Google, add the user data to the database
-        addUserToDatabase(result.user.uid, result.user.email, result.user.displayName);
+        const { uid, email, displayName } = result.user;
+        console.log("User signed in successfully:", { uid, email, displayName });
     })
     .catch((error) => {
         console.error("Google sign-in error:", error);
     });
 }
+
 
 
 
