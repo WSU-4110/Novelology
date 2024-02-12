@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { doc, setDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
 import { auth, db } from '../firebase';
+import { valid } from "semver";
+import { Navigate } from "react-router";
 
 export function signUpWithEmail(htmlEmail, htmlPass, htmlUser) {
     handleSignUpWithEmail(htmlEmail, htmlPass, htmlUser);
@@ -50,3 +52,10 @@ function handleSignUpWithEmail(htmlEmail, htmlPass, htmlUser) {
         if (errorCode === 'auth/email-already-in-use') return; // Email already in use
     });
 }
+
+
+export const handleLogout = (navigate) => {
+    localStorage.removeItem('userData');
+    auth.signOut();
+    navigate('/');
+};
