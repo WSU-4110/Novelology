@@ -1,20 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { deleteUser } from "firebase/auth";
-import { auth, storage } from '../firebase.js';
+import { auth, storage, db } from '../firebase.js'; // Consolidated Firebase imports
 import { useNavigate } from "react-router-dom";
 import UploadPFP from '../components/UploadPFP.js';
 import DeleteAccountModal from '../components/DeleteAccountModal.js';
-import { db } from '../firebase.js';
 import { doc, getDoc, updateDoc, deleteDoc} from 'firebase/firestore';
 import { deleteObject, listAll} from 'firebase/storage';
 import { handleLogout } from '../functions/Auth.js';
 
-
 // icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
-
 
 import "../styles/settings.css";
 
@@ -65,49 +62,42 @@ export default function Settings() {
             fetchUserData();
         }
     }, [user, newBio]);
-      
 
-        // Function to handle logout
-        const handleLogoutClick = () => {
-            handleLogout(navigate); // Pass navigate function to handleLogout
-        };
-    
     const handleDeleteAccount = async () => {
         try {
-            // Ensure that the user is authenticated
             const currentUser = auth.currentUser;
             if (!currentUser) {
                 console.error('User is not authenticated.');
                 return;
             }
 
-            // Delete user's account
             await deleteUser(currentUser);
-    
-            // Delete user's folder and its contents from storage
-            const userStorageRef = storage.ref(`users/${currentUser.uid}`); // Changed ref to storage.ref
-            await deleteFolder(userStorageRef);
-
-            // Delete user's Firestore document
-            const userFirestoreRef = doc(db, "users", currentUser.uid);
-            await deleteDoc(userFirestoreRef);
-    
-            // After deletion, navigate to the homepage or any desired route
+            await deleteUserData(currentUser.uid); // Extracted function to delete user data
             navigate('/');
         } catch (error) {
             console.error('Error deleting account:', error);
         }
     };
 
+    const deleteUserData = async (uid) => {
+        try {
+            const userStorageRef = storage.ref(`users/${uid}`);
+            await deleteFolder(userStorageRef);
+            const userFirestoreRef = doc(db, "users", uid);
+            await deleteDoc(userFirestoreRef);
+        } catch (error) {
+            console.error('Error deleting user data:', error);
+        }
+    };
+
+    // Extracted function to delete user folder
     const deleteFolder = async (folderRef) => {
         try {
             const items = await listAll(folderRef);
             const promises = items.items.map(async (item) => {
                 if (item.isDirectory) {
-                    // Recursively delete sub-folders
                     await deleteFolder(item);
                 } else {
-                    // Delete files
                     await deleteObject(item);
                 }
             });
@@ -117,19 +107,13 @@ export default function Settings() {
             console.error('Error deleting folder:', error);
         }
     };
-    
+
+    // Extracted function to update user bio
     const updateUserBio = async (newBio) => {
         try {
             const userDoc = doc(db, 'users', user.uid);
             await updateDoc(userDoc, { bio: newBio });
-
-            // Update local user data
-            setUserData(prevUserData => ({
-                ...prevUserData,
-                bio: newBio
-            }));
-
-            // Update local storage
+            setUserData(prevUserData => ({ ...prevUserData, bio: newBio }));
             localStorage.setItem('userData', JSON.stringify({ ...userData, bio: newBio }));
         } catch (error) {
             console.error('Error updating user bio:', error);
@@ -208,7 +192,7 @@ export default function Settings() {
     return (
         <div className="min-h-screen w-full bg-gray-100 flex justify-center">
             <div className=" w-full p-6 shadow-xl">
-                {!user ? navigate('/') : (
+                 {!user ? navigate('/') : (
                     <>
                         <h1 className="text-2xl font-bold mb-4">Profile</h1>
                         <UploadPFP />
