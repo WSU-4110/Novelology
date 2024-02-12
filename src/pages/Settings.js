@@ -31,7 +31,6 @@ export default function Settings() {
     const [genres, setGenres] = useState(null);
     const [loadingGenres, setLoadingGenres] = useState(false);
 
-
     useEffect(() => {
         const fetchUserData = async () => {
             try {
@@ -40,11 +39,20 @@ export default function Settings() {
                 if (docSnapshot.exists()) {
                     const userDataFromSnapshot = docSnapshot.data();
                     setUserData(userDataFromSnapshot);
-
-                    // Store user data locally
-                    // Possible sec issue, possible overwritting issues if multiple tabs
-                    // possible size limit ~5mb
                     localStorage.setItem('userData', JSON.stringify(userDataFromSnapshot));
+
+                    // Check if genres are present in userData
+                    if (userDataFromSnapshot.genres) {
+                        setGenres(userDataFromSnapshot.genres);
+                        localStorage.setItem('genres', JSON.stringify(userDataFromSnapshot.genres));
+                    } else {
+                        console.error('Genres data not found in userData.');
+                    }
+
+                    // Set newBio state if it's not already set
+                    if (!newBio) {
+                        setNewBio(userDataFromSnapshot.bio || '');
+                    }
                 } else {
                     console.error('User document does not exist.');
                 }
@@ -56,30 +64,7 @@ export default function Settings() {
         if (user) {
             fetchUserData();
         }
-    }, [user]);
-
-    useEffect(() => {
-        const fetchGenres = async () => {
-          try {
-            setLoadingGenres(true);
-            // Fetch user's genres data
-            const userGenresRef = doc(db, 'users', user.uid);
-            const genresSnapshot = await getDoc(userGenresRef);
-            if (genresSnapshot.exists()) {
-              const userData = genresSnapshot.data();
-              setGenres(userData.genres || []);
-            }
-            setLoadingGenres(false);
-          } catch (error) {
-            console.error('Error fetching user genres:', error);
-            setLoadingGenres(false);
-          }
-        };
-      
-        if (user) {
-          fetchGenres();
-        }
-      }, [user]);
+    }, [user, newBio]);
       
 
         // Function to handle logout
@@ -234,7 +219,7 @@ export default function Settings() {
                                 <input
                                     className="w-full p-2 mt-2 border rounded"
                                     type="text"
-                                    value={newBio}
+                                    value={newBio} // Use newBio state as the value
                                     onChange={(e) => setNewBio(e.target.value)}
                                 />
                                 <button
