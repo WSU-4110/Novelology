@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { searchUsers } from '../functions/userSearch';
+import ProfilePicture from './ProfilePicture'; 
 
 function Searchbar({ onSearch }) {
     const [query, setQuery] = useState('');
@@ -44,11 +45,11 @@ function Searchbar({ onSearch }) {
                     Search
                 </button>
             </form>
-            {searchResults.length > 0 && query.trim() !== '' && ( // Added condition to check if query is not empty
+            {searchResults.length > 0 && query.trim() !== '' && ( // check if query is not empty
                 <ul className="dropdown bg-white border rounded shadow-lg w-64 absolute top-0 right-0 mt-12 z-50">
                     {searchResults.map((user) => (
                         <li key={user.id} className="flex items-center p-2 hover:bg-gray-100">
-                            <img src={user.profilePicture} alt={user.username} className="w-8 h-8 rounded-full mr-2" />
+                            <ProfilePicture /> 
                             <div>
                                 <strong>Name:</strong> {user.username} | <strong>Email:</strong> {user.email}
                                 <Link to={`/users/${user.username}`} className="block text-blue-500">View Profile</Link>
