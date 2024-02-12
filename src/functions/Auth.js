@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { doc, setDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
-import { auth, db } from '../firebase';
+import { auth, db, provider } from '../firebase';
 import { valid } from "semver";
-import { Navigate } from "react-router";
+import { useNavigate } from "react-router";
 
 export function signUpWithEmail(htmlEmail, htmlPass, htmlUser) {
     handleSignUpWithEmail(htmlEmail, htmlPass, htmlUser);
@@ -11,6 +11,8 @@ export function signUpWithEmail(htmlEmail, htmlPass, htmlUser) {
 
 export function handleSignUpWithPopup(event) {
     event.preventDefault(); // Prevent the default behavior of the button
+
+    const navigate = new useNavigate();
 
     // Sign out the current user from Firebase Authentication
     signOut(auth)
@@ -23,9 +25,11 @@ export function handleSignUpWithPopup(event) {
                     userRef.get().then((doc) => {
                         if (doc.exists) {
                             console.log("User already exists in the database.");
+                            return;
                         } else {
                             // User does not exist in the database, add the user data to the database
                             addUserToDatabase(result.user.uid, result.user.email, result.user.displayName);
+                            navigate('/');
                         }
                     }).catch((error) => {
                         console.error("Error checking user existence:", error);
@@ -41,14 +45,17 @@ export function handleSignUpWithPopup(event) {
 }
 
 export function handleSignInWithPopup() {
-    return signInWithPopup(auth, new GoogleAuthProvider())
+    return signInWithPopup(auth, provider)
     .then((result) => {
-        const { uid, email, displayName } = result.user;
-        console.log("User signed in successfully:", { uid, email, displayName });
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        const user = result.user;
+    }).catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        const email = error.customData.email;
+        const credential = GoogleAuthProvider.credentialFromError(error);
     })
-    .catch((error) => {
-        console.error("Google sign-in error:", error);
-    });
 }
 
 

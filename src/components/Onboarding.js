@@ -155,7 +155,7 @@ const Onboarding = () => {
     }
   };
   return (
-    <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-xl">
+    <div className=" mt-[-1em] max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-xl overflow-y-scroll max-h-svh">
       <h1 className="text-2xl font-bold mb-4">Onboarding</h1>
       {/* Restart setup button */}
       <form onSubmit={handleSubmitForm} className="flex flex-col">
