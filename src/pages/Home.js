@@ -35,7 +35,7 @@ export default function Home() {
     return (
         <main>
             {!user ? (
-                <Modal />
+                <div> logged out</div>
             ) : (
                 <>
                     {user.displayName && (
