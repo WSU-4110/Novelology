@@ -165,8 +165,8 @@ const handleAddGenre = async (e) => {
     };
     
     return (
-        <div className="min-h-screen bg-gray-100 flex justify-center items-center">
-            <div className="max-w-md w-full mx-auto p-6 bg-white rounded-lg shadow-xl">
+        <div className="min-h-screen w-full bg-gray-100 flex justify-center">
+            <div className=" w-full p-6 shadow-xl">
                 {!user ? navigate('/') : (
                     <>
                         <h1 className="text-2xl font-bold mb-4">Profile</h1>
@@ -190,27 +190,29 @@ const handleAddGenre = async (e) => {
                                 {showSavedMessage && (
                                     <p className="text-green-500 mt-2">Saved successfully!</p>
                                 )}
-                                <div className="flex flex-wrap gap-2 mt-4">
-                                    {userData.genres.map((genre, index) => (
-                                        <div
-                                            key={index}
-                                            className="relative"
-                                            onMouseEnter={() => setHoveredGenre(genre)}
-                                            onMouseLeave={() => setHoveredGenre(null)}
-                                        >
-                                            <div className="bg-blue-500 text-white rounded-full px-4 py-2">
-                                                {genre}
+                                {userData && userData.genres && (
+                                    <div className="flex flex-wrap gap-2 mt-4">
+                                        {userData.genres.map((genre, index) => (
+                                            <div
+                                                key={index}
+                                                className="relative"
+                                                onMouseEnter={() => setHoveredGenre(genre)}
+                                                onMouseLeave={() => setHoveredGenre(null)}
+                                            >
+                                                <div className="bg-blue-500 text-white rounded-full px-4 py-2">
+                                                    {genre}
+                                                </div>
+                                                {hoveredGenre === genre && (
+                                                    <FontAwesomeIcon
+                                                        icon={faTimesCircle}
+                                                        className="absolute top-0 right-0 text-red-500 cursor-pointer opacity-75 hover:opacity-100"
+                                                        onClick={() => handleDeleteGenre(genre)}
+                                                    />
+                                                )}
                                             </div>
-                                            {hoveredGenre === genre && (
-                                                <FontAwesomeIcon
-                                                    icon={faTimesCircle}
-                                                    className="absolute top-0 right-0 text-red-500 cursor-pointer opacity-75 hover:opacity-100"
-                                                    onClick={() => handleDeleteGenre(genre)}
-                                                />
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
+                                        ))}
+                                    </div>
+                                )}
 
                                 <form onSubmit={handleAddGenre}>
                                     <div className="flex">

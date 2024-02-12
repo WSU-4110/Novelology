@@ -68,25 +68,26 @@ const UploadPFP = () => {
   };
 
   return (
-    <div className='flex flex-row'>
+    <div className='flex flex-col'>
       <label htmlFor="profilePicture" className="text-lg font-semibold mb-2">
         Profile Picture
       </label>
       <input type="file" accept="image/*" id="profilePicture" onChange={handleChange} />
+      <button onClick={handleUpload} className='bg-green-600 w-16 h-6 rounded-sm text-white'>Upload</button>
       {existingProfilePicture ? (
         <img
           src={existingProfilePicture}
           alt="Existing Profile"
-          className="w-1/4 h-auto rounded-full object-cover border border-gray-400" 
+          className="w-1/4 h-1/4 rounded-full object-cover border border-gray-400 m-4" 
         />
       ) : (
         <img
           src={defaultProfilePicture}
           alt="Default Profile"
-          className="w-1/4 h-auto rounded-full object-cover border border-gray-400"
+          className="w-1/4 h-1/4 rounded-full object-cover border border-gray-400 m-4"
         />
       )}
-      <button onClick={handleUpload} className='bg-green-600 w-16 h-6 rounded-sm text-white'>Upload</button>
+      
       {error && <div>{error}</div>}
     </div>
   );

@@ -17,9 +17,7 @@ export default function Home() {
             });
     };
 
-    const logout = () => {
-        signOut(auth);
-    };
+
 
     const handleSearch = async (query) => {
         // Handle search logic here
@@ -43,7 +41,7 @@ export default function Home() {
                     {user.displayName && (
                         <h1 className='text-3xl font-bold underline'>Welcome back, {user.displayName}!</h1>
                     )}
-                    <button className='logout-button' onClick={logout}>Sign off</button>
+                    
                 </>
             )}
             <div className="mt-8">
