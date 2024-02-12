@@ -7,6 +7,7 @@ import Searchbar from '../components/Searchbar';
 import UploadPFP from '../components/UploadPFP.js';
 import { handleSearch } from '../functions/searchFunctions'; // Import handleSearch function
 
+import BookSearch from '../components/BookSearch.js';
 export default function Home() {
     const [user, loading, error] = useAuthState(auth);
     const [searchResults, setSearchResults] = useState([]);
@@ -43,6 +44,9 @@ export default function Home() {
             <div className="mt-8">
                 <h1 className="mb-4">Search Users</h1>
                 <Searchbar onSearch={(query) => handleSearch(query, setSearchResults, setSearchStatus)} />
+            </div>
+            <div className='bookSearch'>
+                <BookSearch/>
             </div>
         </main>
     )
