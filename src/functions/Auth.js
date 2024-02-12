@@ -40,10 +40,8 @@ export function handleSignUpWithPopup(event) {
         });
 }
 
-export function handleSignInWithPopup(event) {
-    event.preventDefault(); // Prevent the default behavior of the button
-
-    signInWithPopup(auth, new GoogleAuthProvider())
+export function handleSignInWithPopup() {
+    return signInWithPopup(auth, new GoogleAuthProvider())
     .then((result) => {
         const { uid, email, displayName } = result.user;
         console.log("User signed in successfully:", { uid, email, displayName });
@@ -52,7 +50,6 @@ export function handleSignInWithPopup(event) {
         console.error("Google sign-in error:", error);
     });
 }
-
 
 
 

@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { deleteUser } from "firebase/auth";
-import { auth, storage, db } from '../firebase.js'; // Consolidated Firebase imports
+import { auth, storage, db, provider } from '../firebase.js'; // Consolidated Firebase imports
 import { useNavigate } from "react-router-dom";
 import UploadPFP from '../components/UploadPFP.js';
 import DeleteAccountModal from '../components/DeleteAccountModal.js';
 import { doc, getDoc, updateDoc, deleteDoc} from 'firebase/firestore';
 import { deleteObject, listAll} from 'firebase/storage';
-import { handleLogout } from '../functions/Auth.js';
+import { handleSignInWithPopup } from '../functions/Auth.js';
+
 
 // icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -70,21 +71,34 @@ export default function Settings() {
                 console.error('User is not authenticated.');
                 return;
             }
-
+    
+            // Display a message to the user indicating that they need to sign in again
+            alert("Please sign in again to delete your account.");
+    
+            // Sign in with Google provider using popup
+            await handleSignInWithPopup();
+    
+            // After successful sign-in, delete user's account
             await deleteUser(currentUser);
+            
+            // Delete user's data in Firestore
             await deleteUserData(currentUser.uid); // Extracted function to delete user data
+    
             navigate('/');
         } catch (error) {
             console.error('Error deleting account:', error);
         }
     };
-
+    
     const deleteUserData = async (uid) => {
         try {
+            // Delete user's data in Firestore
+            const userDocRef = doc(db, "users", uid);
+            await deleteDoc(userDocRef);
+    
+            // Delete user's data folder in Cloud Storage
             const userStorageRef = storage.ref(`users/${uid}`);
             await deleteFolder(userStorageRef);
-            const userFirestoreRef = doc(db, "users", uid);
-            await deleteDoc(userFirestoreRef);
         } catch (error) {
             console.error('Error deleting user data:', error);
         }
