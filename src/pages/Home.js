@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from '../firebase.js';
 import Modal from '../components/Modal.js';
 import Searchbar from '../components/Searchbar';
 import UploadPFP from '../components/UploadPFP.js';
+import { handleSearch } from '../functions/searchFunctions'; // Import handleSearch function
 
 export default function Home() {
     const [user, loading, error] = useAuthState(auth);
+    const [searchResults, setSearchResults] = useState([]);
+    const [searchStatus, setSearchStatus] = useState('');
 
     const login = () => {
         const provider = new GoogleAuthProvider();
@@ -17,18 +20,12 @@ export default function Home() {
             });
     };
 
-
-
-    const handleSearch = async (query) => {
-        // Handle search logic here
-        console.log(query);
-    };
-
     if (loading) {
         return <div>Loading...</div>;
     }
 
     if (error) {
+        console.error('Auth state error:', error); // Log auth state error
         return <div>Error: {error.message}</div>;
     }
 
@@ -41,12 +38,11 @@ export default function Home() {
                     {user.displayName && (
                         <h1 className='text-3xl font-bold underline'>Welcome back, {user.displayName}!</h1>
                     )}
-                    
                 </>
             )}
             <div className="mt-8">
                 <h1 className="mb-4">Search Users</h1>
-                <Searchbar onSearch={handleSearch} />
+                <Searchbar onSearch={(query) => handleSearch(query, setSearchResults, setSearchStatus)} />
             </div>
         </main>
     )

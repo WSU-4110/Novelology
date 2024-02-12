@@ -18,13 +18,14 @@ function Searchbar({ onSearch }) {
         const results = await searchUsers(value);
         setSearchResults(results);
     };
-
+    
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (query.length > 0) {
-            onSearch(query);
+            onSearch(query); // Pass the query value to the onSearch function
         }
     };
+    
 
     return (
         <div className="relative z-10">
