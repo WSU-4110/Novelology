@@ -229,7 +229,7 @@ export default function Settings() {
                                 {showSavedMessage && (
                                     <p className="text-green-500 mt-2">Saved successfully!</p>
                                 )}
-                                <h1 className='text-3xl font-bold m-4'>Your Genres</h1>
+                                <h1 className='text-3xl font-bold m-4'>Genre Preferences:</h1>
                                 {!loadingGenres && genres && (
                                     <div className="flex flex-wrap gap-2 m-4">
                                         {genres.map((genre, index) => (

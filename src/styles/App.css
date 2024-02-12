@@ -1,4 +1,5 @@
 .App {
+  overflow-y: scroll;
   text-align: center;
 }
 
