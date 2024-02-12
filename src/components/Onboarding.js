@@ -12,7 +12,9 @@ const Onboarding = () => {
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [genreSuggestions, setGenreSuggestions] = useState([]);
   const [hasCompletedSetup, setHasCompletedSetup] = useState(false);
-  const [fetchedProfilePicture, setFetchedProfilePicture] = useState(null); // Add state variable for fetched profile picture
+  const [fetchedProfilePicture, setFetchedProfilePicture] = useState(null);
+  const [selectedRoles, setSelectedRoles] = useState([]); // Define selectedRoles state variable
+
 
   const navigate = useNavigate();
   
@@ -154,33 +156,45 @@ const Onboarding = () => {
       }
     }
   };
-  return (
-    <div className=" mt-[-1em] max-w-md mx-auto p-6 bg-white rounded-lg shadow-xl overflow-y-scroll max-h-svh">
-      <h1 className="text-2xl font-bold mb-4">Onboarding</h1>
-      {/* Restart setup button */}
-      <form onSubmit={handleSubmitForm} className="flex flex-col">
-        <UploadPFP setProfilePicture={setProfilePicture} />
-        {fetchedProfilePicture && (
-          <img src={fetchedProfilePicture} alt="Profile" className="w-24 h-24 rounded-full my-4" />
-        )}
-        <textarea
-          className="w-full h-24 p-2 border rounded my-4"
-          placeholder="Bio"
-          value={bio}
-          onChange={(e) => setBio(e.target.value)}
-          style={{ resize: "none" }} // Add inline style to disable resizing
-        />
-        <div className="flex flex-wrap justify-start gap-2 my-4">
-          {selectedGenres.map((genre) => (
-            <div
-              key={genre}
-              className="bg-blue-500 text-white rounded-full px-4 py-2 cursor-pointer"
-              onClick={() => handleGenreUnselect(genre)} // Add onClick handler for unselecting genre
-            >
-              {genre}
-            </div>
-          ))}
-        </div>
+
+    return (
+      <div className="mt-[-1em] max-w-md mx-auto p-6 bg-white rounded-lg shadow-xl overflow-y-scroll max-h-svh">
+        <h1 className="text-2xl font-bold mb-4">Onboarding</h1>
+        {/* Restart setup button */}
+        <form onSubmit={handleSubmitForm} className="flex flex-col">
+          <UploadPFP setProfilePicture={setProfilePicture} />
+          {fetchedProfilePicture && (
+            <img src={fetchedProfilePicture} alt="Profile" className="w-24 h-24 rounded-full my-4" />
+          )}
+          <textarea
+            className="w-full h-24 p-2 border rounded my-4"
+            placeholder="Bio"
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+            style={{ resize: "none" }} // Add inline style to disable resizing
+          />
+          {/* Pronouns dropdown */}
+          <select
+            className="w-full p-2 mt-2 border rounded"
+            value={pronouns}
+            onChange={(e) => setPronouns(e.target.value)}
+          >
+            <option value="" disabled hidden>Select Pronouns</option>
+            <option value="He/Him">He/Him</option>
+            <option value="She/Her">She/Her</option>
+            <option value="They/Them">They/Them</option>
+          </select>
+          {/* Roles selection */}
+          <select
+            multiple
+            className="w-full p-2 mt-2 border rounded"
+            value={selectedRoles}
+            onChange={(e) => setSelectedRoles(Array.from(e.target.selectedOptions, option => option.value))}
+          >
+            <option value="Reader">Reader</option>
+            <option value="Reviewer">Reviewer</option>
+            <option value="Author">Author</option>
+          </select>
         <div className="mb-4">
           <h2 className="text-lg font-semibold">Select Genres</h2>
           <div className="flex flex-wrap justify-start gap-2 mt-2">

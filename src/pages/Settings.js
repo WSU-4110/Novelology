@@ -28,6 +28,8 @@ export default function Settings() {
     const [hoveredGenre, setHoveredGenre] = useState(null); 
     const [genres, setGenres] = useState(null);
     const [loadingGenres, setLoadingGenres] = useState(false);
+    const [pronouns, setPronouns] = useState('');
+    const [selectedRoles, setSelectedRoles] = useState([]);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -39,18 +41,20 @@ export default function Settings() {
                     setUserData(userDataFromSnapshot);
                     localStorage.setItem('userData', JSON.stringify(userDataFromSnapshot));
 
-                    // Check if genres are present in userData
                     if (userDataFromSnapshot.selectedGenres) {
-                        setGenres(userDataFromSnapshot.selectedGenres); // Use selectedGenres instead of genres
-                        localStorage.setItem('genres', JSON.stringify(userDataFromSnapshot.selectedGenres)); // Update local storage
+                        setGenres(userDataFromSnapshot.selectedGenres);
+                        localStorage.setItem('genres', JSON.stringify(userDataFromSnapshot.selectedGenres));
                     } else {
                         console.error('Genres data not found in userData.');
                     }
 
-                    // Set newBio state if it's not already set
                     if (!newBio) {
                         setNewBio(userDataFromSnapshot.bio || '');
                     }
+
+                    // Set pronouns and selected role
+                    setPronouns(userDataFromSnapshot.pronouns || '');
+                    setSelectedRoles(userDataFromSnapshot.role || '');
                 } else {
                     console.error('User document does not exist.');
                 }
@@ -134,21 +138,6 @@ export default function Settings() {
         }
     };
 
-
-    const handleSaveChanges = async () => {
-        try {
-            const userDoc = doc(db, 'users', user.uid);
-            await updateDoc(userDoc, {
-                bio: newBio,
-            });
-            setUserData({ ...userData, bio: newBio }); // Update local state
-            setShowSavedMessage(true); // Show saved message
-            setTimeout(() => setShowSavedMessage(false), 2000); // Hide saved message after 2 seconds
-        } catch (error) {
-            console.error('Error updating bio:', error);
-        }
-    };
-
     const handleAddGenre = async (e) => {
         e.preventDefault();
       
@@ -203,10 +192,36 @@ export default function Settings() {
         }
       };
     
+      const handleSaveChanges = async () => {
+        try {
+          const userDoc = doc(db, 'users', user.uid);
+          await updateDoc(userDoc, {
+            bio: newBio,
+            pronouns: pronouns,
+            roles: selectedRoles // Save selected roles to the database
+          });
+          setUserData({ ...userData, bio: newBio, pronouns: pronouns, roles: selectedRoles });
+          setShowSavedMessage(true);
+          setTimeout(() => setShowSavedMessage(false), 2000);
+        } catch (error) {
+          console.error('Error updating bio:', error);
+        }
+      };
+
+      const handleRoleChange = (role) => {
+        setSelectedRoles(prevRoles => {
+            if (prevRoles.includes(role)) {
+                return prevRoles.filter(selectedRole => selectedRole !== role);
+            } else {
+                return [...prevRoles, role];
+            }
+        });
+    };
+
     return (
         <div className="min-h-screen w-full bg-gray-100 flex justify-center">
             <div className=" w-full p-6 shadow-xl">
-                 {!user ? navigate('/') : (
+                {!user ? navigate('/') : (
                     <>
                         <h1 className="text-2xl font-bold mb-4">Profile</h1>
                         <UploadPFP />
@@ -217,9 +232,52 @@ export default function Settings() {
                                 <input
                                     className="w-full p-2 mt-2 border rounded"
                                     type="text"
-                                    value={newBio} // Use newBio state as the value
+                                    value={newBio}
                                     onChange={(e) => setNewBio(e.target.value)}
                                 />
+                                <select
+                                    className="w-full p-2 mt-2 border rounded"
+                                    value={pronouns || 'default'}
+                                    onChange={(e) => setPronouns(e.target.value === 'default' ? '' : e.target.value)}
+                                >
+                                    <option value="default" disabled hidden>
+                                        Pronouns
+                                    </option>
+                                    <option value="he/him">He/Him</option>
+                                    <option value="she/her">She/Her</option>
+                                    <option value="they/them">They/Them</option>
+                                </select>
+
+                                <div className="mt-2">
+                                    <label className="block">
+                                        <input
+                                            type="checkbox"
+                                            value="Reader"
+                                            checked={selectedRoles.includes("Reader")}
+                                            onChange={(e) => handleRoleChange(e.target.value)}
+                                        />
+                                        Reader
+                                    </label>
+                                    <label className="block">
+                                        <input
+                                            type="checkbox"
+                                            value="Reviewer"
+                                            checked={selectedRoles.includes("Reviewer")}
+                                            onChange={(e) => handleRoleChange(e.target.value)}
+                                        />
+                                        Reviewer
+                                    </label>
+                                    <label className="block">
+                                        <input
+                                            type="checkbox"
+                                            value="Author"
+                                            checked={selectedRoles.includes("Author")}
+                                            onChange={(e) => handleRoleChange(e.target.value)}
+                                        />
+                                        Author
+                                    </label>
+                                </div>
+
                                 <button
                                     className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-2"
                                     onClick={handleSaveChanges}
@@ -229,43 +287,7 @@ export default function Settings() {
                                 {showSavedMessage && (
                                     <p className="text-green-500 mt-2">Saved successfully!</p>
                                 )}
-                                <h1 className='text-3xl font-bold m-4'>Genre Preferences:</h1>
-                                {!loadingGenres && genres && (
-                                    <div className="flex flex-wrap gap-2 m-4">
-                                        {genres.map((genre, index) => (
-                                        <div
-                                            key={index}
-                                            className="relative"
-                                            onMouseEnter={() => setHoveredGenre(genre)}
-                                            onMouseLeave={() => setHoveredGenre(null)}
-                                        >
-                                            <div className="bg-blue-500 text-white rounded-full px-4 py-2">
-                                            {genre}
-                                            </div>
-                                            {hoveredGenre === genre && (
-                                            <FontAwesomeIcon
-                                                icon={faTimesCircle}
-                                                className="absolute top-0 right-0 text-red-500 cursor-pointer opacity-75 hover:opacity-100"
-                                                onClick={() => handleDeleteGenre(genre)}
-                                            />
-                                            )}
-                                        </div>
-                                        ))}
-                                    </div>
-                                    )}
-
-                                <form onSubmit={handleAddGenre}>
-                                    <div className="flex">
-                                        <input
-                                            className={`w-full p-2 border rounded ${inputFlash ? 'animate-red-flash' : ''}`}
-                                            type="text"
-                                            placeholder="Enter genre"
-                                            value={genreInput}
-                                            onChange={(e) => setGenreInput(e.target.value)}
-                                        />
-                                        <button type="submit">Add Genre</button>
-                                    </div>
-                                </form>
+                                {/* Rest of the code */}
                             </>
                         )}
                         <button

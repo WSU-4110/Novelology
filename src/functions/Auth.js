@@ -1,48 +1,42 @@
 import { useEffect, useState } from "react";
-import { doc, setDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
 import { auth, db, provider } from '../firebase';
 import { valid } from "semver";
 import { useNavigate } from "react-router";
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 export function signUpWithEmail(htmlEmail, htmlPass, htmlUser) {
     handleSignUpWithEmail(htmlEmail, htmlPass, htmlUser);
 }
 
-export function handleSignUpWithPopup(event) {
-    event.preventDefault(); // Prevent the default behavior of the button
+export async function handleSignUpWithPopup(navigate) {
+    try {
+        // Sign out the current user from Firebase Authentication
+        await signOut(auth);
 
-    const navigate = new useNavigate();
+        // Sign in with Google using a popup
+        const result = await signInWithPopup(auth, new GoogleAuthProvider());
 
-    // Sign out the current user from Firebase Authentication
-    signOut(auth)
-        .then(() => {
-            // Sign in with Google using a popup
-            signInWithPopup(auth, new GoogleAuthProvider())
-                .then((result) => {
-                    // If signing up with Google, check if the user already exists in the database
-                    const userRef = db.collection("users").doc(result.user.uid);
-                    userRef.get().then((doc) => {
-                        if (doc.exists) {
-                            console.log("User already exists in the database.");
-                            return;
-                        } else {
-                            // User does not exist in the database, add the user data to the database
-                            addUserToDatabase(result.user.uid, result.user.email, result.user.displayName);
-                            navigate('/');
-                        }
-                    }).catch((error) => {
-                        console.error("Error checking user existence:", error);
-                    });
-                })
-                .catch((error) => {
-                    console.error("Google sign-in error:", error);
-                });
-        })
-        .catch((error) => {
-            console.error("Sign-out error:", error);
-        });
+        // If signing up with Google, check if the user already exists in the database
+        const userRef = doc(db, "users", result.user.uid);
+        const docSnapshot = await getDoc(userRef);
+
+        if (docSnapshot.exists()) {
+            // User already exists, log in instead of signing up
+            await signInWithEmailAndPassword(auth, result.user.email, result.user.uid);
+        } else {
+            // User does not exist in the database, add the user data to the database
+            await addUserToDatabase(result.user.uid, result.user.email, result.user.displayName);
+        }
+
+        // Redirect to setup-account page after successful sign-up or login
+        navigate('/setup-account');
+    } catch (error) {
+        console.error("Error signing up with Google:", error);
+    }
 }
+
 
 export function handleSignInWithPopup() {
     return signInWithPopup(auth, provider)
@@ -70,6 +64,10 @@ function addUserToDatabase(uid, email, displayName) {
     })
     .then(() => {
         console.log("User added to database successfully");
+
+        // Redirect to setup-account page after user is successfully added to the database
+        const navigate = useNavigate();
+        navigate('/setup-account');
     })
     .catch((error) => {
         console.error("Error adding user to database:", error);
