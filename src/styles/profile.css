@@ -1,0 +1,9 @@
+@keyframes red-flash {
+    0% { border-color: red; }
+    50% { border-color: transparent; }
+    100% { border-color: red; }
+}
+
+.animate-red-flash {
+    animation: red-flash 1s linear infinite;
+}
