@@ -10,6 +10,7 @@ export default function(){
         {!user ? <Link to="/login">Login</Link>: 
             <>
                 <Link to="/profile">Profile</Link>
+                <Link to="/post">Post</Link>
             </>
 
         }

@@ -45,8 +45,8 @@ const Onboarding = () => {
 
     setDoc(userRef, { 
         hasCompletedSetup: true,
-        bio : bioRef,
-        roles : rolesRef
+        // bio : bioRef,
+        // roles : rolesRef
     }, { merge: true })
       .then(() => {
         navigate("/");
