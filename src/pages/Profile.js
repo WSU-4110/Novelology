@@ -9,13 +9,24 @@ import { db } from '../firebase.js';
 import { doc, getDoc, updateDoc, deleteDoc} from 'firebase/firestore';
 import { deleteObject, listAll} from 'firebase/storage';
 
+
+// icons
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+
+
+import "../styles/profile.css";
+
 export default function Profile() {
     const [user] = useAuthState(auth);
     const [userData, setUserData] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [newBio, setNewBio] = useState(''); // State to store changes in bio
-    const [showSavedMessage, setShowSavedMessage] = useState(false); // State for showing saved message
+    const [newBio, setNewBio] = useState('');
+    const [showSavedMessage, setShowSavedMessage] = useState(false); 
     const navigate = useNavigate();
+    const [genreInput, setGenreInput] = useState("");
+    const [inputFlash, setInputFlash] = useState(false); 
+    const [hoveredGenre, setHoveredGenre] = useState(null); 
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -46,7 +57,7 @@ export default function Profile() {
                 console.error('User is not authenticated.');
                 return;
             }
-    
+
             // Delete user's account
             await deleteUser(currentUser);
     
@@ -99,6 +110,60 @@ export default function Profile() {
         }
     };
 
+const handleAddGenre = async (e) => {
+    e.preventDefault();
+
+    if (!genreInput.trim()) {
+        return;
+    }
+
+    try {
+        const genreRef = doc(db, "genres", genreInput.trim());
+        const genreDocSnapshot = await getDoc(genreRef);
+
+        if (genreDocSnapshot.exists()) {
+            // Check if the genre is not already in the userData
+            if (!userData.genres || !userData.genres.includes(genreInput.trim())) {
+                const userDocRef = doc(db, "users", user.uid);
+                await updateDoc(userDocRef, {
+                    genres: [...(userData.genres || []), genreInput.trim()]
+                });
+
+                // Update local state to reflect the addition of the new genre
+                setUserData(prevUserData => ({
+                    ...prevUserData,
+                    genres: [...(prevUserData.genres || []), genreInput.trim()]
+                }));
+
+                console.log("Genre added successfully.");
+            } else {
+                console.log("Genre already exists in user data.");
+            }
+        } else {
+            console.error("Genre does not exist in database.");
+        }
+
+        setGenreInput(""); // Clear genre input field
+    } catch (error) {
+        console.error("Error adding genre:", error);
+    }
+};
+
+    
+
+    const handleDeleteGenre = async (genreToDelete) => {
+        try {
+            const updatedGenres = userData.genres.filter(genre => genre !== genreToDelete);
+            const userDocRef = doc(db, "users", user.uid);
+            await updateDoc(userDocRef, {
+                genres: updatedGenres
+            });
+            setUserData({ ...userData, genres: updatedGenres });
+        } catch (error) {
+            console.error("Error deleting genre:", error);
+        }
+    };
+    
     return (
         <div className="min-h-screen bg-gray-100 flex justify-center items-center">
             <div className="max-w-md w-full mx-auto p-6 bg-white rounded-lg shadow-xl">
@@ -106,11 +171,9 @@ export default function Profile() {
                     <>
                         <h1 className="text-2xl font-bold mb-4">Profile</h1>
                         <UploadPFP />
-                        {/* Display user information */}
                         <p>Email: {user.email}</p>
                         {userData && (
                             <>
-                                {/* Editable bio input field */}
                                 <h2 className="font-semibold">Bio:</h2>
                                 <input
                                     className="w-full p-2 mt-2 border rounded"
@@ -118,17 +181,49 @@ export default function Profile() {
                                     value={newBio}
                                     onChange={(e) => setNewBio(e.target.value)}
                                 />
-                                {/* Save button */}
                                 <button
                                     className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-2"
                                     onClick={handleSaveChanges}
                                 >
                                     Save Changes
                                 </button>
-                                {/* Saved message */}
                                 {showSavedMessage && (
                                     <p className="text-green-500 mt-2">Saved successfully!</p>
                                 )}
+                                <div className="flex flex-wrap gap-2 mt-4">
+                                    {userData.genres.map((genre, index) => (
+                                        <div
+                                            key={index}
+                                            className="relative"
+                                            onMouseEnter={() => setHoveredGenre(genre)}
+                                            onMouseLeave={() => setHoveredGenre(null)}
+                                        >
+                                            <div className="bg-blue-500 text-white rounded-full px-4 py-2">
+                                                {genre}
+                                            </div>
+                                            {hoveredGenre === genre && (
+                                                <FontAwesomeIcon
+                                                    icon={faTimesCircle}
+                                                    className="absolute top-0 right-0 text-red-500 cursor-pointer opacity-75 hover:opacity-100"
+                                                    onClick={() => handleDeleteGenre(genre)}
+                                                />
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <form onSubmit={handleAddGenre}>
+                                    <div className="flex">
+                                        <input
+                                            className={`w-full p-2 border rounded ${inputFlash ? 'animate-red-flash' : ''}`}
+                                            type="text"
+                                            placeholder="Enter genre"
+                                            value={genreInput}
+                                            onChange={(e) => setGenreInput(e.target.value)}
+                                        />
+                                        <button type="submit">Add Genre</button>
+                                    </div>
+                                </form>
                             </>
                         )}
                         <button
