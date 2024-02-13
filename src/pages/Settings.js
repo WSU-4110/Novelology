@@ -7,7 +7,7 @@ import UploadPFP from '../components/UploadPFP.js';
 import DeleteAccountModal from '../components/DeleteAccountModal.js';
 import { doc, getDoc, updateDoc, deleteDoc} from 'firebase/firestore';
 import { handleDeleteAccount } from '../functions/Auth.js';
-
+import SelectGenres from '../components/SelectGenres.js'
 
 import "../styles/settings.css";
 
@@ -18,27 +18,23 @@ export default function Settings() {
     const [newBio, setNewBio] = useState('');
     const [showSavedMessage, setShowSavedMessage] = useState(false); 
     const navigate = useNavigate();
-    const [genreInput, setGenreInput] = useState(""); 
-    const [genres, setGenres] = useState(null);
+
+
     const [pronouns, setPronouns] = useState('');
     const [selectedRoles, setSelectedRoles] = useState([]);
 
     useEffect(() => {
         const fetchUserData = async () => {
             try {
+
+                
+
                 const userDoc = doc(db, 'users', user.uid);
                 const docSnapshot = await getDoc(userDoc);
                 if (docSnapshot.exists()) {
                     const userDataFromSnapshot = docSnapshot.data();
                     setUserData(userDataFromSnapshot);
                     localStorage.setItem('userData', JSON.stringify(userDataFromSnapshot));
-
-                    if (userDataFromSnapshot.selectedGenres) {
-                        setGenres(userDataFromSnapshot.selectedGenres);
-                        localStorage.setItem('genres', JSON.stringify(userDataFromSnapshot.selectedGenres));
-                    } else {
-                        console.error('Genres data not found in userData.');
-                    }
 
                     if (!newBio) {
                         setNewBio(userDataFromSnapshot.bio || '');
@@ -61,7 +57,6 @@ export default function Settings() {
     }, [user, newBio]);
 
 
-
     // Extracted function to update user bio
     const updateUserBio = async (newBio) => {
         try {
@@ -74,75 +69,6 @@ export default function Settings() {
         }
     };
 
-    const handleAddGenre = async (e) => {
-        e.preventDefault();
-      
-        if (!genreInput.trim()) {
-          return;
-        }
-      
-        try {
-          const genreRef = doc(db, "genres", genreInput.trim());
-          const genreDocSnapshot = await getDoc(genreRef);
-      
-          if (genreDocSnapshot.exists()) {
-            // Check if the genre is not already in the userData
-            if (!userData.genres || !userData.genres.includes(genreInput.trim())) {
-              const userDocRef = doc(db, "users", user.uid);
-              await updateDoc(userDocRef, {
-                genres: [...(userData.genres || []), genreInput.trim()]
-              });
-      
-              // Update local state to reflect the addition of the new genre
-              setGenres(prevGenres => [...prevGenres, genreInput.trim()]);
-      
-              console.log("Genre added successfully.");
-            } else {
-              console.log("Genre already exists in user data.");
-            }
-          } else {
-            console.error("Genre does not exist in database.");
-          }
-      
-          setGenreInput(""); // Clear genre input field
-        } catch (error) {
-          console.error("Error adding genre:", error);
-        }
-      };
-
-    
-
-      const handleDeleteGenre = async (genreToDelete) => {
-        try {
-          const updatedGenres = genres.filter(genre => genre !== genreToDelete);
-          const userDocRef = doc(db, "users", user.uid);
-          await updateDoc(userDocRef, {
-            genres: updatedGenres
-          });
-      
-          // Update local state to reflect the deletion of the genre
-          setGenres(updatedGenres);
-          console.log("Genre, " + genreToDelete + " removed successfully.")
-        } catch (error) {
-          console.error("Error deleting genre:", error);
-        }
-      };
-    
-      const handleSaveChanges = async () => {
-        try {
-          const userDoc = doc(db, 'users', user.uid);
-          await updateDoc(userDoc, {
-            bio: newBio,
-            pronouns: pronouns,
-            roles: selectedRoles // Save selected roles to the database
-          });
-          setUserData({ ...userData, bio: newBio, pronouns: pronouns, roles: selectedRoles });
-          setShowSavedMessage(true);
-          setTimeout(() => setShowSavedMessage(false), 2000);
-        } catch (error) {
-          console.error('Error updating bio:', error);
-        }
-      };
 
       const handleRoleChange = (role) => {
         setSelectedRoles(prevRoles => {
@@ -153,6 +79,24 @@ export default function Settings() {
             }
         });
     };
+
+    const handleSaveChanges = async () => {
+        try {
+            const userDoc = doc(db, 'users', user.uid);
+            await updateDoc(userDoc, {
+                bio: newBio,
+                pronouns: pronouns,
+                role: selectedRoles // Save selected roles to the database
+            });
+            setUserData({ ...userData, bio: newBio, pronouns: pronouns, role: selectedRoles });
+            setShowSavedMessage(true);
+            setTimeout(() => {
+                setShowSavedMessage(false);
+            }, 2000);
+        } catch (error) {
+            console.error('Error updating user data:', error);
+        }
+    }
 
     return (
         <div className="min-h-screen w-full bg-gray-100 flex justify-center">
@@ -212,6 +156,8 @@ export default function Settings() {
                                     </label>
                                 </div>
 
+                                <SelectGenres/>
+
                                 <button
                                     className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-2"
                                     onClick={handleSaveChanges}
@@ -221,7 +167,7 @@ export default function Settings() {
                                 {showSavedMessage && (
                                     <p className="text-green-500 mt-2">Saved successfully!</p>
                                 )}
-                                {/* Rest of the code */}
+                                
                             </>
                         )}
                         <button
