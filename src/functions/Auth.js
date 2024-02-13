@@ -100,11 +100,39 @@ export const handleDeleteAccount = async (navigate) => {
             return;
         }
 
-        // Display a message to the user indicating that they need to sign in again
-        alert("Please sign in again to delete your account.");
+        let authMethod = '';
 
-        // Sign in with Google provider using popup
-        await handleSignInWithPopup();
+        // Check if the user is authenticated with password or Google provider
+        currentUser.providerData.forEach(provider => {
+            if (provider.providerId === 'password') {
+                authMethod = 'password';
+            } else if (provider.providerId === 'google.com') {
+                authMethod = 'Google';
+            }
+        });
+
+        if (!authMethod) {
+            console.error('Authentication method not found.');
+            return;
+        }
+
+        if (authMethod === 'password') {
+            // Prompt the user to input their password
+            const password = prompt("Please enter your password to delete your account:");
+            if (!password) {
+                console.log('Password input cancelled.');
+                return;
+            }
+
+            // Authenticate the user with email and password
+            await signInWithEmailAndPassword(auth, currentUser.email, password);
+        } else if (authMethod === 'Google') {
+            // Sign out the user if authenticated with Google
+            await signOut(auth);
+
+            // Sign in with Google provider using popup
+            await handleSignInWithPopup();
+        }
 
         // Delete user's profile picture
         await deleteProfilePicture(currentUser.uid);
@@ -117,6 +145,7 @@ export const handleDeleteAccount = async (navigate) => {
         console.error('Error deleting account:', error);
     }
 };
+
 
 const deleteProfilePicture = async (uid) => {
     try {
