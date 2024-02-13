@@ -16,7 +16,7 @@ export default function(){
             <>
                 <Link to="/profile">Profile</Link>
                 <button className='logout-button' onClick={handleLogout}>Sign off</button>
-
+                <Link to="/submit">Post</Link>
             </>
 
         }

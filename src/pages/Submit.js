@@ -8,7 +8,7 @@ import {useEffect, useRef, useState} from 'react';
 import FileRenderer, {getFileType} from '../components/FileRenderer';
 import PostForm from '../components/PostForm';
 import { useNavigate } from "react-router-dom";
-function Post() {
+function Submit() {
   const [user] = useAuthState(auth)
   const messageRef = collection(db, 'posts')
   const [uploadFile, uploading] = useUploadFile()
@@ -111,4 +111,4 @@ function Post() {
 
 }
 
-export default Post;
+export default Submit;
