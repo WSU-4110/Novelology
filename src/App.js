@@ -29,7 +29,7 @@ const App = () => {
           <Route path="/users/:username" element={<UserPage />} />
           <Route path="/setup-account" element={<SetUpAccount />}/>
           <Route path="/submit" element={<Submit/>}/>
-          <Route path="/login:redirect" element={<Login/>}/>
+          <Route path="/login/:redirect" element={<Login/>}/>
         </Routes>
         
       </Fragment>
