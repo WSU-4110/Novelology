@@ -38,7 +38,7 @@ const Onboarding = () => {
         }, 1000);
         setTimeout(() => {
           clearInterval(timer);
-          navigate("/?signup=true");
+          navigate("/");
         }, countdown * 1000);
         return;
       }
