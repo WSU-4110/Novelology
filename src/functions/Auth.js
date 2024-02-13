@@ -10,7 +10,6 @@ const storage = getStorage();
 export function signUpWithEmail(htmlEmail, htmlPass, htmlUser) {
     handleSignUpWithEmail(htmlEmail, htmlPass, htmlUser);
 }
-
 export async function handleSignUpWithPopup(navigate) {
     try {
         // Sign out the current user from Firebase Authentication
@@ -28,7 +27,7 @@ export async function handleSignUpWithPopup(navigate) {
             await signInWithEmailAndPassword(auth, result.user.email, result.user.uid);
         } else {
             // User does not exist in the database, add the user data to the database
-            await addUserToDatabase(result.user.uid, result.user.email, result.user.displayName);
+            await addUserToDatabase(result.user.uid, result.user.email, result.user.displayName, navigate);
         }
 
         // Redirect to setup-account page after successful sign-up or login
@@ -37,40 +36,52 @@ export async function handleSignUpWithPopup(navigate) {
         console.error("Error signing up with Google:", error);
     }
 }
+export async function handleSignInWithPopup(navigate) {
+    try {
+        // Sign in with Google using a popup
+        const result = await signInWithPopup(auth, provider);
 
-export function handleSignInWithPopup() {
-    return signInWithPopup(auth, provider)
-    .then((result) => {
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
+        // Handle successful sign-in
         const user = result.user;
-    }).catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        const email = error.customData.email;
-        const credential = GoogleAuthProvider.credentialFromError(error);
-    })
+
+        // Check if the user already exists in the database
+        const userRef = doc(db, "users", user.uid);
+        const docSnapshot = await getDoc(userRef);
+
+        if (!docSnapshot.exists()) {
+            // User does not exist in the database, sign up
+            console.log('User signed up for the first time');
+            // Perform actions specific to first sign-up
+            await addUserToDatabase(user.uid, user.email, user.displayName, navigate);
+        } else {
+            // Redirect to setup-account page after successful sign-in or login
+            navigate('/setup-account');
+        }
+    } catch (error) {
+        console.error("Error signing in with Google:", error);
+    }
 }
 
-function addUserToDatabase(uid, email, displayName) {
-    const signUpTime = Date.now(); // Get current timestamp
-    setDoc(doc(db, "users", uid), {
-        email: email,
-        emailVerified: false,
-        username: displayName,
-        signUpTime: signUpTime // Add sign-up time
-    })
-    .then(() => {
+
+
+async function addUserToDatabase(uid, email, displayName, navigate) {
+    try {
+        const signUpTime = Date.now(); // Get current timestamp
+        await setDoc(doc(db, "users", uid), {
+            email: email,
+            emailVerified: false,
+            username: displayName,
+            signUpTime: signUpTime // Add sign-up time
+        });
         console.log("User added to database successfully");
 
         // Redirect to setup-account page after user is successfully added to the database
-        const navigate = useNavigate();
         navigate('/setup-account');
-    })
-    .catch((error) => {
+    } catch (error) {
         console.error("Error adding user to database:", error);
-    });
+    }
 }
+
 
 function handleSignUpWithEmail(htmlEmail, htmlPass, htmlUser) {
     createUserWithEmailAndPassword(auth, htmlEmail, htmlPass)
@@ -129,9 +140,11 @@ export const handleDeleteAccount = async (navigate) => {
         } else if (authMethod === 'Google') {
             // Sign out the user if authenticated with Google
             await signOut(auth);
-
-            // Sign in with Google provider using popup
-            await handleSignInWithPopup();
+            // Don't open the popup again if authenticated with Google
+            // Handle sign in with popup only if not authenticated with Google
+            if (auth.currentUser?.providerData?.every(provider => provider.providerId !== 'google.com')) {
+                await handleSignInWithPopup(navigate);
+            }
         }
 
         // Delete user's profile picture

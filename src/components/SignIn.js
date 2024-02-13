@@ -26,12 +26,17 @@ export function SignIn() {
       <h1>Sign In</h1>
       <form>
       <button
-        className="flex items-center w-full bg-white border border-gray-300 rounded-[1rem] shadow-md px-6 py-2 text-sm font-medium text-gray-800 mt-4 mb-4"
-        id="register"
-        onClick={(event) => handleSignInWithPopup(event)}
+          className="flex items-center w-full bg-white border border-gray-300 rounded-[1rem] shadow-md px-6 py-2 text-sm font-medium text-gray-800 mt-4 mb-4"
+          id="register"
+          onClick={(event) => {
+              event.preventDefault(); // Prevent default form submission
+              handleSignInWithPopup().catch((error) => console.error('Error during sign-in:', error));
+          }}
       >
-        <FaGoogle className="mr-2" /> Sign In with Google
+          <FaGoogle className="mr-2" /> Sign In with Google
       </button>
+
+
 
       <div className="h-2 w-full flex flex-row mb-2 select-none">
       <div className="w-[45%] h-[.05em] bg-black">
