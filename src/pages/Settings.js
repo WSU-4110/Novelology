@@ -18,11 +18,8 @@ export default function Settings() {
     const [newBio, setNewBio] = useState('');
     const [showSavedMessage, setShowSavedMessage] = useState(false); 
     const navigate = useNavigate();
-    const [genreInput, setGenreInput] = useState("");
-    const [inputFlash, setInputFlash] = useState(false); 
-    const [hoveredGenre, setHoveredGenre] = useState(null); 
+    const [genreInput, setGenreInput] = useState(""); 
     const [genres, setGenres] = useState(null);
-    const [loadingGenres, setLoadingGenres] = useState(false);
     const [pronouns, setPronouns] = useState('');
     const [selectedRoles, setSelectedRoles] = useState([]);
 

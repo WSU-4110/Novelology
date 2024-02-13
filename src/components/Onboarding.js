@@ -104,40 +104,36 @@ const Onboarding = () => {
   // Event handler to submit form
   const handleSubmitForm = async (e) => {
     e.preventDefault();
-
+  
     try {
       const userId = auth.currentUser ? auth.currentUser.uid : null;
       if (!userId) throw new Error("User not authenticated");
-
+  
+      const userRef = doc(db, "users", userId);
+      const userData = {
+        hasCompletedSetup: true,
+        bio: bio,
+        pronouns: pronouns,
+        genres: selectedGenres
+      };
+  
       if (profilePicture) {
         // Upload profile picture
         const uploadTask = storage.ref(`users/${userId}/${profilePicture.name}`).put(profilePicture);
-
+  
         uploadTask.on("state_changed", null, (error) => {
           console.error("Error uploading profile picture:", error);
         }, () => {
           storage.ref(`users/${userId}`).child(profilePicture.name).getDownloadURL().then((url) => {
-            const userRef = doc(db, "users", userId);
-            setDoc(userRef, {
-              hasCompletedSetup: true,
-              bio: bio,
-              pronouns: pronouns,
-              selectedGenres: selectedGenres,
-              profilePicture: url
-            }, { merge: true }).then(() => navigate("/")).catch((error) => {
+            userData.profilePicture = url;
+            setDoc(userRef, userData, { merge: true }).then(() => navigate("/")).catch((error) => {
               console.error("Error updating document:", error);
             });
           });
         });
       } else {
         // Save data without profile picture
-        const userRef = doc(db, "users", userId);
-        await setDoc(userRef, {
-          hasCompletedSetup: true,
-          bio: bio,
-          pronouns: pronouns,
-          selectedGenres: selectedGenres
-        }, { merge: true });
+        await setDoc(userRef, userData, { merge: true });
         navigate("/");
       }
     } catch (error) {
