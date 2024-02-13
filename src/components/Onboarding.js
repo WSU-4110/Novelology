@@ -7,13 +7,14 @@ import fetchPFP from "../functions/fetchPFP";
 import PronounsDropdown from "./PronounsDropdown";
 import RolesSelection from "./RolesSelection";
 import BioTextArea from "./BioTextArea";
+import SelectGenres from "./SelectGenres";
+
 const Onboarding = () => {
   // State variables
   const [bio, setBio] = useState("");
   const [profilePicture, setProfilePicture] = useState(null); 
   const [pronouns, setPronouns] = useState("");
-  const [selectedGenres, setSelectedGenres] = useState([]);
-  const [genreSuggestions, setGenreSuggestions] = useState([]);
+
   const [hasCompletedSetup, setHasCompletedSetup] = useState(false);
   const [fetchedProfilePicture, setFetchedProfilePicture] = useState(null);
   const [selectedRoles, setSelectedRoles] = useState([]);
@@ -52,7 +53,6 @@ const Onboarding = () => {
           console.log("Fetched data:", userData);
           setBio(userData.bio || "");
           setPronouns(userData.pronouns || "");
-          setSelectedGenres(userData.selectedGenres || []);
 
           const existingURL = await fetchPFP(userId);
           if (existingURL) {
@@ -67,20 +67,7 @@ const Onboarding = () => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    const loadGenreSuggestions = async () => {
-      try {
-        const genreCollection = collection(db, "genres");
-        const querySnapshot = await getDocs(genreCollection);
-        const suggestions = querySnapshot.docs.map((doc) => doc.data().name);
-        setGenreSuggestions(suggestions);
-      } catch (error) {
-        console.error("Error loading genre suggestions:", error);
-      }
-    };
 
-    loadGenreSuggestions();
-  }, []);
 
   useEffect(() => {
     if (countdown === 0) {
@@ -89,17 +76,6 @@ const Onboarding = () => {
   }, [countdown]);
 
 
-  // Event handler to select genre
-  const handleGenreSelect = (genre) => {
-    setSelectedGenres([...selectedGenres, genre]);
-    setGenreSuggestions(genreSuggestions.filter((suggestion) => suggestion !== genre));
-  };
-
-  // Event handler to unselect genre
-  const handleGenreUnselect = (genre) => {
-    setSelectedGenres(selectedGenres.filter((selectedGenre) => selectedGenre !== genre));
-    setGenreSuggestions([...genreSuggestions, genre]);
-  };
 
   // Event handler to submit form
   const handleSubmitForm = async (e) => {
@@ -113,8 +89,7 @@ const Onboarding = () => {
       const userData = {
         hasCompletedSetup: true,
         bio: bio,
-        pronouns: pronouns,
-        genres: selectedGenres
+        pronouns: pronouns
       };
   
       if (profilePicture) {
@@ -160,7 +135,6 @@ const Onboarding = () => {
         setHasCompletedSetup(false);
         setBio("");
         setPronouns("");
-        setSelectedGenres([]);
         window.location.reload();
       } catch (error) {
         console.error("Error restarting setup:", error);
@@ -194,22 +168,7 @@ const Onboarding = () => {
 
         <div className="mb-4">
           <h2 className="text-lg font-semibold">Select Genres</h2>
-          <div className="flex flex-wrap justify-start gap-2 mt-2">
-            {genreSuggestions
-              .filter((suggestion, index, self) => self.indexOf(suggestion) === index) // Filter out duplicates
-              .map((suggestion) => (
-                // Check if the genre suggestion is not in the selectedGenres array
-                !selectedGenres.includes(suggestion) && (
-                  <div
-                    key={suggestion}
-                    className="bg-gray-200 hover:bg-gray-300 rounded-full px-4 py-2 cursor-pointer"
-                    onClick={() => handleGenreSelect(suggestion)}
-                  >
-                    {suggestion}
-                  </div>
-                )
-              ))}
-          </div>
+        <SelectGenres />
         </div>
         <button
           type="submit"

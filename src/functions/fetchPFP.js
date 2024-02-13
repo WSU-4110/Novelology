@@ -29,9 +29,9 @@ const fetchPFP = async () => {
       }
     }
     
-    // If no profile picture is found with any of the extensions
-    console.error('No profile picture found with supported extensions.');
-    return null;
+    // If no profile picture is found with any of the extensions, use default profile picture from local assets
+    const defaultProfilePicturePath = require('../assets/default-profile-picture.jpg');
+    return defaultProfilePicturePath.default; // Return the local file path of the default profile picture
   } catch (error) {
     console.error('Error fetching profile picture URL:', error);
     return null;
