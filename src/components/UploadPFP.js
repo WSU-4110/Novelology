@@ -44,7 +44,9 @@ const UploadPFP = () => {
   };
   
 
-  const handleUpload = () => {
+  const handleUpload = (event) => {
+    event.preventDefault(); // Prevent default form submission behavior
+  
     if (!image) return;
   
     const userId = auth.currentUser.uid;
@@ -78,6 +80,7 @@ const UploadPFP = () => {
       }
     );
   };
+  
 
   const handleDeleteProfilePicture = async () => {
     if (!existingProfilePicture) return; // No existing profile picture to delete

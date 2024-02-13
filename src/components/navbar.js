@@ -3,10 +3,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { signOut } from "@firebase/auth";
 import { auth } from "../firebase";
 import Modal from "./Modal";
-
-const logout = () => {
-    signOut(auth);
-};
+import { handleLogout } from "../functions/Auth";
 
 export default function(){
     const [user] = useAuthState(auth);
@@ -18,9 +15,8 @@ export default function(){
 
             <>
                 <Link to="/profile">Profile</Link>
-                <Link to="/post">Post</Link>
+                <button className='logout-button' onClick={handleLogout}>Sign off</button>
 
-               <button className='logout-button' onClick={logout}>Sign off</button>
             </>
 
         }

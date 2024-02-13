@@ -1,11 +1,12 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { signUpWithEmail, handleSignUpWithPopup } from "../functions/Auth";
-import "../styles/registration.css";
 import { FaGoogle } from 'react-icons/fa';
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { onAuthStateChanged } from 'firebase/auth'; 
+import { doc, getDoc } from 'firebase/firestore'; 
+import { auth, db } from '../firebase'; 
 
-
+// Your compo
 // Reactive input field component
 const ReactiveInputField = ({ type, placeholder, inputRef, onChange }) => {
   return (
@@ -76,6 +77,25 @@ export function Registration() {
     }
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const userRef = doc(db, "users", user.uid);
+            const docSnapshot = await getDoc(userRef);
+
+            if (docSnapshot.exists()) {
+                // User already exists, log in
+                navigate('/setup-account');
+            } else {
+                // New user, redirect to setup-account page
+                navigate('/setup-account');
+            }
+        }
+    });
+
+    return () => unsubscribe();
+}, [navigate]);
+
   async function handleSignUpWithEmail() {
     setLoading(true);
     try {
@@ -84,7 +104,6 @@ export function Registration() {
         passwordRef.current.value.trim(),
         usernameRef.current.value.trim()
       );
-      navigate('/setup-account')
     } catch (error) {
       alert("Error signing up with email " + error.message);
     }
@@ -97,10 +116,7 @@ export function Registration() {
       <button
         className="flex items-center w-full bg-white border border-gray-300 rounded-[1rem] shadow-md px-6 py-2 text-sm font-medium text-gray-800 mt-4 mb-4"
         id="register"
-        onClick={(event) => handleSignUpWithPopup(event)
-        .then(
-          navigate('/setup-account')
-        )}
+        onClick={(event) => handleSignUpWithPopup(event, navigate)}
       >
         <FaGoogle className="mr-2" /> Continue with Google
       </button>
