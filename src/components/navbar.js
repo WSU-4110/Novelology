@@ -18,7 +18,9 @@ export default function(){
 
             <>
                 <Link to="/profile">Profile</Link>
-                <button className='logout-button' onClick={logout}>Sign off</button>
+                <Link to="/post">Post</Link>
+
+               <button className='logout-button' onClick={logout}>Sign off</button>
             </>
 
         }

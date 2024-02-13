@@ -7,6 +7,7 @@ import PrivateRoute from './components/routing/PrivateRoute';
 import Modal from './components/Modal'; 
 import Onboarding from './components/Onboarding'; 
 import SetUpAccount from './pages/SetUpAccount';
+import Post from './pages/Post';
 import Settings from './pages/Settings';
 import UserPage from './pages/UserPage';
 import Profile from './pages/Profile';
@@ -25,6 +26,8 @@ const App = () => {
           <Route path="/settings" element={<Settings/>} />
           <Route path="/profile" element={<Profile/>}/>
           <Route path="/users/:username" element={<UserPage />} />
+          <Route path="/setup-account" element={<SetUpAccount />}/>
+          <Route path="/post" element={<Post/>}/>
         </Routes>
         
       </Fragment>
