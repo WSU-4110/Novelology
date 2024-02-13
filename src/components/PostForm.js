@@ -1,5 +1,5 @@
 import { FaPaperPlane } from "react-icons/fa";
-function Form({ sendMessage, handleFileChange, handleChange, handleKeyDown, formValue, file, fileInputRef, textAreaRef }) {
+function PostForm({ sendMessage, handleFileChange, handleChange, handleKeyDown, formValue, file, fileInputRef, textAreaRef }) {
   
     return (
     <form className="">
@@ -34,4 +34,4 @@ function Form({ sendMessage, handleFileChange, handleChange, handleKeyDown, form
     );
   }
   
-  export default Form;
+  export default PostForm;

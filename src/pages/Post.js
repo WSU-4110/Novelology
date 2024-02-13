@@ -6,7 +6,7 @@ import { useUploadFile } from 'react-firebase-hooks/storage';
 import {db,auth,storage} from '../firebase';
 import {useEffect, useRef, useState} from 'react';
 import FileRenderer, {getFileType} from '../components/FileRenderer';
-import Form from '../components/Form';
+import PostForm from '../components/PostForm';
 import { useNavigate } from "react-router-dom";
 function Post() {
   const [user] = useAuthState(auth)
@@ -93,7 +93,7 @@ function Post() {
         }
       
       <div className=''>
-        <Form
+        <PostForm
         sendMessage={sendMessage}
         handleFileChange={handleFileChange}
         handleChange={handleChange}
