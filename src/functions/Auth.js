@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
-import { auth, db, provider } from '../firebase';
-import { valid } from "semver";
+import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, signInWithEmailAndPassword, deleteUser } from 'firebase/auth';
+import { auth, db, provider} from '../firebase';
 import { useNavigate } from "react-router";
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, deleteDoc} from 'firebase/firestore';
+import { getStorage, ref, deleteObject } from "firebase/storage";
+
+const storage = getStorage();
 
 export function signUpWithEmail(htmlEmail, htmlPass, htmlUser) {
     handleSignUpWithEmail(htmlEmail, htmlPass, htmlUser);
@@ -37,7 +38,6 @@ export async function handleSignUpWithPopup(navigate) {
     }
 }
 
-
 export function handleSignInWithPopup() {
     return signInWithPopup(auth, provider)
     .then((result) => {
@@ -51,8 +51,6 @@ export function handleSignInWithPopup() {
         const credential = GoogleAuthProvider.credentialFromError(error);
     })
 }
-
-
 
 function addUserToDatabase(uid, email, displayName) {
     const signUpTime = Date.now(); // Get current timestamp
@@ -88,9 +86,91 @@ function handleSignUpWithEmail(htmlEmail, htmlPass, htmlUser) {
     });
 }
 
-
 export const handleLogout = (navigate) => {
     localStorage.removeItem('userData');
     auth.signOut();
     navigate('/');
+};
+
+export const handleDeleteAccount = async (navigate) => {
+    try {
+        const currentUser = auth.currentUser;
+        if (!currentUser) {
+            console.error('User is not authenticated.');
+            return;
+        }
+
+        // Display a message to the user indicating that they need to sign in again
+        alert("Please sign in again to delete your account.");
+
+        // Sign in with Google provider using popup
+        await handleSignInWithPopup();
+
+        // Delete user's profile picture
+        await deleteProfilePicture(currentUser.uid);
+
+        // After successful sign-in and profile picture deletion, delete user's account
+        await deleteUserAccount(currentUser);
+
+        navigate('/');
+    } catch (error) {
+        console.error('Error deleting account:', error);
+    }
+};
+
+const deleteProfilePicture = async (uid) => {
+    try {
+        // Create a reference to the profile picture in Firebase Storage
+        const storageRef = ref(storage, `users/${uid}/profilePicture.png`);
+        
+        // Delete the profile picture
+        await deleteObject(storageRef);
+
+        console.log('Profile picture deleted successfully.');
+    } catch (error) {
+        console.error('Error deleting profile picture:', error);
+        // Handle error appropriately, e.g., retry, show error message, etc.
+    }
+};
+
+
+
+
+
+const deleteUserAccount = async (user) => {
+    try {
+        // Delete user's data in Firestore
+        await deleteUserData(user.uid);
+
+        // Delete user's account
+        await deleteUser(user);
+        
+        console.log('User account deleted successfully.');
+    } catch (error) {
+        console.error('Error deleting user account:', error);
+        // Handle error appropriately, e.g., retry, show error message, etc.
+    }
+};
+
+
+
+const deleteUserData = async (uid) => {
+    try {
+        // Delete user's data in Firestore
+        const userDocRef = doc(db, "users", uid);
+        await deleteDoc(userDocRef);
+
+        // Delete profile picture files in Cloud Storage
+        const storageRef = storage.ref(`users/${uid}`);
+        const deletePromises = ['profilePicture.png', 'profilePicture.jpg', 'profilePicture.jpeg'].map(async (fileName) => {
+            const fileRef = storageRef.child(fileName);
+            await fileRef.delete();
+            console.log(`Deleted ${fileName} successfully.`);
+        });
+
+        await Promise.all(deletePromises);
+        console.log('Profile pictures deleted successfully.');
+    } catch (error) {
+        console.error('Error deleting user data:', error);
+    }
 };
