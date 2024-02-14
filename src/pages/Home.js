@@ -6,6 +6,7 @@ import Modal from '../components/Modal.js';
 import Searchbar from '../components/Searchbar';
 import UploadPFP from '../components/UploadPFP.js';
 import { handleSearch } from '../functions/searchFunctions'; // Import handleSearch function
+import Feed from './Feed.js';
 
 import BookSearch from '../components/BookSearch.js';
 export default function Home() {
@@ -39,6 +40,7 @@ export default function Home() {
                     {user.displayName && (
                         <h1 className='text-3xl font-bold underline'>Welcome back, {user.displayName}!</h1>
                     )}
+                    <Feed/>
                 </>
             )}
             <div className="mt-8">
