@@ -194,7 +194,7 @@ class Feed extends Component {
     const { currentUser } = this.props;
 
     return (
-      <div className="feed-container">
+      <div className="max-w-md">
         {/* Filter buttons */}
         <div>
           <button onClick={() => this.handleFilterByType('all')}>All</button>
@@ -295,12 +295,16 @@ class CommentComponent extends Component {
     replies: [],
     showReplies: false, // New state variable to track whether replies should be shown or hidden
   };
-
   fetchUserData = async () => {
     const { comment } = this.props;
-
+  
     try {
+      console.log('Comment UID:', comment.uid); // Check the value of comment.uid
+      console.log('DB instance:', db); // Check the db instance
+  
       const userDoc = doc(db, 'users', comment.uid);
+      console.log('User Doc:', userDoc); // Check the userDoc variable
+  
       const userDocSnap = await userDoc.get();
       if (userDocSnap.exists()) {
         const userData = userDocSnap.data();
@@ -314,6 +318,8 @@ class CommentComponent extends Component {
       console.error('Error fetching user data:', error);
     }
   };
+  
+
 
   componentDidMount() {
     this.fetchUserData();
@@ -394,10 +400,26 @@ class CommentComponent extends Component {
 
   render() {
     const { comment, currentUser } = this.props;
-    const { userProfilePicture, username, isReplying, replyText, replies, showReplies } = this.state;
+    const { userProfilePicture, username, isReplying, replyText, replies, showReplies, createdAt } = this.state;
+
+    const formatTimeDifference = (timestamp) => {
+      const now = new Date();
+      const diff = Math.floor((now - timestamp) / 1000); // Difference in seconds
+      if (diff < 60) {
+        return 'just now';
+      } else if (diff < 3600) {
+        return `${Math.floor(diff / 60)} minutes ago`;
+      } else if (diff < 86400) {
+        return `${Math.floor(diff / 3600)} hours ago`;
+      } else {
+        // Return the formatted date if it's more than a day old
+        return createdAt instanceof Date ? createdAt.toLocaleString() : 'Invalid Date';
+      }
+    };
+
 
     return (
-      <li className="flex items-start space-x-4 py-2">
+      <li className="flex items-start space-x-4 py-2 max-w-3/4">
         {userProfilePicture && <img src={userProfilePicture} alt="Profile" className="w-8 h-8 rounded-full" />}
 
         <div className="flex-grow">
