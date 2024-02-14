@@ -9,6 +9,7 @@ import { handleSearch } from '../functions/searchFunctions'; // Import handleSea
 import Feed from './Feed.js';
 
 import BookSearch from '../components/BookSearch.js';
+
 export default function Home() {
     const [user, loading, error] = useAuthState(auth);
     const [searchResults, setSearchResults] = useState([]);
@@ -40,7 +41,7 @@ export default function Home() {
                     {user.displayName && (
                         <h1 className='text-3xl font-bold underline'>Welcome back, {user.displayName}!</h1>
                     )}
-                    <Feed/>
+                    <Feed currentUser={user} />
                 </>
             )}
             <div className="mt-8">
