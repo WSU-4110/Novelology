@@ -2,25 +2,26 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faReply } from '@fortawesome/free-solid-svg-icons';
-import { updateDoc, doc, getDoc } from 'firebase/firestore';
-import { db } from '../firebase';
-import fetchUserProfilePicture from '../functions/fetchUserProfilePicture';
-import CommentItem from './CommentItem';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { updateDoc, doc, getDoc } from 'firebase/firestore'; // Correct import path for Firestore functions
+import { db } from '../firebase'; // Assuming '../firebase' is the correct relative path to your Firebase configuration
+import fetchUserProfilePicture from '../functions/fetchUserProfilePicture'; // Assuming '../functions/fetchUserProfilePicture' is the correct relative path to your function
+import CommentItem from './CommentItem'; // Assuming './CommentItem' is the correct relative path to your CommentItem component
+import { collection, getDocs, query, where } from 'firebase/firestore'; // Correct import path for Firestore functions
 
 class CommentComponent extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-          userProfilePicture: null,
-          username: '',
-          isReplying: false,
-          replyText: '',
-          replies: props.comment.replies || [], // Initialize replies state with comment's replies
-          showReplies: false,
-          comments: [], // Initialize comments array
-        };
-      }
+  constructor(props) {
+    super(props);
+    this.state = {
+      userProfilePicture: null,
+      username: '',
+      isReplying: false,
+      replyText: '',
+      replies: props.comment.replies || [], // Initialize replies state with comment's replies
+      showReplies: false,
+      comments: [], // Initialize comments array
+    };
+  }
+
   static propTypes = {
     comment: PropTypes.object.isRequired,
     currentUser: PropTypes.object.isRequired,
@@ -34,11 +35,11 @@ class CommentComponent extends Component {
 
   fetchUserData = async () => {
     const { comment } = this.props;
-  
+
     try {
       const userDoc = doc(db, 'users', comment.uid); // Assuming 'users' is the collection name
       const userDocSnap = await getDoc(userDoc);
-  
+
       if (userDocSnap.exists()) {
         const userData = userDocSnap.data();
         this.setState({
@@ -47,18 +48,17 @@ class CommentComponent extends Component {
       } else {
         console.error('User document does not exist');
       }
-  
+
       const userProfilePicture = await fetchUserProfilePicture(comment.uid);
       this.setState({ userProfilePicture });
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
   };
-  
 
   fetchComments = async () => {
     const { comment } = this.props;
-  
+
     try {
       const commentsRef = collection(db, 'comments');
       const q = query(commentsRef, where('parentCommentId', '==', comment.id));
@@ -75,7 +75,7 @@ class CommentComponent extends Component {
       this.setState({ error: 'Error fetching comments', loading: false });
     }
   };
-  
+
   handleReply = () => {
     this.setState({ isReplying: true });
   };
@@ -96,11 +96,11 @@ class CommentComponent extends Component {
     try {
       const commentDocRef = doc(db, 'comments', comment.id);
       const commentDocSnap = await getDoc(commentDocRef);
-      
+
       if (commentDocSnap.exists()) {
         const commentData = commentDocSnap.data();
         let updatedReplies = commentData.replies || [];
-        
+
         updatedReplies.push({
           uid,
           text: replyText,
@@ -135,6 +135,28 @@ class CommentComponent extends Component {
     const { comment, currentUser } = this.props;
     const { userProfilePicture, username, isReplying, replyText, showReplies, comments } = this.state;
 
+    const formatTimeDifference = (timestamp) => {
+      if (isNaN(timestamp)) {
+        return 'Just Now';
+      }
+    
+      const currentTime = new Date();
+      const commentTime = new Date(timestamp);
+      const differenceInSeconds = Math.floor((currentTime - commentTime) / 1000);
+    
+      if (differenceInSeconds < 60) {
+        return 'just now';
+      } else if (differenceInSeconds < 3600) {
+        const minutes = Math.floor(differenceInSeconds / 60);
+        return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+      } else if (differenceInSeconds < 86400) {
+        const hours = Math.floor(differenceInSeconds / 3600);
+        return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+      } else {
+        const days = Math.floor(differenceInSeconds / 86400);
+        return `${days} day${days > 1 ? 's' : ''} ago`;
+      }
+    };
     return (
       <li className="flex items-start space-x-4 py-2 max-w-3/4">
         {userProfilePicture && <img src={userProfilePicture} alt="Profile" className="w-8 h-8 rounded-full" />}
@@ -142,7 +164,7 @@ class CommentComponent extends Component {
         <div className="flex-grow border p-1">
           <div className="flex justify-between">
             <span className="">{username}</span>
-            <span className="text-sm text-gray-500">{comment.createdAt instanceof Date ? comment.createdAt.toLocaleString() : 'Invalid Date'}</span>
+            <span className="text-sm text-gray-500">{formatTimeDifference(comment.createdAt)}</span>
 
           </div>
           <p className="text-sm">{comment.text}</p>
@@ -176,7 +198,7 @@ class CommentComponent extends Component {
                   comment={reply}
                   userProfilePicture={null} // Pass userProfilePicture as per your data structure
                   username={currentUser.displayName} // Pass username as per your data structure
-                  formatTimeDifference={(timestamp) => 'Some formatted time'} // Implement formatTimeDifference function
+                  formatTimeDifference={(timestamp) => formatTimeDifference(timestamp)} // Pass formatTimeDifference function
                 />
               ))}
             </div>

@@ -102,6 +102,8 @@ class Feed extends Component {
         });
         comments.push(comment);
       });
+      // Sort comments by timestamp in descending order
+      comments.sort((a, b) => b.createdAt - a.createdAt);
       console.log('Comments for post:', post.id, comments); // Log comments here
       this.setState((prevState) => ({
         comments: {
