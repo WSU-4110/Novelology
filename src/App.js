@@ -31,7 +31,7 @@ const App = () => {
           <Route path="/submit" element={<Submit/>}/>
           <Route path="/login/:redirect" element={<Login/>}/>
           <Route path="/login/" element={<Login/>}/>
-          <Route path="/post/:" element={</Post/>}/>
+          <Route path="/post/:pid" element={</Post/>}/>
         </Routes>
         
       </Fragment>
