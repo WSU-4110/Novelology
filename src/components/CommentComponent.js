@@ -24,7 +24,6 @@ class CommentComponent extends Component {
   }
 
   static propTypes = {
-    comment: PropTypes.object.isRequired,
     currentUser: PropTypes.object.isRequired,
     onReply: PropTypes.func.isRequired,
   };
@@ -35,11 +34,11 @@ class CommentComponent extends Component {
   }
 
   fetchUserData = async () => {
-    const { comment } = this.props;
+    const { uid } = this.props.comment;
 
     try {
       // Fetch user data
-      const userDoc = doc(db, 'users', comment.uid);
+      const userDoc = doc(db, 'users', uid);
       const userDocSnap = await getDoc(userDoc);
 
       if (userDocSnap.exists()) {
@@ -52,7 +51,7 @@ class CommentComponent extends Component {
       }
 
       // Fetch user profile picture
-      const userProfilePicture = await fetchUserProfilePicture(comment.uid);
+      const userProfilePicture = await fetchUserProfilePicture(uid);
       this.setState({ userProfilePicture });
 
       // Fetch comments and replies
@@ -62,26 +61,45 @@ class CommentComponent extends Component {
     }
   };
 
-  // Inside the fetchComments method of CommentComponent
   fetchComments = async () => {
     const { comment } = this.props;
-
+  
     try {
       const commentsRef = collection(db, 'comments');
       const q = query(commentsRef, where('parentCommentId', '==', comment.id));
       const querySnapshot = await getDocs(q);
-      const replies = [];
-      querySnapshot.forEach((doc) => {
-        const replyData = doc.data();
-        replies.push({ id: doc.id, ...replyData });
-      });
-
-      this.setState({ replies, loadingReplies: false });
+      const comments = [];
+  
+      for (const doc of querySnapshot.docs) {
+        const commentData = doc.data();
+        const replies = await this.fetchReplies(doc.id); // Fetch replies for the current comment
+        const commentWithReplies = { id: doc.id, ...commentData, replies };
+        comments.push(commentWithReplies);
+      }
+  
+      this.setState({ comments, loadingReplies: false });
     } catch (error) {
-      console.error('Error fetching replies:', error);
+      console.error('Error fetching comments and replies:', error);
       this.setState({ loadingReplies: false });
     }
   };
+  
+  
+
+  fetchReplies = async (commentId) => {
+    try {
+      const repliesRef = collection(db, 'comments', commentId); // Reference to the replies collection for a specific comment
+      const q = query(repliesRef, where('parentCommentId', '==', commentId));
+      const querySnapshot = await getDocs(q);
+      const replies = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      console.log('Replies:', replies);
+      return replies;
+    } catch (error) {
+      console.error('Error fetching replies:', error);
+      return [];
+    }
+  };
+  
 
   handleReply = () => {
     this.setState({ isReplying: true });
@@ -95,13 +113,14 @@ class CommentComponent extends Component {
     this.setState({ replyText: e.target.value });
   };
 
-
   handleDeleteComment = async () => {
     const { comment } = this.props;
 
     try {
-      const commentDocRef = doc(db, 'comments', comment.id);
-      await deleteDoc(commentDocRef);
+      await deleteDoc(doc(db, 'comments', comment.id));
+
+      // Log success message to console
+      console.log('Comment deleted successfully.');
 
       // Refresh comments after deleting
       this.fetchComments();
@@ -109,7 +128,6 @@ class CommentComponent extends Component {
       console.error('Error deleting comment:', error);
     }
   };
-    
 
   handleSubmitReply = async () => {
     const { comment, currentUser } = this.props;
@@ -149,32 +167,35 @@ class CommentComponent extends Component {
     }
   };
 
+  formatTimeDifference = (timestamp) => {
+    if (isNaN(timestamp)) {
+      return 'Just Now';
+    }
+
+    const currentTime = new Date();
+    const commentTime = new Date(timestamp);
+    const differenceInSeconds = Math.floor((currentTime - commentTime) / 1000);
+
+    if (differenceInSeconds < 60) {
+      return 'just now';
+    } else if (differenceInSeconds < 3600) {
+      const minutes = Math.floor(differenceInSeconds / 60);
+      return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+    } else if (differenceInSeconds < 86400) {
+      const hours = Math.floor(differenceInSeconds / 3600);
+      return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    } else {
+      const days = Math.floor(differenceInSeconds / 86400);
+      return `${days} day${days > 1 ? 's' : ''} ago`;
+    }
+  };
+
   render() {
-    const { comment, currentUser } = this.props;
+    const { currentUser } = this.props;
     const { userProfilePicture, username, isReplying, replyText, replies, loadingReplies } = this.state;
 
-    const formatTimeDifference = (timestamp) => {
-      if (isNaN(timestamp)) {
-        return 'Just Now';
-      }
-
-      const currentTime = new Date();
-      const commentTime = new Date(timestamp);
-      const differenceInSeconds = Math.floor((currentTime - commentTime) / 1000);
-
-      if (differenceInSeconds < 60) {
-        return 'just now';
-      } else if (differenceInSeconds < 3600) {
-        const minutes = Math.floor(differenceInSeconds / 60);
-        return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-      } else if (differenceInSeconds < 86400) {
-        const hours = Math.floor(differenceInSeconds / 3600);
-        return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-      } else {
-        const days = Math.floor(differenceInSeconds / 86400);
-        return `${days} day${days > 1 ? 's' : ''} ago`;
-      }
-    };
+    // Function to check if the current user is the author of the comment
+    const isAuthor = currentUser && currentUser.uid === this.props.comment.uid;
 
     return (
       <li className="flex items-start space-x-4 py-2 max-w-3/4">
@@ -183,14 +204,16 @@ class CommentComponent extends Component {
         <div className="flex-grow border p-1">
           <div className="flex justify-between">
             <span className="">{username}</span>
-            <span className="text-sm text-gray-500">{formatTimeDifference(comment.createdAt)}</span>
+            <span className="text-sm text-gray-500">{this.formatTimeDifference(this.props.comment.createdAt)}</span>
           </div>
-          <p className="text-sm">{comment.text}</p>
-          {fetchUsernameWithUID(auth.currentUser.uid) == username && (
+          <p className="text-sm">{this.props.comment.text}</p>
+          
+          {isAuthor && (
             <button onClick={this.handleDeleteComment} className="text-sm text-red-500 mr-1 border rounded-md">
               <FontAwesomeIcon icon={faTrash} />
             </button>
           )}
+
           {!isReplying && (
             <button onClick={this.handleReply} className="text-sm text-gray-400 mr-1 border rounded-md">
               <FontAwesomeIcon icon={faReply} />
@@ -206,6 +229,13 @@ class CommentComponent extends Component {
           )}
 
           <h3>Replies</h3>
+
+          {/* Render replies */}
+          {replies.map(reply => (
+            <div key={reply.id}>
+              {/* Implement rendering logic for replies here */}
+            </div>
+          ))}
           
         </div>
       </li>
