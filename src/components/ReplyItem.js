@@ -5,14 +5,12 @@ const CommentItem = ({ comment, userProfilePicture, username, formatTimeDifferen
   const { text, createdAt } = comment;
 
   return (
-    <div className="comment flex items-start space-x-4 py-2 max-w-3/4">
-      {userProfilePicture && <img src={userProfilePicture} alt="Profile" className="comment-user-profile-picture w-8 h-8 rounded-full" />}
-      <div className="comment-details flex-grow border p-1">
-        <div className="flex justify-between">
+    <div className="comment flex-row items-start space-x-4 py-2 max-w-3/4">
+      <fetchUserProfilePicture />
+      <div className="comment-details flex-row border p-1">
           <span className="comment-username font-bold">{username}</span>
-          <span className="comment-timestamp text-sm text-gray-500">{formatTimeDifference(createdAt)}</span>
-        </div>
-        <p className="comment-text text-sm">{text}</p>
+          <span className="comment-timestamp text-xs text-gray-500">{formatTimeDifference(createdAt)}</span>
+          <p className="comment-text text-sm">{text}</p>
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db, auth } from "../firebase";
 
-const RolesSelection = ({ selectedRoles, setSelectedRoles, handleRoleToggle }) => {
+const RolesSelection = ({ selectedRoles, setSelectedRoles}) => {
   
   useEffect(() => {
     const user = auth.currentUser;
@@ -19,6 +19,16 @@ const RolesSelection = ({ selectedRoles, setSelectedRoles, handleRoleToggle }) =
 
     loadUserData();
   }, [setSelectedRoles]); // Include setSelectedRoles in the dependency array
+
+  const handleRoleToggle = (role) => {
+    setSelectedRoles((prevRoles) => {
+      if (prevRoles.includes(role)) {
+        return prevRoles.filter((r) => r !== role);
+      } else {
+        return [...prevRoles, role];
+      }
+    });
+  };
 
   return (
     <div className="grid space-y-3">

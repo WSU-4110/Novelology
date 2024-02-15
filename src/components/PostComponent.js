@@ -48,24 +48,21 @@ class PostComponent extends Component {
 
 
     return (
-      <div key={post.id} className="post" style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}>
+      <div key={post.id} className="feed-container" style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}>
         {/* Render post content */}
         <p>{post.data.text}</p>
-        {/* Add rendering logic for file, image, video, etc. */}
-        {/* Display comments for the post */}
+        
         <div>
           <h4>Comments:</h4>
           <ul>
           {comments.map((comment) => (
               <CommentComponent
-  key={comment.id}
-  comment={comment}
-  currentUser={currentUser} // Make sure currentUser prop is passed
-  onReply={this.handleReply} // Assuming this is how you handle replies
-/>
-
-
-))}
+                key={comment.id}
+                comment={comment}
+                currentUser={currentUser} // Make sure currentUser prop is passed
+                onReply={this.handleReply} 
+              />
+            ))}
           </ul>
         </div>
         <form onSubmit={(e) => { e.preventDefault(); onAddComment(post.id); }}>

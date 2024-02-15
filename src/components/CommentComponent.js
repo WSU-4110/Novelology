@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faReply } from '@fortawesome/free-solid-svg-icons';
-import { updateDoc, doc, getDoc } from 'firebase/firestore';
+import { faReply, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { updateDoc, doc, getDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import fetchUserProfilePicture from '../functions/fetchUserProfilePicture';
-import CommentItem from './CommentItem';
+import ReplyItem from './ReplyItem';
 import { collection, getDocs, query, where } from 'firebase/firestore';
+import { auth } from '../firebase';
+import fetchUsernameWithUID from '../functions/fetchUsernameWithUID';
 
 class CommentComponent extends Component {
   constructor(props) {
@@ -93,6 +95,22 @@ class CommentComponent extends Component {
     this.setState({ replyText: e.target.value });
   };
 
+
+  handleDeleteComment = async () => {
+    const { comment } = this.props;
+
+    try {
+      const commentDocRef = doc(db, 'comments', comment.id);
+      await deleteDoc(commentDocRef);
+
+      // Refresh comments after deleting
+      this.fetchComments();
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+    }
+  };
+    
+
   handleSubmitReply = async () => {
     const { comment, currentUser } = this.props;
     const { replyText } = this.state;
@@ -168,7 +186,11 @@ class CommentComponent extends Component {
             <span className="text-sm text-gray-500">{formatTimeDifference(comment.createdAt)}</span>
           </div>
           <p className="text-sm">{comment.text}</p>
-
+          {fetchUsernameWithUID(auth.currentUser.uid) == username && (
+            <button onClick={this.handleDeleteComment} className="text-sm text-red-500 mr-1 border rounded-md">
+              <FontAwesomeIcon icon={faTrash} />
+            </button>
+          )}
           {!isReplying && (
             <button onClick={this.handleReply} className="text-sm text-gray-400 mr-1 border rounded-md">
               <FontAwesomeIcon icon={faReply} />
@@ -183,20 +205,8 @@ class CommentComponent extends Component {
             </div>
           )}
 
-          {replies.length > 0 && (
-            <div style={{ borderLeft: '2px solid #ccc', paddingLeft: '8px', marginTop: '8px' }}>
-              {replies.map((reply) => (
-                <div key={reply.id}>
-                  <CommentItem
-                    comment={reply}
-                    userProfilePicture={null} // Pass userProfilePicture as per your data structure
-                    username={currentUser.displayName} // Pass username as per your data structure
-                    formatTimeDifference={(timestamp) => formatTimeDifference(timestamp)} // Pass formatTimeDifference function
-                  />
-                </div>
-              ))}
-            </div>
-          )}
+          <h3>Replies</h3>
+          
         </div>
       </li>
     );
