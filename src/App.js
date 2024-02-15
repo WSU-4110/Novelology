@@ -12,7 +12,7 @@ import Settings from './pages/Settings';
 import UserPage from './pages/UserPage';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
-
+import Post from './pages/Post';
 const App = () => {
   return (
     <Router>
@@ -31,6 +31,7 @@ const App = () => {
           <Route path="/submit" element={<Submit/>}/>
           <Route path="/login/:redirect" element={<Login/>}/>
           <Route path="/login/" element={<Login/>}/>
+          <Route path="/post/:" element={</Post/>}/>
         </Routes>
         
       </Fragment>

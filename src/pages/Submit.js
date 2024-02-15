@@ -42,6 +42,7 @@ function Submit() {
     comments: [], 
     uid:user.uid,
     userEmail: user.email,
+    likes: 0,
     fileName: file ? file.name : null }
     if (file){
     
