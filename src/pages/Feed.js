@@ -119,7 +119,7 @@ class Feed extends Component {
   
 
   handleAddComment = async (postId) => {
-    const { newComments } = this.state;
+    const { newComments, comments } = this.state;
     const newCommentText = newComments[postId] || '';
     if (!newCommentText.trim()) return;
     try {
@@ -135,10 +135,14 @@ class Feed extends Component {
         createdAt: new Date(),
         uid: this.props.currentUser.uid,
       });
+  
+      // Prepend the new comment to the existing comments array
+      const updatedComments = [newComment, ...comments[postId]];
+  
       this.setState((prevState) => ({
         comments: {
           ...prevState.comments,
-          [postId]: [...(prevState.comments[postId] || []), newComment],
+          [postId]: updatedComments,
         },
         newComments: {
           ...prevState.newComments,
@@ -149,6 +153,7 @@ class Feed extends Component {
       console.error('Error adding comment:', error);
     }
   };
+  
 
   handleCommentChange = (e, postId) => {
     const { value } = e.target;
@@ -193,27 +198,26 @@ class Feed extends Component {
     const { currentUser } = this.props;
 
     return (
-      <div className="max-w-md">
-        <div>
-          <button onClick={() => this.handleFilterByType('all')}>All</button>
-          <button onClick={() => this.handleFilterByType('image')}>Images</button>
+      <div className="w-3/4 mx-auto" style={{ maxWidth: '800px' }}>
+        <div className="mb-4">
+          <button className="mr-2" onClick={() => this.handleFilterByType('all')}>All</button>
+          <button className="mr-2" onClick={() => this.handleFilterByType('image')}>Images</button>
           <button onClick={() => this.handleFilterByType('video')}>Videos</button>
         </div>
         <div ref={this.postContainerRef} className="post-container" style={{ minHeight: 'calc(100vh - 100px)' }}>
-        {filteredPosts.map((post) => (
-          comments[post.id] && (
-<PostComponent
-  key={post.id}
-  post={post}
-  comments={comments[post.id] || []} // Pass the comments for the post or an empty array if not available
-  newCommentText={newComments[post.id] || ''}
-  currentUser={currentUser}
-  onAddComment={this.handleAddComment}
-  onCommentChange={(e) => this.handleCommentChange(e, post.id)}
-/>
-          
-          )
-        ))}
+          {filteredPosts.map((post) => (
+            comments[post.id] && (
+              <PostComponent
+                key={post.id}
+                post={post}
+                comments={comments[post.id] || []}
+                newCommentText={newComments[post.id] || ''}
+                currentUser={currentUser}
+                onAddComment={this.handleAddComment}
+                onCommentChange={(e) => this.handleCommentChange(e, post.id)}
+              />
+            )
+          ))}
           {isLoading && <p>Loading...</p>}
           {allPostsFetched && <p>No more posts to show</p>}
         </div>
@@ -221,5 +225,6 @@ class Feed extends Component {
     );
   }
 }
+    
 
 export default Feed;

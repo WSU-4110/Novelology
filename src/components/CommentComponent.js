@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faReply } from '@fortawesome/free-solid-svg-icons';
-import { updateDoc, doc, getDoc } from 'firebase/firestore'; // Correct import path for Firestore functions
-import { db } from '../firebase'; // Assuming '../firebase' is the correct relative path to your Firebase configuration
-import fetchUserProfilePicture from '../functions/fetchUserProfilePicture'; // Assuming '../functions/fetchUserProfilePicture' is the correct relative path to your function
-import CommentItem from './CommentItem'; // Assuming './CommentItem' is the correct relative path to your CommentItem component
-import { collection, getDocs, query, where } from 'firebase/firestore'; // Correct import path for Firestore functions
+import { updateDoc, doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase';
+import fetchUserProfilePicture from '../functions/fetchUserProfilePicture';
+import CommentItem from './CommentItem';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 
 class CommentComponent extends Component {
   constructor(props) {
@@ -16,9 +16,8 @@ class CommentComponent extends Component {
       username: '',
       isReplying: false,
       replyText: '',
-      replies: props.comment.replies || [], // Initialize replies state with comment's replies
-      showReplies: false,
-      comments: [], // Initialize comments array
+      replies: [],
+      loadingReplies: true, // Set to true initially
     };
   }
 
@@ -30,14 +29,15 @@ class CommentComponent extends Component {
 
   componentDidMount() {
     this.fetchUserData();
-    this.fetchComments(); // Fetch comments for this comment
+    this.fetchComments(); // Fetch comments and replies when component mounts
   }
 
   fetchUserData = async () => {
     const { comment } = this.props;
 
     try {
-      const userDoc = doc(db, 'users', comment.uid); // Assuming 'users' is the collection name
+      // Fetch user data
+      const userDoc = doc(db, 'users', comment.uid);
       const userDocSnap = await getDoc(userDoc);
 
       if (userDocSnap.exists()) {
@@ -49,13 +49,18 @@ class CommentComponent extends Component {
         console.error('User document does not exist');
       }
 
+      // Fetch user profile picture
       const userProfilePicture = await fetchUserProfilePicture(comment.uid);
       this.setState({ userProfilePicture });
+
+      // Fetch comments and replies
+      this.fetchComments();
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
   };
 
+  // Inside the fetchComments method of CommentComponent
   fetchComments = async () => {
     const { comment } = this.props;
 
@@ -63,16 +68,16 @@ class CommentComponent extends Component {
       const commentsRef = collection(db, 'comments');
       const q = query(commentsRef, where('parentCommentId', '==', comment.id));
       const querySnapshot = await getDocs(q);
-      const comments = [];
+      const replies = [];
       querySnapshot.forEach((doc) => {
-        // Assuming each comment document has a 'text' field
-        const commentData = doc.data();
-        comments.push({ id: doc.id, text: commentData.text });
+        const replyData = doc.data();
+        replies.push({ id: doc.id, ...replyData });
       });
-      this.setState({ comments, loading: false });
+
+      this.setState({ replies, loadingReplies: false });
     } catch (error) {
-      console.error('Error fetching comments:', error);
-      this.setState({ error: 'Error fetching comments', loading: false });
+      console.error('Error fetching replies:', error);
+      this.setState({ loadingReplies: false });
     }
   };
 
@@ -89,9 +94,8 @@ class CommentComponent extends Component {
   };
 
   handleSubmitReply = async () => {
-    const { comment } = this.props;
+    const { comment, currentUser } = this.props;
     const { replyText } = this.state;
-    const { uid } = this.props.currentUser;
 
     try {
       const commentDocRef = doc(db, 'comments', comment.id);
@@ -99,10 +103,10 @@ class CommentComponent extends Component {
 
       if (commentDocSnap.exists()) {
         const commentData = commentDocSnap.data();
-        let updatedReplies = commentData.replies || [];
+        const updatedReplies = commentData.replies || [];
 
         updatedReplies.push({
-          uid,
+          uid: currentUser.uid,
           text: replyText,
           createdAt: new Date(),
         });
@@ -111,11 +115,13 @@ class CommentComponent extends Component {
           replies: updatedReplies,
         });
 
+        // Refresh comments after updating
+        this.fetchComments();
+
         this.setState({
           isReplying: false,
           replyText: '',
-          showReplies: true, // Show replies after submitting a new reply
-          comments: [...this.state.comments, { text: replyText, createdAt: new Date(), replies: [] }], // Add the new reply to the comments array
+          replies: updatedReplies,
         });
       } else {
         console.error('Comment document does not exist');
@@ -125,25 +131,19 @@ class CommentComponent extends Component {
     }
   };
 
-  toggleShowReplies = () => {
-    this.setState((prevState) => ({
-      showReplies: !prevState.showReplies,
-    }));
-  };
-
   render() {
     const { comment, currentUser } = this.props;
-    const { userProfilePicture, username, isReplying, replyText, showReplies, comments } = this.state;
+    const { userProfilePicture, username, isReplying, replyText, replies, loadingReplies } = this.state;
 
     const formatTimeDifference = (timestamp) => {
       if (isNaN(timestamp)) {
         return 'Just Now';
       }
-    
+
       const currentTime = new Date();
       const commentTime = new Date(timestamp);
       const differenceInSeconds = Math.floor((currentTime - commentTime) / 1000);
-    
+
       if (differenceInSeconds < 60) {
         return 'just now';
       } else if (differenceInSeconds < 3600) {
@@ -157,6 +157,7 @@ class CommentComponent extends Component {
         return `${days} day${days > 1 ? 's' : ''} ago`;
       }
     };
+
     return (
       <li className="flex items-start space-x-4 py-2 max-w-3/4">
         {userProfilePicture && <img src={userProfilePicture} alt="Profile" className="w-8 h-8 rounded-full" />}
@@ -165,11 +166,9 @@ class CommentComponent extends Component {
           <div className="flex justify-between">
             <span className="">{username}</span>
             <span className="text-sm text-gray-500">{formatTimeDifference(comment.createdAt)}</span>
-
           </div>
           <p className="text-sm">{comment.text}</p>
 
-          {/* Button and input for replying */}
           {!isReplying && (
             <button onClick={this.handleReply} className="text-sm text-gray-400 mr-1 border rounded-md">
               <FontAwesomeIcon icon={faReply} />
@@ -184,22 +183,17 @@ class CommentComponent extends Component {
             </div>
           )}
 
-          {/* Show/hide replies */}
-          <button onClick={this.toggleShowReplies} className="text-sm text-blue-500">
-            {showReplies ? 'Hide Replies' : `Show ${comments.length} Replies`}
-          </button>
-
-          {/* Render replies */}
-          {showReplies && (
+          {replies.length > 0 && (
             <div style={{ borderLeft: '2px solid #ccc', paddingLeft: '8px', marginTop: '8px' }}>
-              {comments.map((reply, index) => (
-                <CommentItem
-                  key={index}
-                  comment={reply}
-                  userProfilePicture={null} // Pass userProfilePicture as per your data structure
-                  username={currentUser.displayName} // Pass username as per your data structure
-                  formatTimeDifference={(timestamp) => formatTimeDifference(timestamp)} // Pass formatTimeDifference function
-                />
+              {replies.map((reply) => (
+                <div key={reply.id}>
+                  <CommentItem
+                    comment={reply}
+                    userProfilePicture={null} // Pass userProfilePicture as per your data structure
+                    username={currentUser.displayName} // Pass username as per your data structure
+                    formatTimeDifference={(timestamp) => formatTimeDifference(timestamp)} // Pass formatTimeDifference function
+                  />
+                </div>
               ))}
             </div>
           )}

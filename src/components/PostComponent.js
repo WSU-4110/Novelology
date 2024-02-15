@@ -58,12 +58,12 @@ class PostComponent extends Component {
           <ul>
           {comments.map((comment) => (
               <CommentComponent
-            key={comment.id}
-            comment={comment}
-            userProfilePicture={null} // Pass userProfilePicture as per your data structure
-            username={currentUser.displayName} // Pass username as per your data structure
-            formatTimeDifference={formatTimeDifference} // Pass the formatTimeDifference function
-          />
+  key={comment.id}
+  comment={comment}
+  currentUser={currentUser} // Make sure currentUser prop is passed
+  onReply={this.handleReply} // Assuming this is how you handle replies
+/>
+
 
 ))}
           </ul>
