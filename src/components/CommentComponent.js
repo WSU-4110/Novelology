@@ -8,7 +8,18 @@ import fetchUserProfilePicture from '../functions/fetchUserProfilePicture';
 import CommentItem from './CommentItem';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 
-
+class CommentComponent extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+          userProfilePicture: null,
+          username: '',
+          isReplying: false,
+          replyText: '',
+          replies: props.comment.replies || [], // Initialize replies state with comment's replies
+          showReplies: false,
+          comments: [], // Initialize comments array
+        };
       }
   static propTypes = {
     comment: PropTypes.object.isRequired,
@@ -29,18 +40,7 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
       const userDocSnap = await getDoc(userDoc);
   
       if (userDocSnap.exists()) {
-        const userData = userDoclass CommentComponent extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-          userProfilePicture: null,
-          username: '',
-          isReplying: false,
-          replyText: '',
-          replies: props.comment.replies || [], // Initialize replies state with comment's replies
-          showReplies: false,
-          comments: [], // Initialize comments array
-        };cSnap.data();
+        const userData = userDocSnap.data();
         this.setState({
           username: userData.username,
         });
