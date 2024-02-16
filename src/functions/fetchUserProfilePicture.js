@@ -1,13 +1,10 @@
 import { ref, getDownloadURL } from 'firebase/storage';
 import { storage } from '../firebase';
-import { auth } from '../firebase';
 
-const fetchPFP = async () => {
+const fetchUserProfilePicture = async (userId) => {
   try {
-    const userId = auth.currentUser.uid;
-    
     if (!userId) {
-      throw new Error('User is not authenticated');
+      throw new Error('User ID is required');
     }
 
     const fileExtensions = ['jpg', 'jpeg', 'png']; // Add more file extensions if needed
@@ -18,10 +15,6 @@ const fetchPFP = async () => {
       try {
         // Get the download URL for the profile picture
         const downloadURL = await getDownloadURL(profilePictureRef);
-
-        // Store the download URL in localStorage
-        localStorage.setItem('profilePictureURL', downloadURL);
-
         return downloadURL; // Return download URL if found
       } catch (error) {
         // Ignore error and continue with the next file extension
@@ -29,13 +22,18 @@ const fetchPFP = async () => {
       }
     }
     
-    // If no profile picture is found with any of the extensions, use default profile picture from local assets
-    const defaultProfilePicturePath = require('../assets/default-profile-picture.jpg');
-    return defaultProfilePicturePath.default; // Return the local file path of the default profile picture
+    // If no profile picture is found with any of the extensions, return the default profile picture URL
+    return getDefaultProfilePictureURL(); // Implement getDefaultProfilePictureURL function to return the default profile picture URL
   } catch (error) {
     console.error('Error fetching profile picture URL:', error);
-    return null;
+    return getDefaultProfilePictureURL(); // Return the default profile picture URL in case of an error
   }
 };
 
-export default fetchPFP;
+const getDefaultProfilePictureURL = () => {
+  // Implement logic to return the default profile picture URL
+  const defaultProfilePicturePath = require('../assets/default-profile-picture.jpg');
+  return defaultProfilePicturePath.default; // Return the local file path of the default profile picture
+};
+
+export default fetchUserProfilePicture;

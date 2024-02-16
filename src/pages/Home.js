@@ -6,8 +6,10 @@ import Modal from '../components/Modal.js';
 import Searchbar from '../components/Searchbar';
 import UploadPFP from '../components/UploadPFP.js';
 import { handleSearch } from '../functions/searchFunctions'; // Import handleSearch function
+import Feed from './Feed.js';
 
 import BookSearch from '../components/BookSearch.js';
+
 export default function Home() {
     const [user, loading, error] = useAuthState(auth);
     const [searchResults, setSearchResults] = useState([]);
@@ -36,9 +38,12 @@ export default function Home() {
                 <div> logged out</div>
             ) : (
                 <>
-                    {user.displayName && (
-                        <h1 className='text-3xl font-bold underline'>Welcome back, {user.displayName}!</h1>
-                    )}
+                    <div className='flex flex-col justify-center items-center'>
+                        {user.displayName && (
+                            <h1 className='text-3xl font-bold underline'>Welcome back, {user.displayName}!</h1>
+                        )}
+                        <Feed currentUser={user} />
+                    </div>
                 </>
             )}
             <div className="mt-8">
