@@ -8,8 +8,12 @@ import fetchUsernameWithUID from '../functions/fetchUsernameWithUID.js';
 
 const Profile = () => {
     const [user, loading] = useAuthState(auth);
-    const [userData, setUserData] = useState(null);
-    const [fetchedProfilePicture, setFetchedProfilePicture] = useState(null); // State to store fetched profile picture
+    const [userData, setUserData] = useState(() => {
+        const storedUserData = localStorage.getItem('userData');
+        return storedUserData ? JSON.parse(storedUserData) : null;
+    });
+    const [fetchedProfilePicture, setFetchedProfilePicture] = useState(null);
+    const [isLoading, setIsLoading] = useState(true); // New loading state
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -19,29 +23,31 @@ const Profile = () => {
                     const docSnapshot = await getDoc(userRef);
                     
                     if (docSnapshot.exists()) {
-                        setUserData(docSnapshot.data());
+                        const userData = docSnapshot.data();
+                        setUserData(userData);
+                        localStorage.setItem('userData', JSON.stringify(userData)); // Store userData in localStorage
                     } else {
                         console.log('User document does not exist');
                     }
 
-                    // Fetch profile picture if available
                     const profilePictureURL = await fetchPFP(user.uid);
                     setFetchedProfilePicture(profilePictureURL);
+                    setIsLoading(false); // Set loading to false after fetching profile picture
                 }
             } catch (error) {
                 console.error('Error fetching user data:', error);
+                setIsLoading(false); // Set loading to false in case of error
             }
         };
     
         fetchUserData();
     }, [user]);
 
-    if (loading) {
-        return <div>Loading...</div>;
+    if (loading || isLoading) {
+        return <div>Loading...</div>; // Show loading indicator while fetching data
     }
 
     if (!user) {
-        // If user is not authenticated, redirect to home
         return (
             <div>
                 <p>You need to sign in to view your profile. Redirecting...</p>
@@ -52,15 +58,16 @@ const Profile = () => {
         );
     }
 
-    // Define the path to the default profile picture in the assets folder
     const defaultProfilePicture = require('../assets/default-profile-picture.jpg');
 
     return (
         <div className="profile-container bg-purple-100 p-8 rounded-lg shadow-md">
             <h1 className="text-3xl font-bold">User Profile</h1>
+            
             {userData && (
                 <div>
-                    {fetchedProfilePicture ? (
+                    {/* Conditionally render the profile picture */}
+                    {fetchedProfilePicture !== null ? (
                         <img src={fetchedProfilePicture} alt="Profile" className="w-24 h-24 rounded-full my-4" />
                     ) : (
                         <img src={defaultProfilePicture} alt="Default Profile" className="w-24 h-24 rounded-full my-4" />
@@ -73,7 +80,6 @@ const Profile = () => {
                     </div>
                 </div>
             )}
-
 
             <Link to={`/users/${userData && userData.username}`} className="bg-blue-300 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded">
                 View Your Public Page!
