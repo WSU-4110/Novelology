@@ -67,7 +67,7 @@ class Feed extends Component {
       const fetchedPosts = [];
       querySnapshot.forEach((doc) => {
         const postData = doc.data();
-        const createdAt = postData.createdAt ? postData.createdAt.toDate() : null;
+        const createdAt = postData.createdAt && postData.createdAt.toDate ? postData.createdAt.toDate() : null;
         const post = new Post(doc.id, {
           ...postData,
           createdAt: createdAt,
@@ -75,18 +75,21 @@ class Feed extends Component {
         fetchedPosts.push(post);
         this.fetchCommentsForPost(post);
       });
-      this.setState({
-        posts: [...posts, ...fetchedPosts],
-        filteredPosts: [...posts, ...fetchedPosts],
+      this.setState((prevState) => ({
+        posts: fetchedPosts, // Replace existing posts with fetched posts
+        filteredPosts: [...prevState.filteredPosts, ...fetchedPosts.filter(newPost => 
+          !prevState.filteredPosts.some(oldPost => oldPost.id === newPost.id)
+        )], // Add fetched posts to filteredPosts, avoiding duplicates
         isLoading: false,
-      });
+      }));
       this.totalPosts = querySnapshot.size;
     } catch (error) {
       console.error('Error fetching posts:', error);
       this.setState({ isLoading: false });
     }
   };
-
+  
+  
   fetchCommentsForPost = async (post) => {
     try {
       const commentsRef = collection(db, 'comments');
@@ -200,6 +203,7 @@ class Feed extends Component {
     }
     this.setState({ filteredPosts: sortedPosts });
   };
+  
 
   handleScroll = () => {
     const postContainer = this.postContainerRef.current;
