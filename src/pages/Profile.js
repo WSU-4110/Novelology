@@ -4,6 +4,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, db } from '../firebase.js';
 import { doc, getDoc } from 'firebase/firestore';
 import fetchPFP from '../functions/fetchPFP';
+import fetchUsernameWithUID from '../functions/fetchUsernameWithUID.js';
 
 const Profile = () => {
     const [user, loading] = useAuthState(auth);
@@ -72,6 +73,12 @@ const Profile = () => {
                     </div>
                 </div>
             )}
+
+
+            <Link to={`/users/${userData && userData.username}`} className="bg-blue-300 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded">
+                View Your Public Page!
+            </Link>
+
             <Link to="/settings" className="mt-4 bg-pink-300 hover:bg-pink-400 text-white font-bold py-2 px-4 rounded">
                 Go to Settings
             </Link>
