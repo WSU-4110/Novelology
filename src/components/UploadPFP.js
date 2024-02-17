@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { auth } from '../firebase';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject} from "firebase/storage";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
 import defaultProfilePicture from '../assets/default-profile-picture.jpg'; // Import default profile picture
 import fetchPFP from '../functions/fetchPFP'; // Import fetchPFP function
 
@@ -10,17 +10,23 @@ const UploadPFP = () => {
   const [existingProfilePicture, setExistingProfilePicture] = useState(null);
 
   useEffect(() => {
-    // Fetch existing profile picture URL if available
     const fetchExistingProfilePicture = async () => {
       try {
         const userId = auth.currentUser.uid;
-        // Fetch existing profile picture URL from Firestore or any other storage location
-        const existingURL = await fetchPFP(userId); // Use fetchPFP function
+        console.log('Fetching existing profile picture...');
+        const existingURL = await fetchPFP(userId);
         if (existingURL) {
+          console.log('Existing profile picture found:', existingURL);
           setExistingProfilePicture(existingURL);
+        } else {
+          console.log('No existing profile picture found.');
+          // If no existing profile picture is found, set defaultProfilePicture
+          setExistingProfilePicture(defaultProfilePicture);
         }
       } catch (error) {
         console.error('Error fetching existing profile picture:', error);
+        // If there's an error fetching the profile picture, set defaultProfilePicture
+        setExistingProfilePicture(defaultProfilePicture);
       }
     };
 
@@ -32,7 +38,7 @@ const UploadPFP = () => {
   const handleChange = (e) => {
     const selectedFile = e.target.files[0];
     if (!selectedFile) return;
-  
+
     // Check if file size exceeds the maximum allowed size
     if (selectedFile.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
       setError(`File size exceeds the maximum allowed size of ${MAX_FILE_SIZE_MB} MB.`);
@@ -42,52 +48,71 @@ const UploadPFP = () => {
       setImage(selectedFile);
     }
   };
-  
 
   const handleUpload = (event) => {
     event.preventDefault(); // Prevent default form submission behavior
-  
-    if (!image) return;
-  
+
+    if (!image) {
+      console.log('No image selected for upload.');
+      return;
+    }
+
     const userId = auth.currentUser.uid;
     const storage = getStorage();
     const metadata = {
-      contentType: image.type // Use the content type of the selected image file
+      contentType: 'image/jpeg' // Set content type to JPEG
     };
-    const storageRef = ref(storage, `users/${userId}/profilePicture.${image.name.split('.').pop()}`); // Use the file extension as part of the file name
-    const uploadTask = uploadBytesResumable(storageRef, image, metadata);
-  
-    uploadTask.on('state_changed',
-      (snapshot) => {
-        // Track upload progress if needed
-      },
-      (error) => {
-        console.error('Error uploading file:', error);
-        setError('Failed to upload profile picture. Please try again later.');
-      },
-      () => {
-        // Upload completed successfully, get the download URL
-        getDownloadURL(uploadTask.snapshot.ref)
-          .then((downloadURL) => {
-            console.log('File uploaded successfully:', downloadURL);
-            setExistingProfilePicture(downloadURL); // Update existing profile picture URL
-            setImage(null); // Reset image state after upload
-          })
-          .catch((error) => {
-            console.error('Error getting download URL:', error);
-            setError('Failed to get download URL. Please try again later.');
-          });
-      }
-    );
+
+    // Convert image to JPEG format
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    img.onload = async () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+      canvas.toBlob(async (blob) => {
+        const storageRef = ref(storage, `users/${userId}/profilePicture.jpg`); // Save as .jpg
+        const uploadTask = uploadBytesResumable(storageRef, blob, metadata);
+
+        console.log('Starting upload...');
+        uploadTask.on('state_changed',
+          (snapshot) => {
+            // Track upload progress if needed
+          },
+          (error) => {
+            console.error('Error uploading file:', error);
+            setError('Failed to upload profile picture. Please try again later.');
+          },
+          () => {
+            // Upload completed successfully, get the download URL
+            getDownloadURL(uploadTask.snapshot.ref)
+              .then((downloadURL) => {
+                console.log('File uploaded successfully:', downloadURL);
+                setExistingProfilePicture(downloadURL); // Update existing profile picture URL
+                localStorage.setItem('profilePicture', downloadURL); // Update profile picture URL in local storage
+                setImage(null); // Reset image state after upload
+              })
+              .catch((error) => {
+                console.error('Error getting download URL:', error);
+                setError('Failed to get download URL. Please try again later.');
+              });
+          }
+        );
+      }, 'image/jpeg');
+    };
+    img.src = URL.createObjectURL(image);
   };
-  
 
   const handleDeleteProfilePicture = async () => {
-    if (!existingProfilePicture) return; // No existing profile picture to delete
+    if (!existingProfilePicture) {
+      console.log('No existing profile picture to delete.');
+      return; // No existing profile picture to delete
+    }
 
     const userId = auth.currentUser.uid;
     const storage = getStorage();
-    const profilePictureRef = ref(storage, existingProfilePicture);
+    const profilePictureRef = ref(storage, `users/${userId}/profilePicture`);
 
     try {
       await deleteObject(profilePictureRef);
@@ -108,6 +133,7 @@ const UploadPFP = () => {
       <button onClick={handleDeleteProfilePicture} className='bg-red-600 w-40 h-6 rounded-sm text-white mt-2'>Delete Profile Picture</button>
      
       <button onClick={handleUpload} className='bg-green-600 w-16 h-6 rounded-sm text-white'>Upload</button>
+      <h2>Current Profile Picture: </h2>
       {existingProfilePicture ? (
         <img
           src={existingProfilePicture}
