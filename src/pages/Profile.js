@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, db } from '../firebase.js';
-import fetchPFP from '../functions/fetchPFP';
 import { doc, getDoc } from 'firebase/firestore';
+import fetchPFP from '../functions/fetchPFP';
 
 const Profile = () => {
     const [user, loading] = useAuthState(auth);
     const [userData, setUserData] = useState(null);
-    const [profilePicture, setProfilePicture] = useState(null);
+    const [fetchedProfilePicture, setFetchedProfilePicture] = useState(null); // State to store fetched profile picture
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -22,6 +22,10 @@ const Profile = () => {
                     } else {
                         console.log('User document does not exist');
                     }
+
+                    // Fetch profile picture if available
+                    const profilePictureURL = await fetchPFP(user.uid);
+                    setFetchedProfilePicture(profilePictureURL);
                 }
             } catch (error) {
                 console.error('Error fetching user data:', error);
@@ -29,17 +33,6 @@ const Profile = () => {
         };
     
         fetchUserData();
-    }, [user]);
-
-    useEffect(() => {
-        const fetchProfilePicture = async () => {
-            if (user) {
-                const profilePictureURL = await fetchPFP(user.uid);
-                setProfilePicture(profilePictureURL);
-            }
-        };
-
-        fetchProfilePicture();
     }, [user]);
 
     if (loading) {
@@ -58,19 +51,24 @@ const Profile = () => {
         );
     }
 
+    // Define the path to the default profile picture in the assets folder
+    const defaultProfilePicture = require('../assets/default-profile-picture.jpg');
+
     return (
         <div className="profile-container bg-purple-100 p-8 rounded-lg shadow-md">
             <h1 className="text-3xl font-bold">User Profile</h1>
             {userData && (
                 <div>
-                    <div className="w-20 h-20 rounded-full overflow-hidden mb-4">
-                        {profilePicture && <img src={profilePicture} alt="Profile" className="w-full h-full object-cover" />}
-                    </div>
+                    {fetchedProfilePicture ? (
+                        <img src={fetchedProfilePicture} alt="Profile" className="w-24 h-24 rounded-full my-4" />
+                    ) : (
+                        <img src={defaultProfilePicture} alt="Default Profile" className="w-24 h-24 rounded-full my-4" />
+                    )}
                     <div className='m-8'>
-                    <p><strong>Username:</strong> {userData.username}</p>
-                    <p><strong>Bio:</strong> {userData.bio}</p>
-                    <p><strong>Pronouns:</strong> {userData.pronouns}</p>
-                    <p><strong>Genres:</strong> {userData.genres ? userData.genres.join(', ') : 'No genres selected'}</p>
+                        <p><strong>Username:</strong> {userData.username}</p>
+                        <p><strong>Bio:</strong> {userData.bio}</p>
+                        <p><strong>Pronouns:</strong> {userData.pronouns}</p>
+                        <p><strong>Genres:</strong> {userData.genres ? userData.genres.join(', ') : 'No genres selected'}</p>
                     </div>
                 </div>
             )}
