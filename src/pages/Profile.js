@@ -16,15 +16,16 @@ const Profile = () => {
         const storedProfilePicture = localStorage.getItem('profilePicture');
         return storedProfilePicture ? storedProfilePicture : null;
     });
+    
     const [isLoading, setIsLoading] = useState(false); // Set loading to false initially
 
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                if (user && !fetchedProfilePicture) { // Fetch profile picture only if not available in local storage
+                if (user && !fetchedProfilePicture) {
                     const userRef = doc(db, 'users', user.uid);
                     const docSnapshot = await getDoc(userRef);
-                    
+    
                     if (docSnapshot.exists()) {
                         const userData = docSnapshot.data();
                         setUserData(userData);
@@ -32,10 +33,12 @@ const Profile = () => {
                     } else {
                         console.log('User document does not exist');
                     }
-
+    
                     const profilePictureURL = await fetchPFP(user.uid);
-                    setFetchedProfilePicture(profilePictureURL);
-                    localStorage.setItem('profilePicture', profilePictureURL); // Store profile picture URL in localStorage
+                    if (profilePictureURL !== fetchedProfilePicture) {
+                        setFetchedProfilePicture(profilePictureURL);
+                        localStorage.setItem('profilePicture', profilePictureURL); // Update profile picture URL in localStorage
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching user data:', error);
@@ -46,7 +49,7 @@ const Profile = () => {
     
         fetchUserData();
     }, [user, fetchedProfilePicture]);
-
+    
     if (loading || isLoading) {
         return <div>Loading...</div>; // Show loading indicator while fetching data
     }

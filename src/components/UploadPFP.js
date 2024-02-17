@@ -33,7 +33,6 @@ const UploadPFP = () => {
     fetchExistingProfilePicture();
   }, []);
 
-
   const MAX_FILE_SIZE_MB = 1; // Maximum file size allowed in megabytes
 
   const handleChange = (e) => {
@@ -61,34 +60,48 @@ const UploadPFP = () => {
     const userId = auth.currentUser.uid;
     const storage = getStorage();
     const metadata = {
-      contentType: image.type // Use the content type of the selected image file
+      contentType: 'image/jpeg' // Set content type to JPEG
     };
-    const storageRef = ref(storage, `users/${userId}/profilePicture.${image.name.split('.').pop()}`); // Use the file extension as part of the file name
-    const uploadTask = uploadBytesResumable(storageRef, image, metadata);
 
-    console.log('Starting upload...');
-    uploadTask.on('state_changed',
-      (snapshot) => {
-        // Track upload progress if needed
-      },
-      (error) => {
-        console.error('Error uploading file:', error);
-        setError('Failed to upload profile picture. Please try again later.');
-      },
-      () => {
-        // Upload completed successfully, get the download URL
-        getDownloadURL(uploadTask.snapshot.ref)
-          .then((downloadURL) => {
-            console.log('File uploaded successfully:', downloadURL);
-            setExistingProfilePicture(downloadURL); // Update existing profile picture URL
-            setImage(null); // Reset image state after upload
-          })
-          .catch((error) => {
-            console.error('Error getting download URL:', error);
-            setError('Failed to get download URL. Please try again later.');
-          });
-      }
-    );
+    // Convert image to JPEG format
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    img.onload = async () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+      canvas.toBlob(async (blob) => {
+        const storageRef = ref(storage, `users/${userId}/profilePicture.jpg`); // Save as .jpg
+        const uploadTask = uploadBytesResumable(storageRef, blob, metadata);
+
+        console.log('Starting upload...');
+        uploadTask.on('state_changed',
+          (snapshot) => {
+            // Track upload progress if needed
+          },
+          (error) => {
+            console.error('Error uploading file:', error);
+            setError('Failed to upload profile picture. Please try again later.');
+          },
+          () => {
+            // Upload completed successfully, get the download URL
+            getDownloadURL(uploadTask.snapshot.ref)
+              .then((downloadURL) => {
+                console.log('File uploaded successfully:', downloadURL);
+                setExistingProfilePicture(downloadURL); // Update existing profile picture URL
+                localStorage.setItem('profilePicture', downloadURL); // Update profile picture URL in local storage
+                setImage(null); // Reset image state after upload
+              })
+              .catch((error) => {
+                console.error('Error getting download URL:', error);
+                setError('Failed to get download URL. Please try again later.');
+              });
+          }
+        );
+      }, 'image/jpeg');
+    };
+    img.src = URL.createObjectURL(image);
   };
 
   const handleDeleteProfilePicture = async () => {
