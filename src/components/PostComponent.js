@@ -22,6 +22,10 @@ class PostComponent extends Component {
 
   // Function to format time difference
   formatTimeDifference = (timestamp) => {
+
+    console.log("Timestamp received:", timestamp); // Log the timestamp received
+
+
     if (!timestamp) {
       return 'Unknown time';
     }
@@ -105,7 +109,9 @@ class PostComponent extends Component {
             ) : (
               <p className="font-bold">{username}</p> 
             )}
-            <p className="text-sm text-gray-500">{this.formatTimeDifference(post.data.createdAt ? post.data.createdAt.seconds * 1000 : '')}</p>
+          <p className="text-sm text-gray-500 cursor-help" title={post.data.createdAt && post.data.createdAt.toString()}>
+            {this.formatTimeDifference(post.data.createdAt ? new Date(post.data.createdAt).getTime() : '')}
+          </p>
           </div>
         </div>
 
