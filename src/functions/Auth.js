@@ -10,8 +10,10 @@ const storage = getStorage();
 export function signUpWithEmail(htmlEmail, htmlPass, htmlUser) {
     handleSignUpWithEmail(htmlEmail, htmlPass, htmlUser);
 }
-export async function handleSignUpWithPopup(navigate) {
+export async function handleSignUpWithPopup(navigate, setLoading) {
     try {
+        setLoading(true); // Set loading state to true
+
         // Sign out the current user from Firebase Authentication
         await signOut(auth);
 
@@ -34,10 +36,15 @@ export async function handleSignUpWithPopup(navigate) {
         navigate('/setup-account');
     } catch (error) {
         console.error("Error signing up with Google:", error);
+    } finally {
+        setLoading(false); // Set loading state to false regardless of success or failure
     }
 }
-export async function handleSignInWithPopup(navigate) {
+
+export async function handleSignInWithPopup(navigate, setLoading) {
     try {
+        setLoading(true); // Set loading state to true
+
         // Sign in with Google using a popup
         const result = await signInWithPopup(auth, provider);
 
@@ -59,8 +66,11 @@ export async function handleSignInWithPopup(navigate) {
         }
     } catch (error) {
         console.error("Error signing in with Google:", error);
+    } finally {
+        setLoading(false); // Set loading state to false regardless of success or failure
     }
 }
+
 
 
 

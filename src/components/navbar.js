@@ -1,4 +1,4 @@
-import {Link, useNavigate} from "react-router-dom"
+import {Link} from "react-router-dom"
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { signOut } from "@firebase/auth";
 import { auth } from "../firebase";
@@ -7,7 +7,6 @@ import { handleLogout } from "../functions/Auth";
 
 export default function(){
     const [user] = useAuthState(auth);
-    const navigate = useNavigate();
 
     return(
        
@@ -17,7 +16,7 @@ export default function(){
 
             <>
                 <Link to="/profile">Profile</Link>
-                <button className='logout-button' onClick={handleLogout(navigate)}>Sign off</button>
+                <button className='logout-button' onClick={handleLogout}>Sign off</button>
 
             </>
 
