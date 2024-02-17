@@ -93,6 +93,7 @@ class Feed extends Component {
       const q = query(commentsRef, where('postId', '==', post.id));
       const querySnapshot = await getDocs(q);
       const comments = [];
+      
       querySnapshot.forEach((doc) => {
         const commentData = doc.data();
         const createdAt = commentData.createdAt;
@@ -102,9 +103,12 @@ class Feed extends Component {
         });
         comments.push(comment);
       });
+      
       // Sort comments by timestamp in descending order
       comments.sort((a, b) => b.createdAt - a.createdAt);
+  
       console.log('Comments for post:', post.id, comments); // Log comments here
+  
       this.setState((prevState) => ({
         comments: {
           ...prevState.comments,
@@ -113,8 +117,11 @@ class Feed extends Component {
       }));
     } catch (error) {
       console.error(`Error fetching comments for post ${post.id}:`, error);
+      // Log error details
+      console.error('Error Details:', error.message);
     }
   };
+  
   
   
 
@@ -153,7 +160,6 @@ class Feed extends Component {
       console.error('Error adding comment:', error);
     }
   };
-  
 
   handleCommentChange = (e, postId) => {
     const { value } = e.target;
@@ -163,6 +169,15 @@ class Feed extends Component {
         [postId]: value,
       },
     }));
+  };
+
+  handleDeleteComment = async (deletedCommentId) => {
+    const { comments } = this.state;
+    const updatedComments = Object.keys(comments).reduce((acc, postId) => {
+      acc[postId] = comments[postId].filter(comment => comment.id !== deletedCommentId);
+      return acc;
+    }, {});
+    this.setState({ comments: updatedComments });
   };
 
   handleFilterByType = (filterType) => {
@@ -196,7 +211,7 @@ class Feed extends Component {
   render() {
     const { filteredPosts, isLoading, allPostsFetched, comments, newComments } = this.state;
     const { currentUser } = this.props;
-
+  
     return (
       <div className="w-3/4 mx-auto" style={{ maxWidth: '800px' }}>
         <div className="mb-4">
@@ -205,17 +220,19 @@ class Feed extends Component {
           <button onClick={() => this.handleFilterByType('video')}>Videos</button>
         </div>
         <div ref={this.postContainerRef} className="post-container" style={{ minHeight: 'calc(100vh - 100px)' }}>
-          {filteredPosts.map((post) => (
+          {filteredPosts.map((post, index) => (
             comments[post.id] && (
-              <PostComponent
-                key={post.id}
-                post={post}
-                comments={comments[post.id] || []}
-                newCommentText={newComments[post.id] || ''}
-                currentUser={currentUser}
-                onAddComment={this.handleAddComment}
-                onCommentChange={(e) => this.handleCommentChange(e, post.id)}
-              />
+              <div key={post.id} className={`mb-8 ${index !== filteredPosts.length - 1 ? 'pb-8 border-b' : ''}`}>
+                <PostComponent
+                  post={post}
+                  comments={comments} // Pass comments as a prop
+                  newCommentText={newComments[post.id] || ''} // Pass newCommentText for this post
+                  currentUser={currentUser}
+                  onAddComment={this.handleAddComment} // Pass handleAddComment function
+                  onCommentChange={this.handleCommentChange} // Pass handleCommentChange function
+                  onDeleteComment={this.handleDeleteComment} // Pass handleDeleteComment function
+                />
+              </div>
             )
           ))}
           {isLoading && <p>Loading...</p>}
@@ -225,6 +242,5 @@ class Feed extends Component {
     );
   }
 }
-    
-
+  
 export default Feed;
