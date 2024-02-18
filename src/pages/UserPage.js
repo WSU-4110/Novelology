@@ -4,6 +4,7 @@ import { collection, query, where, getDocs, doc, setDoc, getDoc, updateDoc, arra
 import { db, auth } from '../firebase';
 import fetchUserProfilePicture from '../functions/fetchUserProfilePicture'; // Import fetchUserProfilePicture
 import fetchUIDwithUsername from '../functions/fetchUIDwithUsername';
+import { FaInfoCircle, FaEnvelope, FaUser } from 'react-icons/fa';
 
 const FollowButton = ({ isFollowing, toggleFollow }) => {
     return (
@@ -146,25 +147,27 @@ const UserPage = () => {
     }
 
     return (
-        <div>
+        <div className="max-w-md mx-auto p-4 bg-white rounded-lg shadow-md">
             {userData ? (
                 <div>
-                    <h2>Username: {userData.username}</h2>
-                    {profilePicture && <img src={profilePicture} alt="Profile" />}
-                    {userData.uid && <p>UID: {userData.uid}</p>}
-                    {userData.email && <p>Email: {userData.email}</p>}
-                    {userData.bio && <p>Bio: {userData.bio}</p>}
-                    {userData.pronouns && <p>Pronouns: {userData.pronouns}</p>}
-                    <p>Followers: {followersCount}</p>
-                    <p>Following: {followingCount}</p>
+                    <h2 className="text-xl font-semibold mb-4">Username: {userData.username}</h2>
+                    {profilePicture && <img src={profilePicture} alt="Profile" className="rounded-full w-20 h-20 object-cover mb-4" />}
+                    {userData.uid && <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">UID:</span> {userData.uid}</p>}
+                    {userData.email && <p className="mb-2"><FaEnvelope className="inline-block mr-2" /><span className="font-semibold">Email:</span> {userData.email}</p>}
+                    {userData.bio && <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">Bio:</span> {userData.bio}</p>}
+                    {userData.pronouns && <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">Pronouns:</span> {userData.pronouns}</p>}
+                    <div className="flex justify-between mb-4">
+                        <p className="font-semibold"><FaUser className="inline-block mr-2" /> Followers: {followersCount}</p>
+                        <p className="font-semibold"><FaUser className="inline-block mr-2" /> Following: {followingCount}</p>
+                    </div>
                     {auth.currentUser && auth.currentUser.uid !== userData.uid && (
                         <FollowButton isFollowing={isFollowing} toggleFollow={toggleFollow} />
                     )}
                 </div>
             ) : (
-                <p>User data not found.</p>
+                <p className="text-red-500">User data not found.</p>
             )}
         </div>
     );
-};
+            }
 export default UserPage;
