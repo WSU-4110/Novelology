@@ -8,24 +8,18 @@ import fetchUsernameWithUID from '../functions/fetchUsernameWithUID.js';
 
 const Profile = () => {
     const [user, loading] = useAuthState(auth);
-    const [userData, setUserData] = useState(() => {
-        const storedUserData = localStorage.getItem('userData');
-        return storedUserData ? JSON.parse(storedUserData) : null;
-    });
-    const [fetchedProfilePicture, setFetchedProfilePicture] = useState(() => {
-        const storedProfilePicture = localStorage.getItem('profilePicture');
-        return storedProfilePicture ? storedProfilePicture : null;
-    });
-    
+    const [userData, setUserData] = useState(null);
+    const [fetchedProfilePicture, setFetchedProfilePicture] = useState(null);
     const [isLoading, setIsLoading] = useState(false); // Set loading to false initially
 
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                if (user && !fetchedProfilePicture) {
+                if (user && !userData) {
+                    setIsLoading(true); // Set loading to true when fetching data
                     const userRef = doc(db, 'users', user.uid);
                     const docSnapshot = await getDoc(userRef);
-    
+
                     if (docSnapshot.exists()) {
                         const userData = docSnapshot.data();
                         setUserData(userData);
@@ -33,7 +27,7 @@ const Profile = () => {
                     } else {
                         console.log('User document does not exist');
                     }
-    
+
                     const profilePictureURL = await fetchPFP(user.uid);
                     if (profilePictureURL !== fetchedProfilePicture) {
                         setFetchedProfilePicture(profilePictureURL);
@@ -46,10 +40,10 @@ const Profile = () => {
                 setIsLoading(false); // Set loading to false after fetching data
             }
         };
-    
+
         fetchUserData();
-    }, [user, fetchedProfilePicture]);
-    
+    }, [user, userData, fetchedProfilePicture]);
+
     if (loading || isLoading) {
         return <div>Loading...</div>; // Show loading indicator while fetching data
     }
@@ -70,7 +64,7 @@ const Profile = () => {
     return (
         <div className="profile-container bg-purple-100 p-8 rounded-lg shadow-md">
             <h1 className="text-3xl font-bold">User Profile</h1>
-            
+
             {userData && (
                 <div>
                     {/* Conditionally render the profile picture */}

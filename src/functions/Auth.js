@@ -76,11 +76,14 @@ export async function handleSignInWithPopup(navigate, setLoading) {
 
 async function addUserToDatabase(uid, email, displayName, navigate) {
     try {
+        // Remove any spaces from the display name
+        const username = displayName.replace(/\s/g, '');
+
         const signUpTime = Date.now(); // Get current timestamp
         await setDoc(doc(db, "users", uid), {
             email: email,
             emailVerified: false,
-            username: displayName,
+            username: username, // Use sanitized username
             signUpTime: signUpTime // Add sign-up time
         });
         console.log("User added to database successfully");
@@ -91,6 +94,7 @@ async function addUserToDatabase(uid, email, displayName, navigate) {
         console.error("Error adding user to database:", error);
     }
 }
+
 
 
 function handleSignUpWithEmail(htmlEmail, htmlPass, htmlUser) {

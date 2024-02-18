@@ -124,13 +124,14 @@ class PostComponent extends Component {
           <ul>
             {comments[post.id].map((comment) => (
               <CommentComponent
-                key={comment.id}
-                comment={comment}
-                comments={comments[post.id]} // Pass comments for the specific post
-                onDelete={this.handleDeleteComment}
-                currentUser={currentUser}
-                onReply={this.handleReply}
-              />
+              key={comment.id}
+              comment={comment}
+              comments={comments[post.id]} // Pass comments for the specific post
+              onDelete={this.handleDeleteComment}
+              currentUser={currentUser}
+              onReply={() => this.handleReply(comment)} // Pass comment as an argument to handleReply function
+            />
+
             ))}
           </ul>
         </div>
