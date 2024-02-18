@@ -14,7 +14,7 @@ body.active-modal {
 }
 
 .overlay {
-    background: rgba(49,49,49,0.8);
+    background: rgba(228, 56, 56, 0.8);
 }
 .modal-content {
     position: absolute;
@@ -22,7 +22,7 @@ body.active-modal {
     left: 50%;
     transform: translate(-50%, -50%);
     line-height: 1.4;
-    background: #f1f1f1;
+    background: #fff9f3; /*changes the background-color of the log-in form*/
     padding: 14px 28px;
     border-radius: 3px;
     

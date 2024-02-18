@@ -35,12 +35,12 @@ function Searchbar({ onSearch }) {
                     type="text" 
                     value={query} 
                     onChange={handleChange} 
-                    placeholder="Search..." 
-                    className="px-3 py-2 border rounded-l-lg mr-2 focus:outline-none focus:ring focus:border-blue-300 flex-grow" 
+                    placeholder="Search Users..." 
+                    className="px-1 py-1 border square-l-lg mr-3 focus:outline-none focus:ring focus:border-blue-300 flex-grow" 
                 />
                 <button 
                     type="submit" 
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+                    className="px-4 py-2 bg-#F4D0A7-500 text-black sqauare-lg hover:bg-#f7e3cb-600 focus:outline-none focus:bg-#f7e3cb-600"
                 >
                     Search
                 </button>

@@ -1,6 +1,7 @@
 .App {
   overflow-y: scroll;
   text-align: center;
+  font-family: 'Lucida Sans', cursive;
 }
 
 .App-logo {
@@ -15,7 +16,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #1059ebf3;
   min-height: 100vh;
   display: flex;
   flex-direction: column;

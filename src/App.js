@@ -16,6 +16,12 @@ const App = () => {
   return (
     <Router>
       <Fragment>
+        <div>
+          <img src={require('./assets/Novelology_Logo.png')} style={{height:200, width:300}} />
+        </div>
+
+
+
         <Navbar />
         <Routes>
         <Route path="/" element={<Home />} />

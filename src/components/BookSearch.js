@@ -15,9 +15,9 @@ const BookSearch = () => {
         
         <>
             <div className="main">
-                <h3>Find your book!</h3>
+                <h3>Book Search</h3>
                 <div className="search">
-                    <input type="text" placeholder="Search for a book" value={bSearch} onChange={e=>setBSearch(e.target.value)} onKeyDown ={searchBook} />
+                    <input type="text" placeholder="Search Book..." value={bSearch} onChange={e=>setBSearch(e.target.value)} onKeyDown ={searchBook} />
                     <button>Search</button>
                 </div>
             </div>
