@@ -26,26 +26,26 @@ class PostComponent extends Component {
     };
     this.popupContainer = document.createElement('div');
     document.body.appendChild(this.popupContainer);
+    this.togglePostOptionsPopup = this.togglePostOptionsPopup.bind(this);
   }
+
+    
+
+
 
   togglePostOptionsPopup = (e) => {
     console.log("Toggle post options popup");
-    e.stopPropagation(); // Prevent event propagation
     this.setState(prevState => ({
       showPostOptionsPopup: !prevState.showPostOptionsPopup,
     }));
   };
 
-  useEffect(() => {
-    document.body.appendChild(popupContainer);
-    return () => {
-      document.body.removeChild(popupContainer);
-    };
-  }, [popupContainer]);
-
-
   handleOutsideClick = (e) => {
+    console.log("Clicked outside popup");
+    console.log("Popup Container:", this.popupContainer);
+    console.log("Target:", e.target);
     if (!this.popupContainer.contains(e.target)) {
+      console.log("Clicked outside popup container");
       this.setState({
         showPostOptionsPopup: false,
       });
@@ -125,26 +125,14 @@ class PostComponent extends Component {
   };
 
   render() {
-    const { showPostOptionsPopup } = this.state;
     const { post, comments, newCommentText, currentUser, onAddComment, onCommentChange } = this.props;
     const { creatorProfilePicture, isLoadingProfilePicture, profilePictureError, username, isLoadingUsername, usernameError } = this.state;
-
-    const popupComponent = showPostOptionsPopup ? (
-      ReactDOM.createPortal(
-        <PostOptionsPopup onClose={this.togglePostOptionsPopup} />,
-        this.popupContainer
-      )
-    ) : null;
-
+    const { showPostOptionsPopup } = this.state;
+  
     return (
       <div key={post.id} className="border p-4 border-gray-300 pb-8 mb-8">
-
-
         {/* Post Header */}
         <div className="flex flex-row items-center mb-4 border-b border-gray-300 pb-4">
-
-        
-
           {/* Display post creator's profile picture */}
           {isLoadingProfilePicture ? (
             <div className="w-10 h-10 bg-gray-300 rounded-full mr-4"></div>
@@ -153,10 +141,10 @@ class PostComponent extends Component {
           ) : (
             creatorProfilePicture && 
             <Link to={`/users/${username}`} className=' '>
-            <img src={creatorProfilePicture} alt="Profile" className="w-10 h-10 rounded-full mr-4" />
+              <img src={creatorProfilePicture} alt="Profile" className="w-10 h-10 rounded-full mr-4" />
             </Link>
           )}
-
+          
           {/* Post Creator Info */}
           <div>
             {isLoadingUsername ? (
@@ -164,60 +152,56 @@ class PostComponent extends Component {
             ) : usernameError ? (
               <p>Error loading username: {usernameError}</p>
             ) : (
-              
               <Link to={`/users/${username}`} className="text-lg font-semibold">
-                <span className='text-blue-400'> @</span>{username}</Link>
+                <span className='text-blue-400'> @</span>{username}
+              </Link>
             )}
-          <p className="text-sm text-gray-500 cursor-help" title={post.data.createdAt && post.data.createdAt.toString()}>
-            {this.formatTimeDifference(post.data.createdAt ? new Date(post.data.createdAt).getTime() : '')}
-          </p>
+            <p className="text-sm text-gray-500 cursor-help" title={post.data.createdAt && post.data.createdAt.toString()}>
+              {this.formatTimeDifference(post.data.createdAt ? new Date(post.data.createdAt).getTime() : '')}
+            </p>
           </div>
-
-
-      {/* Options button */}
-      <button
-          className="absolute top-0 right-0 mt-2 mr-2 z-10 bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-sm focus:outline-none"
-
-          onClick={this.togglePostOptionsPopup}
-        >
-          <FontAwesomeIcon icon={faEllipsisH} />
-        </button>
-        {popupComponent}
-
+  
+          {/* Options button */}
+          <button onClick={this.togglePostOptionsPopup}>
+            Toggle Popup
+          </button>
+          {showPostOptionsPopup && ReactDOM.createPortal(
+            <PostOptionsPopup onClose={this.togglePostOptionsPopup} />,
+            this.popupContainer
+          )}
         </div>
-
+  
         {/* Render media component if available */}
         {post.data.image && (
           <img src={post.data.image} alt="Post Image" className="max-w-full mb-4 border m-auto" />
         )}
-
+  
         {/* Render post content */}
         <p>{post.data.text}</p>
-
+  
         {/* Render comments */}
         <div className="border-t border-gray-300 pt-4">
           <h4>Comments:</h4>
           <ul>
             {comments[post.id].map((comment) => (
               <CommentComponent
-              key={comment.id}
-              comment={comment}
-              comments={comments[post.id]} // Pass comments for the specific post
-              onDelete={this.handleDeleteComment}
-              currentUser={currentUser}
-              onReply={() => this.handleReply(comment)} // Pass comment as an argument to handleReply function
-            />
-
+                key={comment.id}
+                comment={comment}
+                comments={comments[post.id]} // Pass comments for the specific post
+                onDelete={this.handleDeleteComment}
+                currentUser={currentUser}
+                onReply={() => this.handleReply(comment)} // Pass comment as an argument to handleReply function
+              />
             ))}
           </ul>
         </div>
-
+  
         {/* Form to add new comment */}
         <form onSubmit={(e) => { e.preventDefault(); onAddComment(post.id); }} className="pt-4">
           <input type="text" value={newCommentText} onChange={(e) => onCommentChange(e, post.id)} placeholder="Add a comment..." />
           <button type="submit">Post</button>
         </form>
-
+  
         {/* Buttons for actions */}
         <div className="pt-4">
           <button><FontAwesomeIcon icon={faComment} /> Comment</button>
@@ -228,6 +212,7 @@ class PostComponent extends Component {
     );
   }
 }
+  
 
 PostComponent.propTypes = {
   post: PropTypes.object.isRequired,
