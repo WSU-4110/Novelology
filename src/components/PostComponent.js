@@ -33,8 +33,7 @@ class PostComponent extends Component {
 
 
 
-  togglePostOptionsPopup = (e) => {
-    console.log("Toggle post options popup");
+  togglePostOptionsPopup = () => {
     this.setState(prevState => ({
       showPostOptionsPopup: !prevState.showPostOptionsPopup,
     }));
@@ -128,7 +127,7 @@ class PostComponent extends Component {
     const { post, comments, newCommentText, currentUser, onAddComment, onCommentChange } = this.props;
     const { creatorProfilePicture, isLoadingProfilePicture, profilePictureError, username, isLoadingUsername, usernameError } = this.state;
     const { showPostOptionsPopup } = this.state;
-  
+
     return (
       <div key={post.id} className="border p-4 border-gray-300 pb-8 mb-8">
         {/* Post Header */}
@@ -144,7 +143,7 @@ class PostComponent extends Component {
               <img src={creatorProfilePicture} alt="Profile" className="w-10 h-10 rounded-full mr-4" />
             </Link>
           )}
-          
+
           {/* Post Creator Info */}
           <div>
             {isLoadingUsername ? (
@@ -160,25 +159,25 @@ class PostComponent extends Component {
               {this.formatTimeDifference(post.data.createdAt ? new Date(post.data.createdAt).getTime() : '')}
             </p>
           </div>
-  
+
           {/* Options button */}
           <button onClick={this.togglePostOptionsPopup}>
-            Toggle Popup
+            <FontAwesomeIcon icon={faEllipsisH} />
           </button>
           {showPostOptionsPopup && ReactDOM.createPortal(
             <PostOptionsPopup onClose={this.togglePostOptionsPopup} />,
             this.popupContainer
           )}
         </div>
-  
+
         {/* Render media component if available */}
         {post.data.image && (
           <img src={post.data.image} alt="Post Image" className="max-w-full mb-4 border m-auto" />
         )}
-  
+
         {/* Render post content */}
         <p>{post.data.text}</p>
-  
+
         {/* Render comments */}
         <div className="border-t border-gray-300 pt-4">
           <h4>Comments:</h4>
@@ -195,13 +194,13 @@ class PostComponent extends Component {
             ))}
           </ul>
         </div>
-  
+
         {/* Form to add new comment */}
         <form onSubmit={(e) => { e.preventDefault(); onAddComment(post.id); }} className="pt-4">
           <input type="text" value={newCommentText} onChange={(e) => onCommentChange(e, post.id)} placeholder="Add a comment..." />
           <button type="submit">Post</button>
         </form>
-  
+
         {/* Buttons for actions */}
         <div className="pt-4">
           <button><FontAwesomeIcon icon={faComment} /> Comment</button>
@@ -212,6 +211,7 @@ class PostComponent extends Component {
     );
   }
 }
+
   
 
 PostComponent.propTypes = {
