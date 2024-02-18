@@ -8,6 +8,7 @@ import { handleLogout } from "../functions/Auth";
 
 export default function(){
     const [user] = useAuthState(auth);
+
     return(
         
         <nav className="flex flex-row gap-10 p-4">
