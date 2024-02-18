@@ -75,6 +75,8 @@ class Feed extends Component {
         fetchedPosts.push(post);
         this.fetchCommentsForPost(post);
       });
+      // Sort fetched posts by their creation date in descending order
+      fetchedPosts.sort((a, b) => b.data.createdAt - a.data.createdAt);
       this.setState((prevState) => ({
         posts: fetchedPosts, // Replace existing posts with fetched posts
         filteredPosts: [...prevState.filteredPosts, ...fetchedPosts.filter(newPost => 
@@ -88,6 +90,7 @@ class Feed extends Component {
       this.setState({ isLoading: false });
     }
   };
+  
   
   
   fetchCommentsForPost = async (post) => {
