@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { collection, getDocs, addDoc, query, where } from 'firebase/firestore';
+import { collection, getDocs, addDoc, query, where, getDoc, doc} from 'firebase/firestore';
 import { db } from '../firebase';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment, faThumbsUp, faShare, faReply } from '@fortawesome/free-solid-svg-icons';
@@ -63,18 +63,31 @@ class Feed extends Component {
       }
       this.setState({ isLoading: true });
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      const querySnapshot = await getDocs(collection(db, 'posts'));
+  
+      const currentUserID = this.props.currentUser.uid;
+      
+      // Fetch the following list from the current user document
+      const userDocRef = doc(db, 'users', currentUserID);
+      const userDocSnapshot = await getDoc(userDocRef);
+      const followingList = userDocSnapshot.exists() ? userDocSnapshot.data().following : [];
+  
+      // Fetch posts from users in the following list
       const fetchedPosts = [];
-      querySnapshot.forEach((doc) => {
-        const postData = doc.data();
-        const createdAt = postData.createdAt && postData.createdAt.toDate ? postData.createdAt.toDate() : null;
-        const post = new Post(doc.id, {
-          ...postData,
-          createdAt: createdAt,
+      for (const followedUserID of followingList) {
+        const q = query(collection(db, 'posts'), where('uid', '==', followedUserID));
+        const userPostsSnapshot = await getDocs(q);
+        userPostsSnapshot.forEach((doc) => {
+          const postData = doc.data();
+          const createdAt = postData.createdAt && postData.createdAt.toDate ? postData.createdAt.toDate() : null;
+          const post = new Post(doc.id, {
+            ...postData,
+            createdAt: createdAt,
+          });
+          fetchedPosts.push(post);
+          this.fetchCommentsForPost(post);
         });
-        fetchedPosts.push(post);
-        this.fetchCommentsForPost(post);
-      });
+      }
+  
       // Sort fetched posts by their creation date in descending order
       fetchedPosts.sort((a, b) => b.data.createdAt - a.data.createdAt);
       this.setState((prevState) => ({
@@ -84,13 +97,12 @@ class Feed extends Component {
         )], // Add fetched posts to filteredPosts, avoiding duplicates
         isLoading: false,
       }));
-      this.totalPosts = querySnapshot.size;
+      this.totalPosts = fetchedPosts.length;
     } catch (error) {
       console.error('Error fetching posts:', error);
       this.setState({ isLoading: false });
     }
   };
-  
   
   
   fetchCommentsForPost = async (post) => {
