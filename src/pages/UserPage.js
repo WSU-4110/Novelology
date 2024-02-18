@@ -62,6 +62,7 @@ const UserPage = () => {
                     {userData.uid && <p>UID: {userData.uid}</p>}
                     {userData.email && <p>Email: {userData.email}</p>}
                     {userData.bio && <p>Bio: {userData.bio}</p>}
+                    {userData.pronouns && <p>Pronouns: {userData.pronouns}</p>}
                     {/* Display more user data as needed */}
                 </div>
             ) : (

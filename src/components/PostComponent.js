@@ -6,6 +6,10 @@ import { faComment, faThumbsUp, faShare } from '@fortawesome/free-solid-svg-icon
 import fetchUserProfilePicture from '../functions/fetchUserProfilePicture'; // Import fetchUserProfilePicture
 import fetchUsernameWithUID from '../functions/fetchUsernameWithUID'; // Import fetchUsernameWithUID
 import { Link } from 'react-router-dom';
+import { faEllipsisH } from '@fortawesome/free-solid-svg-icons';
+import PostOptionsPopup from './PostOptionsPopup';
+import ReactDOM from 'react-dom';
+
 
 class PostComponent extends Component {
   constructor(props) {
@@ -18,8 +22,44 @@ class PostComponent extends Component {
       username: null, // Store post creator's username
       isLoadingUsername: false, // Loading state for username
       usernameError: null, // Error state for fetching username
+      showPostOptionsPopup: false, // State to show/hide post options popup
     };
+    this.popupContainer = document.createElement('div');
+    document.body.appendChild(this.popupContainer);
   }
+
+  togglePostOptionsPopup = (e) => {
+    console.log("Toggle post options popup");
+    e.stopPropagation(); // Prevent event propagation
+    this.setState(prevState => ({
+      showPostOptionsPopup: !prevState.showPostOptionsPopup,
+    }));
+  };
+
+  useEffect(() => {
+    document.body.appendChild(popupContainer);
+    return () => {
+      document.body.removeChild(popupContainer);
+    };
+  }, [popupContainer]);
+
+
+  handleOutsideClick = (e) => {
+    if (!this.popupContainer.contains(e.target)) {
+      this.setState({
+        showPostOptionsPopup: false,
+      });
+    }
+  };
+
+  componentDidMount() {
+    document.addEventListener('click', this.handleOutsideClick);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('click', this.handleOutsideClick);
+  }
+
 
   // Function to format time difference
   formatTimeDifference = (timestamp) => {
@@ -85,13 +125,26 @@ class PostComponent extends Component {
   };
 
   render() {
+    const { showPostOptionsPopup } = this.state;
     const { post, comments, newCommentText, currentUser, onAddComment, onCommentChange } = this.props;
     const { creatorProfilePicture, isLoadingProfilePicture, profilePictureError, username, isLoadingUsername, usernameError } = this.state;
 
+    const popupComponent = showPostOptionsPopup ? (
+      ReactDOM.createPortal(
+        <PostOptionsPopup onClose={this.togglePostOptionsPopup} />,
+        this.popupContainer
+      )
+    ) : null;
+
     return (
-      <div key={post.id} className="border-b border-gray-300 pb-8 mb-8">
+      <div key={post.id} className="border p-4 border-gray-300 pb-8 mb-8">
+
+
         {/* Post Header */}
-        <div className="flex items-center mb-4 border-b border-gray-300 pb-4">
+        <div className="flex flex-row items-center mb-4 border-b border-gray-300 pb-4">
+
+        
+
           {/* Display post creator's profile picture */}
           {isLoadingProfilePicture ? (
             <div className="w-10 h-10 bg-gray-300 rounded-full mr-4"></div>
@@ -119,7 +172,24 @@ class PostComponent extends Component {
             {this.formatTimeDifference(post.data.createdAt ? new Date(post.data.createdAt).getTime() : '')}
           </p>
           </div>
+
+
+      {/* Options button */}
+      <button
+          className="absolute top-0 right-0 mt-2 mr-2 z-10 bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-sm focus:outline-none"
+
+          onClick={this.togglePostOptionsPopup}
+        >
+          <FontAwesomeIcon icon={faEllipsisH} />
+        </button>
+        {popupComponent}
+
         </div>
+
+        {/* Render media component if available */}
+        {post.data.image && (
+          <img src={post.data.image} alt="Post Image" className="max-w-full mb-4 border m-auto" />
+        )}
 
         {/* Render post content */}
         <p>{post.data.text}</p>
