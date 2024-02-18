@@ -22,12 +22,12 @@ body.active-modal {
     left: 50%;
     transform: translate(-50%, -50%);
     line-height: 1.4;
-    background: #fff9f3; /*changes the background-color of the log-in form*/
+    background: #faf2f2; /*changes the background-color of the log-in form*/
     padding: 14px 28px;
     border-radius: 3px;
     
     min-width: 350px;
-    max-height: 90%;
+    max-height: 45%;
 }
 
 .close-modal {

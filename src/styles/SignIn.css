@@ -1,5 +1,5 @@
 body {
-    font-family: Myriad Pro Bold Condensed Italic, sans-serif;
+    font-family: 'Verdana';
   }
   
   /* Component-specific styles */
@@ -14,7 +14,8 @@ body {
   /* Heading styles */
   h1 {
     font-size: 1.5rem;
-    margin-bottom: 4.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center
   }
   
   /* Form styles */
@@ -71,7 +72,7 @@ body {
     color: #000;
   }
   
-  /* Google sign-in button styles */
+  /* Google sign-in button styles
   .google-signin-button {
     display: flex;
     align-items: center;
@@ -106,4 +107,4 @@ body {
   @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
-  }
+  } 

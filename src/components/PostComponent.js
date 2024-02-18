@@ -53,7 +53,7 @@ class PostComponent extends Component {
         <p>{post.data.text}</p>
         
         <div>
-          <h4>Comments:</h4>
+          <h3>Comments:</h3>
           <ul>
           {comments.map((comment) => (
               <CommentComponent
@@ -67,13 +67,41 @@ class PostComponent extends Component {
         </div>
         <form onSubmit={(e) => { e.preventDefault(); onAddComment(post.id); }}>
           <input type="text" value={newCommentText} onChange={(e) => onCommentChange(e, post.id)} placeholder="Add a comment..." />
-          <button type="submit">Post</button>
+          
+          
+          <button type="submit">Post</button> 
+          
+        
+
+
+        
         </form>
-        <div>
-          <button><FontAwesomeIcon icon={faComment} /> Comment</button>
+
+        {/* <div className="min-w-0.5 min-h-100  p-2">
+          <button><FontAwesomeIcon icon={faComment}  /> Comment</button>
           <button><FontAwesomeIcon icon={faThumbsUp} /> Like</button>
           <button><FontAwesomeIcon icon={faShare} /> Share</button>
+        </div> */}
+
+         <div className="min-w-0.5 p-1">
+          <button><FontAwesomeIcon icon={faComment} /> Comment</button>
         </div>
+
+        <div className="min-w-0.5 p-1">
+          <button><FontAwesomeIcon icon={faThumbsUp} /> Like</button>
+        </div>
+
+        <div className="min-w-0.5 p-1">
+          <button><FontAwesomeIcon icon={faShare} /> Share</button>
+        </div> 
+
+
+
+
+
+
+
+
       </div>
     );
   }

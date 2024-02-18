@@ -18,7 +18,16 @@ const BookSearch = () => {
                 <h3>Book Search</h3>
                 <div className="search">
                     <input type="text" placeholder="Search Book..." value={bSearch} onChange={e=>setBSearch(e.target.value)} onKeyDown ={searchBook} />
-                    <button>Search</button>
+                    {/* <button>Search</button> */}
+                
+                    <button 
+                    type="submit" 
+                    className="px-4 py-1 bg-#F4D0A7-500 text-black sqauare-lg hover:bg-#f7e3cb-600 focus:outline-none focus:bg-#f7e3cb-600"
+                >
+                    Search
+                </button>
+                
+                
                 </div>
             </div>
             <div className="card-container">
@@ -30,3 +39,5 @@ const BookSearch = () => {
 };
 
 export default BookSearch;
+
+            

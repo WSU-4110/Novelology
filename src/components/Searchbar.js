@@ -40,7 +40,7 @@ function Searchbar({ onSearch }) {
                 />
                 <button 
                     type="submit" 
-                    className="px-4 py-2 bg-#F4D0A7-500 text-black sqauare-lg hover:bg-#f7e3cb-600 focus:outline-none focus:bg-#f7e3cb-600"
+                    className="px-4 py-1 bg-#F4D0A7-500 text-black sqauare-lg hover:bg-#f7e3cb-600 focus:outline-none focus:bg-#f7e3cb-600"
                 >
                     Search
                 </button>

@@ -23,11 +23,14 @@ export function SignIn() {
   }
 
   return (
-    <div className="min-w-20 p-2">
-      <h1>Sign In</h1>
+    <div className="min-w-20 p-1">
+      <h1 style={{ fontSize: '1.0rem', marginBottom: '2.5rem', textAlign: 'center' }}>
+      Sign In
+      </h1>
+
       <form>
       <button
-          className="flex items-center w-full bg-white border border-gray-300 rounded-[1rem] shadow-md px-6 py-2 text-sm font-medium text-gray-800 mt-4 mb-4"
+          className="flex items-center w-full bg-white border border-gray-300 rounded-[5rem] shadow-md px-6 py-2 text-sm font-medium text-gray-800 mt-4 mb-4"
           id="register"
           onClick={(event) => {
               event.preventDefault(); // Prevent default form submission
@@ -58,3 +61,6 @@ export function SignIn() {
     </div>
   );
 }
+
+
+
