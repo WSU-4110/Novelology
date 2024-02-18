@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment, faThumbsUp, faShare } from '@fortawesome/free-solid-svg-icons';
 import fetchUserProfilePicture from '../functions/fetchUserProfilePicture'; // Import fetchUserProfilePicture
 import fetchUsernameWithUID from '../functions/fetchUsernameWithUID'; // Import fetchUsernameWithUID
+import { Link } from 'react-router-dom';
 
 class PostComponent extends Component {
   constructor(props) {
@@ -97,7 +98,10 @@ class PostComponent extends Component {
           ) : profilePictureError ? (
             <p>Error loading profile picture: {profilePictureError}</p>
           ) : (
-            creatorProfilePicture && <img src={creatorProfilePicture} alt="Profile" className="w-10 h-10 rounded-full mr-4" />
+            creatorProfilePicture && 
+            <Link to={`/users/${username}`} className=' '>
+            <img src={creatorProfilePicture} alt="Profile" className="w-10 h-10 rounded-full mr-4" />
+            </Link>
           )}
 
           {/* Post Creator Info */}
@@ -107,7 +111,9 @@ class PostComponent extends Component {
             ) : usernameError ? (
               <p>Error loading username: {usernameError}</p>
             ) : (
-              <p className="font-bold">{username}</p> 
+              
+              <Link to={`/users/${username}`} className="text-lg font-semibold">
+                <span className='text-blue-400'> @</span>{username}</Link>
             )}
           <p className="text-sm text-gray-500 cursor-help" title={post.data.createdAt && post.data.createdAt.toString()}>
             {this.formatTimeDifference(post.data.createdAt ? new Date(post.data.createdAt).getTime() : '')}
