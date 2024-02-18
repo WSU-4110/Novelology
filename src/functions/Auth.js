@@ -84,7 +84,10 @@ async function addUserToDatabase(uid, email, displayName, navigate) {
             email: email,
             emailVerified: false,
             username: username, // Use sanitized username
-            signUpTime: signUpTime // Add sign-up time
+            signUpTime: signUpTime, // Add sign-up time
+            followers: [],
+            following: [],
+            UID: uid
         });
         console.log("User added to database successfully");
 
