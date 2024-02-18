@@ -1,81 +1,60 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { db, auth, storage } from "../firebase"; 
-import { getDoc, doc, setDoc, collection, getDocs } from "firebase/firestore"; // Import collection and getDocs
+import { getDoc, doc, setDoc } from "firebase/firestore"; // Import necessary Firestore functions
 import UploadPFP from "./UploadPFP";
-import fetchPFP from "../functions/fetchPFP";
 import PronounsDropdown from "./PronounsDropdown";
 import RolesSelection from "./RolesSelection";
 import BioTextArea from "./BioTextArea";
 import SelectGenres from "./SelectGenres";
+import fetchPFP from "../functions/fetchPFP"; // Import fetchPFP function
 
 const Onboarding = () => {
   // State variables
   const [bio, setBio] = useState("");
   const [profilePicture, setProfilePicture] = useState(null); 
   const [pronouns, setPronouns] = useState("");
-
-  const [hasCompletedSetup, setHasCompletedSetup] = useState(false);
   const [fetchedProfilePicture, setFetchedProfilePicture] = useState(null);
   const [selectedRoles, setSelectedRoles] = useState([]);
   const [authError, setAuthError] = useState(false);
-  const [countdown, setCountdown] = useState(5); // Countdown in seconds
- 
-
 
   // Hooks
   const navigate = useNavigate();
 
   // Effect to fetch user data
-
   useEffect(() => {
-    const fetchData = async () => {
-      console.log("Fetching data...");
-      const userId = auth.currentUser ? auth.currentUser.uid : null;
-      if (!userId) {
-        setAuthError(true);
-        const timer = setInterval(() => {
-          setCountdown((prevCountdown) => prevCountdown - 1);
-        }, 1000);
-        setTimeout(() => {
-          clearInterval(timer);
-          navigate("/");
-        }, countdown * 1000);
-        return;
-      }
-
-      try {
-        const userRef = doc(db, "users", userId);
-        const docSnapshot = await getDoc(userRef);
-
-        if (docSnapshot.exists()) {
-          const userData = docSnapshot.data();
-          console.log("Fetched data:", userData);
-          setBio(userData.bio || "");
-          setPronouns(userData.pronouns || "");
-
-          const existingURL = await fetchPFP(userId);
-          if (existingURL) {
-            setFetchedProfilePicture(existingURL);
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        try {
+          console.log("Fetching data...");
+          const userId = user.uid;
+          const userRef = doc(db, "users", userId);
+          const docSnapshot = await getDoc(userRef);
+  
+          if (docSnapshot.exists()) {
+            const userData = docSnapshot.data();
+            console.log("Fetched data:", userData);
+            setBio(userData.bio || "");
+            setPronouns(userData.pronouns || "");
+  
+            const existingURL = await fetchPFP(userId);
+            if (existingURL) {
+              setFetchedProfilePicture(existingURL);
+            }
           }
+        } catch (error) {
+          console.error("Error fetching data:", error);
         }
-      } catch (error) {
-        console.error("Error fetching data:", error);
+      } else {
+        // Handle the case where the user is not signed in
+        console.log("User not signed in.");
       }
-    };
-
-    fetchData();
+    });
+  
+    return () => unsubscribe();
   }, []);
-
-
-
-  useEffect(() => {
-    if (countdown === 0) {
-      navigate("/?signup=true");
-    }
-  }, [countdown]);
-
-
+  
+  
 
   // Event handler to submit form
   const handleSubmitForm = async (e) => {
@@ -132,7 +111,6 @@ const Onboarding = () => {
           selectedGenres: []
         }, { merge: true });
 
-        setHasCompletedSetup(false);
         setBio("");
         setPronouns("");
         window.location.reload();
@@ -142,33 +120,28 @@ const Onboarding = () => {
     }
   };
 
+  return (
+    <div className="mt-[-1em] max-w-md mx-auto p-6 bg-white rounded-lg shadow-xl overflow-y-scroll max-h-svh">
+      <h1 className="text-2xl font-bold mb-4">Onboarding</h1>
 
-    return (
-      <div className="mt-[-1em] max-w-md mx-auto p-6 bg-white rounded-lg shadow-xl overflow-y-scroll max-h-svh">
-        <h1 className="text-2xl font-bold mb-4">Onboarding</h1>
-       
-     {/* handle if user is not signed in */}
-     {authError && (
-      <div className="absolute inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50 z-10">
-        <div className="bg-white p-8 rounded-lg shadow-md">
-          <p className="text-center">You need to sign in to continue. Redirecting in {countdown} seconds...</p>
+      {authError && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+          <strong className="font-bold">Error:</strong>
+          <span className="block sm:inline"> You need to sign in to continue.</span>
         </div>
-      </div>
-    )}
-        {/* Restart setup button */}
-        <form onSubmit={handleSubmitForm} className="flex flex-col">
-          <UploadPFP setProfilePicture={setProfilePicture} />
-          {fetchedProfilePicture && (
-            <img src={fetchedProfilePicture} alt="Profile" className="w-24 h-24 rounded-full my-4" />
-          )}
-          <BioTextArea bio={bio} setBio={setBio} />
-          <PronounsDropdown pronouns={pronouns} setPronouns={setPronouns} />
+      )}
 
-          <RolesSelection selectedRoles={selectedRoles} setSelectedRoles={setSelectedRoles} />
-
+      <form onSubmit={handleSubmitForm} className="flex flex-col">
+        <UploadPFP setProfilePicture={setProfilePicture} />
+        {fetchedProfilePicture && (
+          <img src={fetchedProfilePicture} alt="Profile" className="w-24 h-24 rounded-full my-4" />
+        )}
+        <BioTextArea bio={bio} setBio={setBio} />
+        <PronounsDropdown pronouns={pronouns} setPronouns={setPronouns} />
+        <RolesSelection selectedRoles={selectedRoles} setSelectedRoles={setSelectedRoles} />
         <div className="mb-4">
           <h2 className="text-lg font-semibold">Select Genres</h2>
-        <SelectGenres />
+          <SelectGenres />
         </div>
         <button
           type="submit"
@@ -182,7 +155,6 @@ const Onboarding = () => {
       </button>
     </div>
   );
-  
 };
 
 export default Onboarding;

@@ -5,6 +5,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment, faThumbsUp, faShare } from '@fortawesome/free-solid-svg-icons';
 import fetchUserProfilePicture from '../functions/fetchUserProfilePicture'; // Import fetchUserProfilePicture
 import fetchUsernameWithUID from '../functions/fetchUsernameWithUID'; // Import fetchUsernameWithUID
+import { Link } from 'react-router-dom';
+import { faEllipsisH } from '@fortawesome/free-solid-svg-icons';
+import PostOptionsPopup from './PostOptionsPopup';
+import ReactDOM from 'react-dom';
+
 
 class PostComponent extends Component {
   constructor(props) {
@@ -17,8 +22,43 @@ class PostComponent extends Component {
       username: null, // Store post creator's username
       isLoadingUsername: false, // Loading state for username
       usernameError: null, // Error state for fetching username
+      showPostOptionsPopup: false, // State to show/hide post options popup
     };
+    this.popupContainer = document.createElement('div');
+    document.body.appendChild(this.popupContainer);
+    this.togglePostOptionsPopup = this.togglePostOptionsPopup.bind(this);
   }
+
+    
+
+
+
+  togglePostOptionsPopup = () => {
+    this.setState(prevState => ({
+      showPostOptionsPopup: !prevState.showPostOptionsPopup,
+    }));
+  };
+
+  handleOutsideClick = (e) => {
+    console.log("Clicked outside popup");
+    console.log("Popup Container:", this.popupContainer);
+    console.log("Target:", e.target);
+    if (!this.popupContainer.contains(e.target)) {
+      console.log("Clicked outside popup container");
+      this.setState({
+        showPostOptionsPopup: false,
+      });
+    }
+  };
+
+  componentDidMount() {
+    document.addEventListener('click', this.handleOutsideClick);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('click', this.handleOutsideClick);
+  }
+
 
   // Function to format time difference
   formatTimeDifference = (timestamp) => {
@@ -86,18 +126,22 @@ class PostComponent extends Component {
   render() {
     const { post, comments, newCommentText, currentUser, onAddComment, onCommentChange } = this.props;
     const { creatorProfilePicture, isLoadingProfilePicture, profilePictureError, username, isLoadingUsername, usernameError } = this.state;
+    const { showPostOptionsPopup } = this.state;
 
     return (
-      <div key={post.id} className="border-b border-gray-300 pb-8 mb-8">
+      <div key={post.id} className="border p-4 border-gray-300 pb-8 mb-8">
         {/* Post Header */}
-        <div className="flex items-center mb-4 border-b border-gray-300 pb-4">
+        <div className="flex flex-row items-center mb-4 border-b border-gray-300 pb-4">
           {/* Display post creator's profile picture */}
           {isLoadingProfilePicture ? (
             <div className="w-10 h-10 bg-gray-300 rounded-full mr-4"></div>
           ) : profilePictureError ? (
             <p>Error loading profile picture: {profilePictureError}</p>
           ) : (
-            creatorProfilePicture && <img src={creatorProfilePicture} alt="Profile" className="w-10 h-10 rounded-full mr-4" />
+            creatorProfilePicture && 
+            <Link to={`/users/${username}`} className=' '>
+              <img src={creatorProfilePicture} alt="Profile" className="w-10 h-10 rounded-full mr-4" />
+            </Link>
           )}
 
           {/* Post Creator Info */}
@@ -107,13 +151,29 @@ class PostComponent extends Component {
             ) : usernameError ? (
               <p>Error loading username: {usernameError}</p>
             ) : (
-              <p className="font-bold">{username}</p> 
+              <Link to={`/users/${username}`} className="text-lg font-semibold">
+                <span className='text-blue-400'> @</span>{username}
+              </Link>
             )}
-          <p className="text-sm text-gray-500 cursor-help" title={post.data.createdAt && post.data.createdAt.toString()}>
-            {this.formatTimeDifference(post.data.createdAt ? new Date(post.data.createdAt).getTime() : '')}
-          </p>
+            <p className="text-sm text-gray-500 cursor-help" title={post.data.createdAt && post.data.createdAt.toString()}>
+              {this.formatTimeDifference(post.data.createdAt ? new Date(post.data.createdAt).getTime() : '')}
+            </p>
           </div>
+
+          {/* Options button */}
+          <button onClick={this.togglePostOptionsPopup}>
+            <FontAwesomeIcon icon={faEllipsisH} />
+          </button>
+          {showPostOptionsPopup && ReactDOM.createPortal(
+            <PostOptionsPopup onClose={this.togglePostOptionsPopup} />,
+            this.popupContainer
+          )}
         </div>
+
+        {/* Render media component if available */}
+        {post.data.image && (
+          <img src={post.data.image} alt="Post Image" className="max-w-full mb-4 border m-auto" />
+        )}
 
         {/* Render post content */}
         <p>{post.data.text}</p>
@@ -129,7 +189,7 @@ class PostComponent extends Component {
                 comments={comments[post.id]} // Pass comments for the specific post
                 onDelete={this.handleDeleteComment}
                 currentUser={currentUser}
-                onReply={this.handleReply}
+                onReply={() => this.handleReply(comment)} // Pass comment as an argument to handleReply function
               />
             ))}
           </ul>
@@ -151,6 +211,8 @@ class PostComponent extends Component {
     );
   }
 }
+
+  
 
 PostComponent.propTypes = {
   post: PropTypes.object.isRequired,
