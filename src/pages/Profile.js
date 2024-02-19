@@ -76,6 +76,7 @@ const Profile = () => {
                     <div className='m-8'>
                         <p><strong>Username:</strong> {userData.username}</p>
                         <p><strong>Bio:</strong> {userData.bio}</p>
+                        <p><strong>Roles:</strong> {userData.roles}</p>
                         <p><strong>Pronouns:</strong> {userData.pronouns}</p>
                         <p><strong>Genres:</strong> {userData.genres ? userData.genres.join(', ') : 'No genres selected'}</p>
                     </div>

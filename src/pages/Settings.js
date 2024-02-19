@@ -10,6 +10,7 @@ import { handleDeleteAccount } from '../functions/Auth.js';
 import SelectGenres from '../components/SelectGenres.js'
 
 import "../styles/settings.css";
+import RolesSelection from '../components/RolesSelection.js';
 
 export default function Settings() {
     const [user] = useAuthState(auth);
@@ -157,35 +158,8 @@ export default function Settings() {
                                     <option value="they/them">They/Them</option>
                                 </select>
     
-                                <div className="mt-2">
-                                    <label className="block">
-                                        <input
-                                            type="checkbox"
-                                            value="Reader"
-                                            checked={selectedRoles.includes("Reader")}
-                                            onChange={() => handleRoleChange("Reader")}
-                                        />
-                                        Reader
-                                    </label>
-                                    <label className="block">
-                                        <input
-                                            type="checkbox"
-                                            value="Reviewer"
-                                            checked={selectedRoles.includes("Reviewer")}
-                                            onChange={() => handleRoleChange("Reviewer")}
-                                        />
-                                        Reviewer
-                                    </label>
-                                    <label className="block">
-                                        <input
-                                            type="checkbox"
-                                            value="Author"
-                                            checked={selectedRoles.includes("Author")}
-                                            onChange={() => handleRoleChange("Author")}
-                                        />
-                                        Author
-                                    </label>
-                                </div>
+                                <RolesSelection selectedRoles={selectedRoles} setSelectedRoles={setSelectedRoles} />
+
     
                                 <SelectGenres/>
     
