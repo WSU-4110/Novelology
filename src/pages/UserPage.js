@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { collection, query, where, getDocs, doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 import { FaInfoCircle, FaUser } from 'react-icons/fa';
 import fetchPFP from '../functions/fetchPFP';
+import fetchUIDwithUsername from '../functions/fetchUIDwithUsername';
+import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 
 const FollowButton = ({ isFollowing, toggleFollow }) => {
     return (
@@ -19,16 +21,19 @@ const FollowButton = ({ isFollowing, toggleFollow }) => {
 const UserPage = () => {
     const { username } = useParams();
     const [userData, setUserData] = useState(null);
-    const [fetchedProfilePicture, setFetchedProfilePicture] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isFollowing, setIsFollowing] = useState(false);
     const [followersCount, setFollowersCount] = useState(0);
     const [followingCount, setFollowingCount] = useState(0);
-   
+    const [profilePictureURL, setProfilePictureURL] = useState(null);
+
     useEffect(() => {
         const fetchUserData = async () => {
             try {
                 console.log('Fetching user data...');
+                const uid = await fetchUIDwithUsername(username);
+                console.log('User UID:', uid);
+
                 const q = query(collection(db, 'users'), where('username', '==', username));
                 const querySnapshot = await getDocs(q);
 
@@ -37,11 +42,9 @@ const UserPage = () => {
                     console.log('User Data:', docData);
                     setUserData(docData);
 
-                    const profilePictureURL = await fetchPFP(auth.currentUser.uid);
-                    if (profilePictureURL !== fetchedProfilePicture) {
-                        setFetchedProfilePicture(profilePictureURL);
-                        localStorage.setItem('profilePicture', profilePictureURL); 
-                    }
+                    // Fetch profile picture using fetchPFP function with the obtained UID
+                    const fetchedProfilePicture = await fetchPFP(uid);
+                    setProfilePictureURL(fetchedProfilePicture);
 
                     setFollowersCount(docData.followers ? docData.followers.length : 0);
                     setFollowingCount(docData.following ? docData.following.length : 0);
@@ -147,38 +150,41 @@ const UserPage = () => {
 
     const defaultProfilePicture = require('../assets/default-profile-picture.jpg');
 
+
     return (
         <div className="max-w-md mx-auto p-4 bg-white rounded-lg shadow-md">
             {userData ? (
                 <div>
                     <h2 className="text-3xl font-semibold mb-4"><span className="text-blue-400">@</span> {userData.username}</h2>
                     <div className="mr-8">
-                        <img 
-                            src={fetchedProfilePicture || defaultProfilePicture} 
-                            alt="Profile" 
-                            className="w-24 h-24 rounded-full" 
-                        />
+                        {profilePictureURL ? (
+                            <img src={profilePictureURL} alt="Profile" className="w-10 h-10 rounded-full mr-4" />
+                        ) : (
+                            <div className="w-10 h-10 bg-gray-300 rounded-full mr-4"></div>
+                        )}
                     </div>
-                    {userData.bio ? (
-                        <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">Bio:</span> {userData.bio}</p>
-                    ) : (
-                        <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">Bio:</span> <span className="text-orange-500">No bio provided</span></p>
-                    )}
-                    {userData.pronouns && <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">Pronouns:</span> {userData.pronouns}</p>}
-                    <div className="flex justify-between mb-4">
-                        <p className="font-semibold"><FaUser className="inline-block mr-2" /> Followers: {followersCount}</p>
-                        <p className="font-semibold"><FaUser className="inline-block mr-2" /> Following: {followingCount}</p>
-                    </div>
-                    {userData && userData.role && userData.role.length > 0 && (
-                        <div className="mb-2">
-                            <p><strong>Roles:</strong></p>
-                            <ul className="list-disc ml-4">
-                                {userData.role.map((role, index) => (
-                                    <li key={index}>{role}</li>
-                                ))}
-                            </ul>
+                    <div>
+                        {userData.bio ? (
+                            <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">Bio:</span> {userData.bio}</p>
+                        ) : (
+                            <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">Bio:</span> <span className="text-orange-500">No bio provided</span></p>
+                        )}
+                        {userData.pronouns && <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">Pronouns:</span> {userData.pronouns}</p>}
+                        <div className="flex justify-between mb-4">
+                            <p className="font-semibold"><FaUser className="inline-block mr-2" /> Followers: {followersCount}</p>
+                            <p className="font-semibold"><FaUser className="inline-block mr-2" /> Following: {followingCount}</p>
                         </div>
-                    )}
+                        {userData.role && userData.role.length > 0 && (
+                            <div className="mb-2">
+                                <p><strong>Roles:</strong></p>
+                                <ul className="list-disc ml-4">
+                                    {userData.role.map((role, index) => (
+                                        <li key={index}>{role}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+                    </div>
                     {auth.currentUser && auth.currentUser.uid !== userData.uid && (
                         <FollowButton isFollowing={isFollowing} toggleFollow={toggleFollow} />
                     )}
@@ -189,5 +195,5 @@ const UserPage = () => {
         </div>
     );
 };
-            
+
 export default UserPage;
