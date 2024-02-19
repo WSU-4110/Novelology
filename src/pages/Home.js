@@ -7,8 +7,9 @@ import Searchbar from '../components/Searchbar';
 import UploadPFP from '../components/UploadPFP.js';
 import { handleSearch } from '../functions/searchFunctions'; // Import handleSearch function
 import Feed from './Feed.js';
-
+import PopularUsers from '../components/PopularUsers.js';
 import BookSearch from '../components/BookSearch.js';
+
 
 export default function Home() {
     const [user, loading, error] = useAuthState(auth);
@@ -43,6 +44,7 @@ export default function Home() {
                             <h1 className='text-3xl font-bold underline'>Welcome back, {user.displayName}!</h1>
                         )}
                         <Feed currentUser={user} />
+                        <PopularUsers criteria='followers' />
                     </div>
                 </>
             )}
