@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { deleteUser } from "firebase/auth";
-import { auth, db, provider } from '../firebase.js'; // Consolidated Firebase imports
+import { auth, db } from '../firebase.js'; // Consolidated Firebase imports
 import { useNavigate } from "react-router-dom";
 import UploadPFP from '../components/UploadPFP.js';
 import DeleteAccountModal from '../components/DeleteAccountModal.js';
-import { doc, getDoc, updateDoc, deleteDoc} from 'firebase/firestore';
+import { doc, getDoc, updateDoc} from 'firebase/firestore';
 import { handleDeleteAccount } from '../functions/Auth.js';
 import SelectGenres from '../components/SelectGenres.js'
 

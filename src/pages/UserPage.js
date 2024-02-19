@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { collection, query, where, getDocs, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db, auth } from '../firebase';
-import fetchUserProfilePicture from '../functions/fetchUserProfilePicture'; // Import fetchUserProfilePicture
-import fetchUIDwithUsername from '../functions/fetchUIDwithUsername';
-import { FaInfoCircle, FaEnvelope, FaUser } from 'react-icons/fa';
+import { FaInfoCircle, FaUser } from 'react-icons/fa';
 import fetchPFP from '../functions/fetchPFP';
 
 const FollowButton = ({ isFollowing, toggleFollow }) => {
