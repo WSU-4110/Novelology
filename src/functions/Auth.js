@@ -10,8 +10,10 @@ const storage = getStorage();
 export function signUpWithEmail(htmlEmail, htmlPass, htmlUser) {
     handleSignUpWithEmail(htmlEmail, htmlPass, htmlUser);
 }
-export async function handleSignUpWithPopup(navigate) {
+export async function handleSignUpWithPopup(navigate, setLoading) {
     try {
+        setLoading(true); // Set loading state to true
+
         // Sign out the current user from Firebase Authentication
         await signOut(auth);
 
@@ -34,10 +36,15 @@ export async function handleSignUpWithPopup(navigate) {
         navigate('/setup-account');
     } catch (error) {
         console.error("Error signing up with Google:", error);
+    } finally {
+        setLoading(false); // Set loading state to false regardless of success or failure
     }
 }
-export async function handleSignInWithPopup(navigate) {
+
+export async function handleSignInWithPopup(navigate, setLoading) {
     try {
+        setLoading(true); // Set loading state to true
+
         // Sign in with Google using a popup
         const result = await signInWithPopup(auth, provider);
 
@@ -59,19 +66,28 @@ export async function handleSignInWithPopup(navigate) {
         }
     } catch (error) {
         console.error("Error signing in with Google:", error);
+    } finally {
+        setLoading(false); // Set loading state to false regardless of success or failure
     }
 }
 
 
 
+
 async function addUserToDatabase(uid, email, displayName, navigate) {
     try {
+        // Remove any spaces from the display name
+        const username = displayName.replace(/\s/g, '');
+
         const signUpTime = Date.now(); // Get current timestamp
         await setDoc(doc(db, "users", uid), {
             email: email,
             emailVerified: false,
-            username: displayName,
-            signUpTime: signUpTime // Add sign-up time
+            username: username, // Use sanitized username
+            signUpTime: signUpTime, // Add sign-up time
+            followers: [],
+            following: [],
+            UID: uid
         });
         console.log("User added to database successfully");
 
@@ -81,6 +97,7 @@ async function addUserToDatabase(uid, email, displayName, navigate) {
         console.error("Error adding user to database:", error);
     }
 }
+
 
 
 function handleSignUpWithEmail(htmlEmail, htmlPass, htmlUser) {

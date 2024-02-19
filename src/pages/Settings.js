@@ -16,8 +16,12 @@ export default function Settings() {
     const [userData, setUserData] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [newBio, setNewBio] = useState('');
-    const [showSavedMessage, setShowSavedMessage] = useState(false); 
+    const [showSavedMessage, setShowSavedMessage] = useState(false);
+    const [desiredUsername, setDesiredUsername] = useState('');
+    const [usernameChangeRequested, setUsernameChangeRequested] = useState(false);
+    const [usernameAvailability, setUsernameAvailability] = useState(true); // Initially assume username is available
     const navigate = useNavigate();
+
 
 
     const [pronouns, setPronouns] = useState('');
@@ -98,9 +102,36 @@ export default function Settings() {
         }
     }
 
+    const checkUsernameAvailability = async () => {
+        try {
+            const usernameDoc = doc(db, 'usernames', desiredUsername.toLowerCase());
+            const docSnapshot = await getDoc(usernameDoc);
+            setUsernameAvailability(!docSnapshot.exists()); // Update username availability state based on snapshot
+        } catch (error) {
+            console.error('Error checking username availability:', error);
+        }
+    };
+
+    const handleUsernameChangeRequest = async () => {
+        try {
+            // Update user's data in Firestore to include the desired username
+            await updateDoc(doc(db, 'users', user.uid), {
+                username: desiredUsername // Update the username field directly
+            });
+            setShowSavedMessage(true);
+            setTimeout(() => {
+                setShowSavedMessage(false);
+            }, 2000);
+        } catch (error) {
+            console.error('Error requesting username change:', error);
+        }
+    };
+    
+
+
     return (
         <div className="min-h-screen w-full bg-gray-100 flex justify-center">
-            <div className=" w-full p-6 shadow-xl">
+            <div className="w-full p-6 shadow-xl">
                 {!user ? navigate('/') : (
                     <>
                         <h1 className="text-2xl font-bold mb-4">Profile</h1>
@@ -125,7 +156,7 @@ export default function Settings() {
                                     <option value="she/her">She/Her</option>
                                     <option value="they/them">They/Them</option>
                                 </select>
-
+    
                                 <div className="mt-2">
                                     <label className="block">
                                         <input
@@ -155,9 +186,9 @@ export default function Settings() {
                                         Author
                                     </label>
                                 </div>
-
+    
                                 <SelectGenres/>
-
+    
                                 <button
                                     className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-2"
                                     onClick={handleSaveChanges}
@@ -167,24 +198,43 @@ export default function Settings() {
                                 {showSavedMessage && (
                                     <p className="text-green-500 mt-2">Saved successfully!</p>
                                 )}
-                                
+    
+                                <div className="flex flex-col mt-4"> {/* Start of username change section */}
+                                    <label htmlFor="desiredUsername" className="font-bold">Desired Username:</label>
+                                    <input
+                                        type="text"
+                                        id="desiredUsername"
+                                        className="border rounded p-2 mt-1"
+                                        value={desiredUsername}
+                                        onChange={(e) => setDesiredUsername(e.target.value)}
+                                    />
+                                    <button
+                                        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-2"
+                                        onClick={handleUsernameChangeRequest}
+                                    >
+                                        Request Username Change
+                                    </button>
+                                    {usernameChangeRequested && (
+                                        <p className="text-green-500 mt-2">Username change requested!</p>
+                                    )}
+                                </div> {/* End of username change section */}
+    
+                                <button
+                                    className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded mt-4"
+                                    onClick={() => setShowDeleteModal(true)}
+                                >
+                                    Delete Account
+                                </button>
+                                <DeleteAccountModal
+                                    show={showDeleteModal}
+                                    onClose={() => setShowDeleteModal(false)}
+                                    onDelete={() => handleDeleteAccount(navigate)} // Pass a function reference
+                                />
                             </>
                         )}
-                        <button
-                            className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded mt-4"
-                            onClick={() => setShowDeleteModal(true)}
-                        >
-                            Delete Account
-                        </button>
-                        <DeleteAccountModal
-                            show={showDeleteModal}
-                            onClose={() => setShowDeleteModal(false)}
-                            onDelete={() => handleDeleteAccount(navigate)} // Pass a function reference
-                        />
                     </>
                 )}
             </div>
         </div>
     );
-}
-
+                                    }    
