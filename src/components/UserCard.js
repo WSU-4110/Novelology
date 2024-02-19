@@ -4,6 +4,7 @@ import { db } from '../firebase';
 import { FaInfoCircle, FaUser } from 'react-icons/fa';
 import fetchPFP from '../functions/fetchPFP';
 import { auth } from '../firebase';
+import { Link } from 'react-router-dom';
 
 const FollowButton = ({ isFollowing, toggleFollow }) => {
     return (
@@ -75,7 +76,9 @@ const UserCard = ({ userId }) => {
     <div className="user-card border rounded-lg shadow-md p-6">
       {userData ? (
         <div>
+        <Link to={`/users/${userData.username}`}>
           <h2 className="text-3xl font-semibold mb-4"><span className="text-blue-400">@</span> {userData.username}</h2>
+        </Link>
           <div className="mr-8">
             <img 
               src={fetchedProfilePicture || defaultProfilePicture} 
