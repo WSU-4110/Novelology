@@ -25,13 +25,12 @@ const UserPage = () => {
     const [isFollowing, setIsFollowing] = useState(false);
     const [followersCount, setFollowersCount] = useState(0);
     const [followingCount, setFollowingCount] = useState(0);
-
     useEffect(() => {
         const fetchUserData = async () => {
             try {
                 console.log('Fetching user data...');
-                const userQuery = query(collection(db, 'users'), where('username', '==', username));
-                const querySnapshot = await getDocs(userQuery);
+                const q = query(collection(db, 'users'), where('username', '==', username));
+                const querySnapshot = await getDocs(q);
     
                 if (!querySnapshot.empty) {
                     const docData = querySnapshot.docs[0].data();
@@ -69,7 +68,9 @@ const UserPage = () => {
 
 
     const toggleFollow = async () => {
+        // Add or remove the current user from the followers list of the user being followed/unfollowed
         try {
+            // Check if user data is initialized
             if (!userData) {
                 console.error('User data not initialized.');
                 return;
@@ -88,11 +89,11 @@ const UserPage = () => {
                 return;
             }
     
+            // Get current user document
             const currentUserDocRef = doc(db, 'users', currentUserId);
-            console.log('Current User Document Reference:', currentUserDocRef);
-    
+            // Get current user document snapshot
             const currentUserDocSnapshot = await getDoc(currentUserDocRef);
-            console.log('Current User Document Snapshot:', currentUserDocSnapshot);
+
     
             if (!currentUserDocSnapshot.exists()) {
                 console.error('Current user document not found.');
@@ -150,11 +151,13 @@ const UserPage = () => {
         <div className="max-w-md mx-auto p-4 bg-white rounded-lg shadow-md">
             {userData ? (
                 <div>
-                    <h2 className="text-xl font-semibold mb-4">Username: {userData.username}</h2>
+                    <h2 className="text-3xl font-semibold mb-4"><span className="text-blue-400">@</span> {userData.username}</h2>
                     {profilePicture && <img src={profilePicture} alt="Profile" className="rounded-full w-20 h-20 object-cover mb-4" />}
-                    {userData.uid && <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">UID:</span> {userData.uid}</p>}
-                    {userData.email && <p className="mb-2"><FaEnvelope className="inline-block mr-2" /><span className="font-semibold">Email:</span> {userData.email}</p>}
-                    {userData.bio && <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">Bio:</span> {userData.bio}</p>}
+                    {userData.bio ? (
+                        <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">Bio:</span> {userData.bio}</p>
+                    ) : (
+                        <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">Bio:</span> <span className="text-orange-500">No bio provided</span></p>
+                    )}
                     {userData.pronouns && <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">Pronouns:</span> {userData.pronouns}</p>}
                     <div className="flex justify-between mb-4">
                         <p className="font-semibold"><FaUser className="inline-block mr-2" /> Followers: {followersCount}</p>
@@ -169,5 +172,6 @@ const UserPage = () => {
             )}
         </div>
     );
-            }
+};
+            
 export default UserPage;

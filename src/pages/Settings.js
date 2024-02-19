@@ -11,6 +11,7 @@ import SelectGenres from '../components/SelectGenres.js'
 
 import "../styles/settings.css";
 import RolesSelection from '../components/RolesSelection.js';
+import PronounsDropdown from '../components/PronounsDropdown.js';
 
 export default function Settings() {
     const [user] = useAuthState(auth);
@@ -39,6 +40,7 @@ export default function Settings() {
                 if (docSnapshot.exists()) {
                     const userDataFromSnapshot = docSnapshot.data();
                     setUserData(userDataFromSnapshot);
+                    setPronouns(userDataFromSnapshot.pronouns || '');
                     localStorage.setItem('userData', JSON.stringify(userDataFromSnapshot));
 
                     if (!newBio) {
@@ -147,16 +149,7 @@ export default function Settings() {
                                     value={newBio}
                                     onChange={(e) => setNewBio(e.target.value)}
                                 />
-                                <select
-                                    className="w-full p-2 mt-2 border rounded"
-                                    value={pronouns || ''}
-                                    onChange={(e) => setPronouns(e.target.value)}
-                                >
-                                    <option value="">Pronouns</option>
-                                    <option value="he/him">He/Him</option>
-                                    <option value="she/her">She/Her</option>
-                                    <option value="they/them">They/Them</option>
-                                </select>
+                                <PronounsDropdown pronouns={pronouns} setPronouns={setPronouns} />
     
                                 <RolesSelection selectedRoles={selectedRoles} setSelectedRoles={setSelectedRoles} />
 
