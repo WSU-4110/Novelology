@@ -171,6 +171,16 @@ const UserPage = () => {
                         <p className="font-semibold"><FaUser className="inline-block mr-2" /> Followers: {followersCount}</p>
                         <p className="font-semibold"><FaUser className="inline-block mr-2" /> Following: {followingCount}</p>
                     </div>
+                    {userData && userData.role && userData.role.length > 0 && (
+                        <div className="mb-2">
+                            <p><strong>Roles:</strong></p>
+                            <ul className="list-disc ml-4">
+                                {userData.role.map((role, index) => (
+                                    <li key={index}>{role}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
                     {auth.currentUser && auth.currentUser.uid !== userData.uid && (
                         <FollowButton isFollowing={isFollowing} toggleFollow={toggleFollow} />
                     )}
