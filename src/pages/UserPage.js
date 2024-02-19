@@ -5,6 +5,7 @@ import { db, auth } from '../firebase';
 import fetchUserProfilePicture from '../functions/fetchUserProfilePicture'; // Import fetchUserProfilePicture
 import fetchUIDwithUsername from '../functions/fetchUIDwithUsername';
 import { FaInfoCircle, FaEnvelope, FaUser } from 'react-icons/fa';
+import fetchPFP from '../functions/fetchPFP';
 
 const FollowButton = ({ isFollowing, toggleFollow }) => {
     return (
@@ -20,34 +21,33 @@ const FollowButton = ({ isFollowing, toggleFollow }) => {
 const UserPage = () => {
     const { username } = useParams();
     const [userData, setUserData] = useState(null);
-    const [profilePicture, setProfilePicture] = useState(null);
+    const [fetchedProfilePicture, setFetchedProfilePicture] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isFollowing, setIsFollowing] = useState(false);
     const [followersCount, setFollowersCount] = useState(0);
     const [followingCount, setFollowingCount] = useState(0);
+   
     useEffect(() => {
         const fetchUserData = async () => {
             try {
                 console.log('Fetching user data...');
                 const q = query(collection(db, 'users'), where('username', '==', username));
                 const querySnapshot = await getDocs(q);
-    
+
                 if (!querySnapshot.empty) {
                     const docData = querySnapshot.docs[0].data();
                     console.log('User Data:', docData);
                     setUserData(docData);
-    
-                    if (docData.uid) {
-                        console.log('Fetching profile picture...');
-                        const profilePictureURL = await fetchUserProfilePicture(docData.uid);
-                        console.log('Profile Picture URL:', profilePictureURL);
-                        setProfilePicture(profilePictureURL);
-                        console.log('Profile picture fetched.');
+
+                    const profilePictureURL = await fetchPFP(auth.currentUser.uid);
+                    if (profilePictureURL !== fetchedProfilePicture) {
+                        setFetchedProfilePicture(profilePictureURL);
+                        localStorage.setItem('profilePicture', profilePictureURL); 
                     }
-    
+
                     setFollowersCount(docData.followers ? docData.followers.length : 0);
                     setFollowingCount(docData.following ? docData.following.length : 0);
-    
+
                     const currentUser = auth.currentUser;
                     if (currentUser && docData.uid && currentUser.uid !== docData.uid) {
                         setIsFollowing(docData.followers && docData.followers.includes(currentUser.uid));
@@ -61,10 +61,9 @@ const UserPage = () => {
                 setIsLoading(false);
             }
         };
-    
+
         fetchUserData();
     }, [username]);
-    
 
 
     const toggleFollow = async () => {
@@ -143,16 +142,25 @@ const UserPage = () => {
     };
     
     
+    
     if (isLoading) {
         return <div>Loading...</div>;
     }
+
+    const defaultProfilePicture = require('../assets/default-profile-picture.jpg');
 
     return (
         <div className="max-w-md mx-auto p-4 bg-white rounded-lg shadow-md">
             {userData ? (
                 <div>
                     <h2 className="text-3xl font-semibold mb-4"><span className="text-blue-400">@</span> {userData.username}</h2>
-                    {profilePicture && <img src={profilePicture} alt="Profile" className="rounded-full w-20 h-20 object-cover mb-4" />}
+                    <div className="mr-8">
+                        <img 
+                            src={fetchedProfilePicture || defaultProfilePicture} 
+                            alt="Profile" 
+                            className="w-24 h-24 rounded-full" 
+                        />
+                    </div>
                     {userData.bio ? (
                         <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">Bio:</span> {userData.bio}</p>
                     ) : (
