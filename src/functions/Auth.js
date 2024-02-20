@@ -85,6 +85,9 @@ async function addUserToDatabase(uid, email, displayName, navigate) {
             emailVerified: false,
             username: username, // Use sanitized username
             signUpTime: signUpTime, // Add sign-up time
+            role : [],
+            pronouns: "",
+            genres: [],
             followers: [],
             following: [],
             UID: uid
