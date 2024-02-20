@@ -55,6 +55,7 @@ const BookSearch = () => {
       }
     return (
       <>
+        <center>
         <div className="main">
           <h3>Find your book!</h3>
           <form
@@ -86,6 +87,7 @@ const BookSearch = () => {
           <br></br>
           <div className="card-container">{<Card book={booksData} />}</div>
         </div>
+        </center>
       </>
     );
 {/* 

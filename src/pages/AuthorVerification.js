@@ -4,8 +4,10 @@ function AuthorVerification() {
     return (
         <>
             <div className="verify">
-                <h1> Author Verification Page</h1>
+                <center>
+                <h1 class="text-2xl	font-semibold"> Author Verification Page</h1>
                 <AuthorVerify />
+                </center>
             </div>
         </>
     );

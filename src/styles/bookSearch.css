@@ -1,3 +1,6 @@
+.main{
+    padding: 50vpx;
+}
 .card:hover{
     transform:scale(0.9);
 }
