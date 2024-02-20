@@ -10,7 +10,7 @@ const BookSearch = () => {
     
     
     const searchBook = () => {
-        axios.get('https://www.googleapis.com/books/v1/volumes?q='+bSearch+'&key='+process.env.REACT_APP_GOOGLE_BOOKS_SEARCH+'&maxResults=40')
+        axios.get('https://www.googleapis.com/books/v1/volumes?q='+bSearch+'&key='+process.env.REACT_APP_GOOGLE_BOOKS_SEARCH+'&maxResults=10')
             .then(res=>{
                 const num = res.data.totalItems;
                 if (num > 0) 
@@ -57,7 +57,7 @@ const BookSearch = () => {
       <>
         <center>
         <div className="main">
-          <h3>Find your book!</h3>
+          <h3 class="font-semibold">Find your book!</h3>
           <form
             id="bookSearchForm"
             onSubmit={(e) => {
@@ -66,9 +66,15 @@ const BookSearch = () => {
             }}
           >
             <input
-              type="text"
+               type="search"
+               class="relative m-0 block min-w-0 flex-auto rounded border border-solid border-neutral-300 bg-transparent bg-clip-padding px-3 py-[0.25rem] text-base font-normal leading-[1.6] text-neutral-700 outline-none transition duration-200 ease-in-out focus:z-[3] focus:border-primary focus:text-neutral-700 focus:shadow-[inset_0_0_0_1px_rgb(59,113,202)] focus:outline-none dark:border-neutral-600 dark:text-neutral-200 dark:placeholder:text-neutral-200 dark:focus:border-primary"
+               placeholder="Search"
+              //  aria-label="Search"
+              //  aria-describedby="button-addon2"
+
+              // type="text"
               id="searchBooksInput"
-              placeholder="Search for a book"
+              // placeholder="Search for your book"
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
@@ -81,7 +87,14 @@ const BookSearch = () => {
               <option value="by-genre">Genre</option>
               <option value="by-author">Author</option>
             </select>
-            <button type="submit">Submit</button>
+            {/* <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+            </svg>
+        </div> */}
+            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 
+                            focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 
+                            text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
           </form>
 
           <br></br>
@@ -90,54 +103,7 @@ const BookSearch = () => {
         </center>
       </>
     );
-{/* 
-          <div className="search">
-            <div className="with-book">
-              <input
-                type="text"
-                placeholder="Search for a book"
-                value={bSearch}
-                onChange={(e) => setBSearch(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    searchBook();
-                  }
-                }}
-              />
-              <button onClick={searchBook}>Search</button>
-            </div>
 
-            <div className="with-genre">
-              <input
-                type="text"
-                placeholder="Book Search with genre"
-                value={bGenre}
-                onChange={(e) => setBGenre(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    searchGenres();
-                  }
-                }}
-              />
-              <button onClick={searchGenres}>Search</button>
-            </div>
-
-            <div className="with-author">
-              <input
-                type="text"
-                placeholder="Author's books search"
-                value={bAuthor}
-                onChange={(e) => setBAuthor(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    searchbyAuthor();
-                  }
-                }}
-              />
-              <button onClick={searchbyAuthor}>Search</button>
-            </div>
-          </div>
-        </div> */}
         
     
 };
