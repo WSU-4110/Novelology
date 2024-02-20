@@ -8,6 +8,7 @@ import UploadPFP from '../components/UploadPFP.js';
 import { handleSearch } from '../functions/searchFunctions'; // Import handleSearch function
 import Feed from './Feed.js';
 import PopularUsers from '../components/PopularUsers.js';
+import HotFeed from '../components/Feeds/HotFeed.js';
 import BookSearch from '../components/BookSearch.js';
 
 
@@ -44,17 +45,30 @@ export default function Home() {
             </div>
             {!user ? (
                 <div> logged out</div>
+                
             ) : (
                 <>
                     <div className='flex flex-col justify-center items-center'>
                         {user.displayName && (
                             <h1 className='text-3xl font-bold underline'>Welcome back, {user.displayName}!</h1>
                         )}
+                         
                         <Feed currentUser={user} />
                         <PopularUsers criteria='followers' />
+                       
                     </div>
                 </>
             )}
+
+            <div className="mt-8">
+                <h1 className="mb-4">Search Users</h1>
+                <Searchbar onSearch={(query) => handleSearch(query, setSearchResults, setSearchStatus)} />
+            </div>
+            <div className='bookSearch'>
+                <BookSearch/>
+            </div>
+            
+
         </main>
     )
 }
