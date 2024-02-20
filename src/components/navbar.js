@@ -16,6 +16,7 @@ export default function(){
             {!user ? <Modal/>: 
                 <>
                     <Link to="/profile">Profile</Link>
+                    <Link to="/post">Create a Post</Link>
                     <button className='logout-button' onClick={handleLogout}>Sign off</button>
                 </>
             } 
