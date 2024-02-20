@@ -5,16 +5,14 @@ import { useRef, useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "../firebase";
 
-const UserRegistrationPage = (props) => {
-  // Style for the main container
 
+const UserRegistrationPage = (props) => {
   const mainContainerStyle = {
-    width: "100%",
-    minHeight: "100vh",
-    overflow: "auto",
     display: "flex",
-    flexDirection: "column",
     alignItems: "center",
+    justifyContent: "center",
+    minHeight: "100vh", // Ensure the container fills the viewport height
+    padding: "20px", // Add padding to prevent content from touching the edges
   };
 
   // State to manage password validation status and requirements
@@ -74,7 +72,7 @@ const UserRegistrationPage = (props) => {
         passwordRef.current.value,
         usernameRef.current.value // Assuming the signUpWithEmail function accepts username as an argument
       );
-      navigate("/dashboard"); // Adjust the redirect path as needed
+      navigate("/Onboarding.js"); // Adjust the redirect path as needed
     } catch (error) {
       alert("Error signing up with email: " + error.message);
     }
@@ -97,7 +95,7 @@ const UserRegistrationPage = (props) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         // Redirect to a different page if the user is already signed in
-        navigate("/dashboard"); // Adjust the path as needed
+        navigate("/Onboarding.js"); // Adjust the path as needed
       }
     });
     return unsubscribe; // Cleanup subscription on unmount
