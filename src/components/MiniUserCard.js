@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import { FaInfoCircle, FaUser } from 'react-icons/fa';
 import fetchPFP from '../functions/fetchPFP';
 import { auth } from '../firebase';
 import { Link } from 'react-router-dom';
 import { arrayRemove, arrayUnion, updateDoc } from 'firebase/firestore';
 
+// Allows users to follow or unfollow other users.
 const FollowButton = ({ isFollowing, toggleFollow }) => {
     return (
         <button
@@ -19,6 +19,7 @@ const FollowButton = ({ isFollowing, toggleFollow }) => {
 };
 
 const MiniUserCard = ({ userId }) => {
+    // State variables for user data, profile picture, and loading status
   const [userData, setUserData] = useState(null);
   const [fetchedProfilePicture, setFetchedProfilePicture] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -26,6 +27,8 @@ const MiniUserCard = ({ userId }) => {
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
 
+  // Fetch user data and profile picture
+  // UseEffect runs when the component mounts and when the userId changes
   useEffect(() => {
     const fetchUserData = async () => {
         try {
@@ -33,6 +36,8 @@ const MiniUserCard = ({ userId }) => {
             const userRef = doc(db, 'users', userId);
             const userSnapshot = await getDoc(userRef);
 
+            // If the user document exists, set the user data state variable to the document data
+            // and set the profile picture state variable to the fetched profile picture URL
             if (userSnapshot.exists()) {
                 const userData = userSnapshot.data();
                 setUserData(userData);
@@ -63,7 +68,7 @@ const MiniUserCard = ({ userId }) => {
 }, [userId]); // Include userId in the dependency array to re-run effect when it changes
 
   
-
+    // Function to toggle follow status
   const toggleFollow = async () => {
     try {
         if (!userData) {
@@ -82,6 +87,9 @@ const MiniUserCard = ({ userId }) => {
         const userDocRef = doc(db, 'users', userId);
 
         if (isFollowing) {
+            // if the user IS following the other user, unfollow them
+            // by removing the other user's ID from the current user's following array
+            // and removing the current user's ID from the other user's followers array
             await updateDoc(currentUserDocRef, {
                 following: arrayRemove(userId)
             });
@@ -89,7 +97,7 @@ const MiniUserCard = ({ userId }) => {
                 followers: arrayRemove(currentUserId)
             });
             console.log('User unfollowed successfully.');
-        } else {
+        } else { //otherwise follow them
             await updateDoc(currentUserDocRef, {
                 following: arrayUnion(userId)
             });
@@ -99,6 +107,7 @@ const MiniUserCard = ({ userId }) => {
             console.log('User followed successfully.');
         }
 
+        // toggle the follow state either way
         setIsFollowing(!isFollowing); // Toggle follow status
 
         // Update followers count
@@ -110,7 +119,7 @@ const MiniUserCard = ({ userId }) => {
 
 
   
-
+    // If the user data is still loading, display a loading message
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -132,11 +141,13 @@ const MiniUserCard = ({ userId }) => {
                     </Link>
                 </div>
                 <div className=' flex flex-col justify-center items-center w-full'>
+                
+                {/* Display username*/}
                 <Link to={`/users/${userData.username}`}>
                     <h2 className="text-[1.5rem] justify-center font-semibold mb-2"><span className="text-blue-400">@</span> {userData.username}</h2>
                 </Link>
             
-          
+          {/*Display follow button if the current user is not the user being displayed*/}
           {auth.currentUser && auth.currentUser.uid !== userData.uid && (
             <FollowButton isFollowing={isFollowing} toggleFollow={toggleFollow} />
           )}
