@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import CommentComponent from './CommentComponent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faComment, faThumbsUp, faShare } from '@fortawesome/free-solid-svg-icons';
+import { faHeart, faShare } from '@fortawesome/free-solid-svg-icons';
 import fetchUserProfilePicture from '../functions/fetchUserProfilePicture';
 import fetchUsernameWithUID from '../functions/fetchUsernameWithUID';
 import { Link } from 'react-router-dom';
@@ -73,14 +73,17 @@ class PostComponent extends Component {
     }
   
     try {
+      // Update the Firestore document
       await updateDoc(postRef, { likedBy, likes: currentLikes });
       console.log("Firebase document updated successfully");
+      
       // Update the state with the new number of likes and liked state
       this.setState({ likedBy, likes: currentLikes, liked: !liked });
     } catch (error) {
       console.error("Error updating Firebase document:", error);
     }
   };
+  
   
   
   
@@ -266,10 +269,9 @@ class PostComponent extends Component {
 
         {/* Buttons for actions */}
         <div className="pt-4">
-          <button><FontAwesomeIcon icon={faComment} /> Comment</button>
           <div>
           <button onClick={this.toggleLike}>
-        <FontAwesomeIcon icon={faThumbsUp} style={{ color: liked ? 'blue' : 'gray' }} />
+        <FontAwesomeIcon icon={faHeart} style={{ color: liked ? 'blue' : 'gray' }} />
         {liked ? ' Unlike' : ' Like'} {/* Toggle text based on whether the post is liked */}
         {likes >= 0 && <span>{likes}</span>} {/* Display number of likes if it's not negative */}
       </button>
