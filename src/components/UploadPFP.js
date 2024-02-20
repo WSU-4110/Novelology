@@ -138,13 +138,13 @@ const UploadPFP = () => {
         <img
           src={existingProfilePicture}
           alt="Existing Profile"
-          className="w-1/4 h-1/4  max-w-36 rounded-full object-cover border border-gray-400 m-4" 
+          className="w-36 h-36 max-w-36 max-h-36 rounded-full object-cover border border-gray-400 m-4"
         />
       ) : (
         <img
           src={defaultProfilePicture}
           alt="Default Profile"
-          className="w-1/4 h-1/4 max-w-36 rounded-full object-cover border border-gray-400 m-4"
+          className="w-36 h-36 max-w-36 max-h-36 rounded-full object-cover border border-gray-400 m-4"
         />
       )}
       
