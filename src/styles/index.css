@@ -11,7 +11,7 @@ body {
     sans-serif; !!!!!!!!!! THE FONT STYLE FOR THE WHOLE WEBSITE !!!!!!  */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #e3bd96; /*the background color for the whole website*/
+  background-color: #ffff; /*the background color for the whole website*/
 }
 
 code {

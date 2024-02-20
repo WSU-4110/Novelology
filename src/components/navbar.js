@@ -12,19 +12,7 @@ export default function(){
     return(
 
        
-    <nav className="flex flex-row gap-10 p-4">
-        <Link to="/"> Home</Link>
-        {!user ? <Modal/>: 
 
-            <>
-                <Link to="/profile">Profile</Link>
-                <button className='logout-button' onClick={handleLogout}>Sign off</button>
-                <Link to="/submit">Post</Link>
-            </>
-
-        }
-       
-    </nav>
 
         
         <nav className="flex flex-row gap-10 p-4">
@@ -33,6 +21,7 @@ export default function(){
                 <>
                     <Link to="/profile">Profile</Link>
                     <button className='logout-button' onClick={handleLogout}>Sign off</button>
+                    <Link to="/submit">Post</Link>
                 </>
             } 
         </nav>
