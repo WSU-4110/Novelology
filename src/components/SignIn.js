@@ -3,7 +3,6 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../firebase';
 import { FaGoogle } from 'react-icons/fa';
 import { handleSignInWithPopup } from "../functions/Auth";
-//import '../styles/SignIn.css';
 
 
 export function SignIn() {

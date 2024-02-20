@@ -16,9 +16,11 @@ const App = () => {
   return (
     <Router>
       <Fragment>
-        <div>
-          <img src={require('./assets/Novelology_Logo.png')} style={{height:200, width:300}} />
+
+        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+          <img src={require('./assets/Novelology_Logo.png')} style={{ height: '9em', width: '450px' }} />
         </div>
+
 
 
 
