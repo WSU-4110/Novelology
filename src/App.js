@@ -18,7 +18,7 @@ const App = () => {
       <Fragment>
 
         <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-          <img src={require('./assets/Novelology_Logo.png')} style={{ height: '9em', width: '450px' }} />
+          <img src={require('./assets/Novelology_Logo.png')} style={{ height: '9em', width: '325px' }} />
         </div>
 
 
