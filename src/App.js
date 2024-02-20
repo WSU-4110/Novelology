@@ -16,6 +16,14 @@ const App = () => {
   return (
     <Router>
       <Fragment>
+
+        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+          <img src={require('./assets/Novelology_Logo.png')} style={{ height: '9em', width: '450px' }} />
+        </div>
+
+
+
+
         <Navbar />
         <Routes>
         <Route path="/" element={<Home />} />
