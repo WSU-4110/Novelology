@@ -1,12 +1,12 @@
 import { useRef, useState, useEffect } from "react";
 import { signUpWithEmail, handleSignUpWithPopup } from "../functions/Auth";
-import { FaGoogle } from 'react-icons/fa';
+import { FaGoogle, FaEye } from 'react-icons/fa';
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from 'firebase/auth'; 
 import { doc, getDoc } from 'firebase/firestore'; 
 import { auth, db } from '../firebase'; 
 
-// Your compo
+
 // Reactive input field component
 const ReactiveInputField = ({ type, placeholder, inputRef, onChange }) => {
   return (
@@ -25,6 +25,44 @@ const ReactiveInputField = ({ type, placeholder, inputRef, onChange }) => {
     </div>
   );
 };
+
+const togglePasswordVisibility = ({type}) => {
+
+  console.log("type= " + type);
+  console.log("togglePasswordVisibility");
+
+  if (type === 'password') {
+    console.log("password -> text");
+    type = 'text';
+  } else {
+    type = 'password';
+  }
+
+}
+
+
+const ReactivePasswordInputField = ({ type, placeholder, inputRef, onChange }) => {
+
+  return (
+    <div className="relative">
+      <label className="input-label" htmlFor={placeholder}>
+        {placeholder}
+        <span className="text-red-500">*</span> {/* Red asterisk */}
+      </label>
+      <input
+        className="mt-1 mb-1 rounded-md p-0.5 outline-none focus:ring focus:ring-blue-300 h-8 w-full"
+        ref={inputRef} // Forward inputRef to the input element's ref prop
+        type={type}
+        required
+        onChange={onChange}
+      />
+      <button onClick={togglePasswordVisibility(type)} className="absolute right-2 top-1/2 transform -translate-y-1/2" type="button">
+        <FaEye className="text-gray-400 mt-6"/>
+      </button>
+    </div>
+  );
+};
+
 
 export function Registration() {
   const [loading, setLoading] = useState(false);
@@ -134,7 +172,7 @@ export function Registration() {
           inputRef={emailRef}
           onChange={handleInputChange}
         />
-        <ReactiveInputField
+        <ReactivePasswordInputField
           type="password"
           placeholder="Password"
           inputRef={passwordRef}
@@ -148,7 +186,7 @@ export function Registration() {
         {passwordValid && (
           <p className="text-green-500 text-xs select-none">Great password!</p>
         )}
-        <ReactiveInputField
+        <ReactivePasswordInputField
           type="password"
           placeholder="Confirm Password"
           inputRef={confirmPasswordRef}
