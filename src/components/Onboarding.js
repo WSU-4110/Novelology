@@ -91,7 +91,14 @@ const Onboarding = () => {
       } else {
         // Save data without profile picture
         await setDoc(userRef, userData, { merge: true });
-        navigate("/");
+
+        console.log("roles: " + selectedRoles)
+        if (selectedRoles.includes("Author")) {
+          navigate("/author-verification");
+        } else {
+          navigate("/");
+        }
+        
       }
     } catch (error) {
       console.error("Error submitting form:", error);
