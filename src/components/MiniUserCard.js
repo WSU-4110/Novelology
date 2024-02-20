@@ -18,7 +18,7 @@ const FollowButton = ({ isFollowing, toggleFollow }) => {
     );
 };
 
-const UserCard = ({ userId }) => {
+const MiniUserCard = ({ userId }) => {
   const [userData, setUserData] = useState(null);
   const [fetchedProfilePicture, setFetchedProfilePicture] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -118,42 +118,30 @@ const UserCard = ({ userId }) => {
   const defaultProfilePicture = require('../assets/default-profile-picture.jpg');
 
   return (
-    <div className="user-card border rounded-lg shadow-md p-6">
+    <div className="user-card rounded-lg shadow-md p-2 max-h-30">
       {userData ? (
         <div>
-        <Link to={`/users/${userData.username}`}>
-          <h2 className="text-3xl font-semibold mb-4"><span className="text-blue-400">@</span> {userData.username}</h2>
-        </Link>
-          <div className="mr-8">
-            <img 
-              src={fetchedProfilePicture || defaultProfilePicture} 
-              alt="Profile" 
-              className="w-24 h-24 rounded-full" 
-            />
-          </div>
-          {userData.bio ? (
-            <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">Bio:</span> {userData.bio}</p>
-          ) : (
-            <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">Bio:</span> <span className="text-orange-500">No bio provided</span></p>
-          )}
-          {userData.pronouns && <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">Pronouns:</span> {userData.pronouns}</p>}
-          <div className="flex justify-between mb-4">
-            <p className="font-semibold"><FaUser className="inline-block mr-2" /> Followers: {followersCount}</p>
-            <p className="font-semibold"><FaUser className="inline-block mr-2" /> Following: {followingCount}</p>
-          </div>
-          {userData && userData.role && userData.role.length > 0 && (
-            <div className="mb-2">
-              <p><strong>Roles:</strong></p>
-              <ul className="list-disc ml-4">
-                {userData.role.map((role, index) => (
-                  <li key={index}>{role}</li>
-                ))}
-              </ul>
-            </div>
-          )}
+            <div className='flex flex-row align-middle h-full items-center justify-center'>
+                <div className="h-full w-1/3">
+                    <Link to={`/users/${userData.username}`}>
+                    <img 
+                    src={fetchedProfilePicture || defaultProfilePicture} 
+                    alt="Profile" 
+                    className="rounded-full object-cover h-full w-full" 
+                    />
+                    </Link>
+                </div>
+                <div className=' flex flex-col justify-center items-center w-full'>
+                <Link to={`/users/${userData.username}`}>
+                    <h2 className="text-[1.5rem] justify-center font-semibold mb-2"><span className="text-blue-400">@</span> {userData.username}</h2>
+                </Link>
+            
+          
           {auth.currentUser && auth.currentUser.uid !== userData.uid && (
             <FollowButton isFollowing={isFollowing} toggleFollow={toggleFollow} />
           )}
+          </div>
+          </div>
         </div>
       ) : (
         <p className="text-red-500">User data not found.</p>
@@ -162,4 +150,4 @@ const UserCard = ({ userId }) => {
   );
 };
 
-export default UserCard;
+export default MiniUserCard;

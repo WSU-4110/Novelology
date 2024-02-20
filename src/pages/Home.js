@@ -35,6 +35,13 @@ export default function Home() {
 
     return (
         <main>
+            <div className="mt-8">
+                <h1 className="mb-4">Search Users</h1>
+                <Searchbar onSearch={(query) => handleSearch(query, setSearchResults, setSearchStatus)} />
+            </div>
+            <div className='bookSearch'>
+                <BookSearch/>
+            </div>
             {!user ? (
                 <div> logged out</div>
             ) : (
@@ -48,13 +55,7 @@ export default function Home() {
                     </div>
                 </>
             )}
-            <div className="mt-8">
-                <h1 className="mb-4">Search Users</h1>
-                <Searchbar onSearch={(query) => handleSearch(query, setSearchResults, setSearchStatus)} />
-            </div>
-            <div className='bookSearch'>
-                <BookSearch/>
-            </div>
+
         </main>
     )
 }
