@@ -27,7 +27,7 @@ export default function(){
     </nav>
 
         
-        <nav className="flex flex-row gap-10 p-4">
+        <nav className="flex flex-row gap-10 p-4 bg-[#F4D7B7]">
             <Link to="/"> Home</Link>
             {!user ? <Modal/>: 
                 <>

@@ -1,11 +1,11 @@
-import React,{useState} from 'react';
+import React,{useEffect, useState} from 'react';
+import { Link } from "react-router-dom";
 import axios from "axios";
 import Onboarding from './Onboarding';
 import "../styles/author-verify.css";
 
 const AuthorVerify =() => {
-    // var roleName = Role;
-    // console.log("Is Author?: "+roleName);
+  // const navigate = useNavigate();
     const [AuthorName,setAuthorName] = useState("");
     const [isAuthor,setIsAuthor] = useState(false);
     const searchAuthor = () => {
@@ -20,6 +20,7 @@ const AuthorVerify =() => {
                 }
             }).catch(err=>console.log(err));
     }
+    
     return (
       <>
         <div className="verify-author">
@@ -62,11 +63,16 @@ const AuthorVerify =() => {
           </div>
           <div id="verified">
               <p>{ isAuthor? (
-                <h3>You are an author!</h3>
+                <div>
+                <h3>You are verified as an author. Welcome!</h3>
+                <Link to="/">Go to homepage</Link>
+                </div>
               ):(
-                <h3>You are not an author!</h3>
+                <h3>You are not found in the system. Try Again!</h3>
               )}</p>
+              
           </div>
+
         </div>
       </>
     );
