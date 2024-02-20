@@ -8,6 +8,7 @@ import RolesSelection from "./RolesSelection";
 import BioTextArea from "./BioTextArea";
 import SelectGenres from "./SelectGenres";
 import fetchPFP from "../functions/fetchPFP"; // Import fetchPFP function
+import AuthorVerify from "./AuthorVerify.js";
 
 const Onboarding = () => {
   // State variables
