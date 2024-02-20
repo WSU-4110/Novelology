@@ -2,95 +2,131 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import CommentComponent from './CommentComponent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faComment, faThumbsUp, faShare } from '@fortawesome/free-solid-svg-icons';
-import fetchUserProfilePicture from '../functions/fetchUserProfilePicture'; // Import fetchUserProfilePicture
-import fetchUsernameWithUID from '../functions/fetchUsernameWithUID'; // Import fetchUsernameWithUID
+import { faHeart, faShare } from '@fortawesome/free-solid-svg-icons';
+import fetchUserProfilePicture from '../functions/fetchUserProfilePicture';
+import fetchUsernameWithUID from '../functions/fetchUsernameWithUID';
 import { Link } from 'react-router-dom';
 import { faEllipsisH } from '@fortawesome/free-solid-svg-icons';
 import PostOptionsPopup from './PostOptionsPopup';
 import ReactDOM from 'react-dom';
-
+import { doc, updateDoc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase';
+import formatTimeDifference from '../functions/formatTimeDifference';
 
 class PostComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      comments: [], // Initialize comments array
-      creatorProfilePicture: null, // Store post creator's profile picture URL
-      isLoadingProfilePicture: false, // Loading state for profile picture
-      profilePictureError: null, // Error state for fetching profile picture
-      username: null, // Store post creator's username
-      isLoadingUsername: false, // Loading state for username
-      usernameError: null, // Error state for fetching username
-      showPostOptionsPopup: false, // State to show/hide post options popup
+      comments: [],
+      creatorProfilePicture: null,
+      isLoadingProfilePicture: false,
+      profilePictureError: null,
+      username: null,
+      isLoadingUsername: false,
+      usernameError: null,
+      showPostOptionsPopup: false,
+      liked: null, // Initialize liked state to null
     };
     this.popupContainer = document.createElement('div');
     document.body.appendChild(this.popupContainer);
     this.togglePostOptionsPopup = this.togglePostOptionsPopup.bind(this);
   }
 
+  componentDidMount() {
+    this.fetchPostCreatorData();
+    this.checkLikedState(); // Move the checkLikedState call here
     
+  }
 
 
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.post.id !== this.props.post.id) {
+      this.fetchPostCreatorData();
+      this.checkLikedState();
+    }
+  }
+  
+  
+  toggleLike = async () => {
+    const { post, currentUser } = this.props;
+    const currentUserId = currentUser.uid;
+    const postRef = doc(db, 'posts', post.id);
+  
+    let likedBy = post.data.likedBy || [];
+    let currentLikes = post.data.likes || 0;
+    let liked = likedBy.includes(currentUserId);
+  
+    console.log("Toggling like for post:", post.id);
+    console.log("Current user:", currentUser);
+  
+    if (liked) {
+      // Unlike the post
+      if (currentLikes === 0) return;
+      currentLikes--;
+      likedBy = likedBy.filter(uid => uid !== currentUserId);
+      console.log("Post unliked successfully");
+    } else {
+      // Like the post
+      currentLikes++;
+      likedBy.push(currentUserId);
+      console.log("Post liked successfully");
+    }
+  
+    try {
+      // Update the Firestore document
+      await updateDoc(postRef, { likedBy, likes: currentLikes });
+      console.log("Firebase document updated successfully");
+      
+      // Update the state with the new number of likes and liked state
+      this.setState({ likedBy, likes: currentLikes, liked: !liked });
+    } catch (error) {
+      console.error("Error updating Firebase document:", error);
+    }
+  };
+  
+  
+  
+  
+  
+  
+  checkLikedState = async () => {
+    const { post, currentUser } = this.props;
+    const currentUserId = currentUser.uid;
+  
+    console.log("Checking liked state for post:", post.id);
+    console.log("Current user:", currentUser);
+  
+    try {
+      const postRef = doc(db, 'posts', post.id);
+      const docSnap = await getDoc(postRef);
+  
+      if (docSnap.exists()) {
+        const postData = docSnap.data();
+        const likedBy = postData.likedBy || [];
+        console.log("Liked by:", likedBy);
+  
+        const liked = likedBy.includes(currentUserId);
+        console.log("Liked state updated:", liked);
+        this.setState({ liked });
+      } else {
+        console.log("No such document!");
+      }
+    } catch (error) {
+      console.error("Error fetching liked state:", error);
+    }
+  };
+  
+  
+  
+  
+    
   togglePostOptionsPopup = () => {
     this.setState(prevState => ({
       showPostOptionsPopup: !prevState.showPostOptionsPopup,
     }));
   };
-
-  handleOutsideClick = (e) => {
-    console.log("Clicked outside popup");
-    console.log("Popup Container:", this.popupContainer);
-    console.log("Target:", e.target);
-    if (!this.popupContainer.contains(e.target)) {
-      console.log("Clicked outside popup container");
-      this.setState({
-        showPostOptionsPopup: false,
-      });
-    }
-  };
-
-  componentDidMount() {
-    document.addEventListener('click', this.handleOutsideClick);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('click', this.handleOutsideClick);
-  }
-
-
-  // Function to format time difference
-  formatTimeDifference = (timestamp) => {
-
-    console.log("Timestamp received:", timestamp); // Log the timestamp received
-
-
-    if (!timestamp) {
-      return 'Unknown time';
-    }
-
-    const currentTime = new Date();
-    const postTime = new Date(timestamp); // Remove seconds * 1000
-    const differenceInSeconds = Math.floor((currentTime - postTime) / 1000);
-
-    if (differenceInSeconds < 60) {
-      return 'Just Now';
-    } else if (differenceInSeconds < 3600) {
-      const minutes = Math.floor(differenceInSeconds / 60);
-      return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-    } else if (differenceInSeconds < 86400) {
-      const hours = Math.floor(differenceInSeconds / 3600);
-      return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-    } else {
-      const days = Math.floor(differenceInSeconds / 86400);
-      return `${days} day${days > 1 ? 's' : ''} ago`;
-    }
-  };
-
-  componentDidMount() {
-    this.fetchPostCreatorData(); // Fetch post creator's profile picture and username when component mounts
-  }
+  
 
   // Fetch the post creator's profile picture using the UID
   fetchPostCreatorData = async () => {
@@ -127,6 +163,7 @@ class PostComponent extends Component {
     const { post, comments, newCommentText, currentUser, onAddComment, onCommentChange } = this.props;
     const { creatorProfilePicture, isLoadingProfilePicture, profilePictureError, username, isLoadingUsername, usernameError } = this.state;
     const { showPostOptionsPopup } = this.state;
+    const { liked, likes} = this.state;
 
     return (
       <div key={post.id} className="border p-4 border-gray-300 pb-8 mb-8">
@@ -156,7 +193,7 @@ class PostComponent extends Component {
               </Link>
             )}
             <p className="text-sm text-gray-500 cursor-help" title={post.data.createdAt && post.data.createdAt.toString()}>
-              {this.formatTimeDifference(post.data.createdAt ? new Date(post.data.createdAt).getTime() : '')}
+              {formatTimeDifference(post.data.createdAt ? new Date(post.data.createdAt).getTime() : '')}
             </p>
           </div>
 
@@ -203,8 +240,14 @@ class PostComponent extends Component {
 
         {/* Buttons for actions */}
         <div className="pt-4">
-          <button><FontAwesomeIcon icon={faComment} /> Comment</button>
-          <button><FontAwesomeIcon icon={faThumbsUp} /> Like</button>
+          <div>
+          <button onClick={this.toggleLike}>
+        <FontAwesomeIcon icon={faHeart} style={{ color: liked ? 'blue' : 'gray' }} />
+        {liked ? ' Unlike' : ' Like'} {/* Toggle text based on whether the post is liked */}
+        {likes >= 0 && <span>{likes}</span>} {/* Display number of likes if it's not negative */}
+      </button>
+
+        </div>
           <button><FontAwesomeIcon icon={faShare} /> Share</button>
         </div>
       </div>

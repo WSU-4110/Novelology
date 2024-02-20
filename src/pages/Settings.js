@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { deleteUser } from "firebase/auth";
-import { auth, db, provider } from '../firebase.js'; // Consolidated Firebase imports
+import { auth, db } from '../firebase.js'; // Consolidated Firebase imports
 import { useNavigate } from "react-router-dom";
 import UploadPFP from '../components/UploadPFP.js';
 import DeleteAccountModal from '../components/DeleteAccountModal.js';
-import { doc, getDoc, updateDoc, deleteDoc} from 'firebase/firestore';
+import { doc, getDoc, updateDoc} from 'firebase/firestore';
 import { handleDeleteAccount } from '../functions/Auth.js';
 import SelectGenres from '../components/SelectGenres.js'
 
 import "../styles/settings.css";
+import RolesSelection from '../components/RolesSelection.js';
+import PronounsDropdown from '../components/PronounsDropdown.js';
 
 export default function Settings() {
     const [user] = useAuthState(auth);
@@ -38,6 +39,7 @@ export default function Settings() {
                 if (docSnapshot.exists()) {
                     const userDataFromSnapshot = docSnapshot.data();
                     setUserData(userDataFromSnapshot);
+                    setPronouns(userDataFromSnapshot.pronouns || '');
                     localStorage.setItem('userData', JSON.stringify(userDataFromSnapshot));
 
                     if (!newBio) {
@@ -146,46 +148,10 @@ export default function Settings() {
                                     value={newBio}
                                     onChange={(e) => setNewBio(e.target.value)}
                                 />
-                                <select
-                                    className="w-full p-2 mt-2 border rounded"
-                                    value={pronouns || ''}
-                                    onChange={(e) => setPronouns(e.target.value)}
-                                >
-                                    <option value="">Pronouns</option>
-                                    <option value="he/him">He/Him</option>
-                                    <option value="she/her">She/Her</option>
-                                    <option value="they/them">They/Them</option>
-                                </select>
+                                <PronounsDropdown pronouns={pronouns} setPronouns={setPronouns} />
     
-                                <div className="mt-2">
-                                    <label className="block">
-                                        <input
-                                            type="checkbox"
-                                            value="Reader"
-                                            checked={selectedRoles.includes("Reader")}
-                                            onChange={() => handleRoleChange("Reader")}
-                                        />
-                                        Reader
-                                    </label>
-                                    <label className="block">
-                                        <input
-                                            type="checkbox"
-                                            value="Reviewer"
-                                            checked={selectedRoles.includes("Reviewer")}
-                                            onChange={() => handleRoleChange("Reviewer")}
-                                        />
-                                        Reviewer
-                                    </label>
-                                    <label className="block">
-                                        <input
-                                            type="checkbox"
-                                            value="Author"
-                                            checked={selectedRoles.includes("Author")}
-                                            onChange={() => handleRoleChange("Author")}
-                                        />
-                                        Author
-                                    </label>
-                                </div>
+                                <RolesSelection selectedRoles={selectedRoles} setSelectedRoles={setSelectedRoles} />
+
     
                                 <SelectGenres/>
     
