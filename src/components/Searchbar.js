@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { collection, query, getDocs } from 'firebase/firestore';
 import { db } from '../firebase'; // Import your Firebase instance
 import UserCard from './UserCard'; // Import the UserCard component
+import MiniUserCard from './MiniUserCard'; // Import the MiniUserCard component
 
 async function searchUsers(idQuery) {
     console.log('Searching for:', idQuery);
@@ -77,10 +78,10 @@ function Searchbar({ onSearch }) {
                 </button>
             </form>
             {searchResults.length > 0 && query.trim() !== '' && (
-                <ul className="dropdown bg-white border rounded shadow-lg w-64 absolute top-0 right-0 mt-12 z-50">
+                <ul className="dropdown w-80 absolute top-0 right-0 mt-12 z-50">
                     {searchResults.map((result) => (
                         <li key={result.id} className="p-2 hover:bg-gray-100">
-                            <UserCard userId={result.UI} />
+                            <MiniUserCard userId={result.UID} />
                         </li>
                     ))}
                 </ul>
