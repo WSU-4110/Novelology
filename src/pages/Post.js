@@ -1,31 +1,51 @@
 
-import {auth,db} from '../firebase.js'
-import { useNavigate } from "react-router-dom";
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { getFirestore, doc } from 'firebase/firestore';
+import {auth, db} from '../firebase.js'
+import PostIDComponent from '../components/PostID/PostIDComponent.js';
+import PostIDSubComponent from '../components/PostID/PostIDSubComponent.js';
+import {  doc } from 'firebase/firestore';
 import { useDocument } from 'react-firebase-hooks/firestore';
+import Error from '../components/Error.js'
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { useNavigate ,  useParams} from "react-router-dom";
+import PostActions from '../functions/PostActions.js';
 
-export default function Post(){
-    const [user] = useAuthState(auth);
-    const navigate = useNavigate();
-    const docRef = doc(db, 'posts', 'hhacGRM6jCc3qaF6pcgJ')
-    const [value, loading, error] = useDocument(docRef)
+export default function Post(postid){
+    
+    const { pid } = useParams()
+    const finalPid = pid ?  pid : postid.postdata 
+    console.log(finalPid)
+    const PA = new PostActions(pid)
+    let postData = null
+    let loading = true
+    let error = null
+    try {
+        const [value, isLoading, err] = useDocument(doc(db, 'posts', finalPid), {
+            snapshotListenOptions: { includeMetadataChanges: true },
+        });
+        postData = value?.data()
+        loading = isLoading
+        error = err
+    } catch (err) {
+        error = err
+    }
 
-   
-  
+    if (error) return <Error  />
+    if (!postData) return <Error />
 
-     
     return (
-        
-            <div>
-                    <p>
-                            {error && <strong>Error: {JSON.stringify(error)}</strong>}
-                            {loading && <span>Document: Loading...</span>}
-                            {console.log(JSON.stringify(value.data()))}
-                            
-                            {value && <span>Document: {JSON.stringify(value.data())}</span>}
-                    </p>
 
+            <div>
+    
+             
+              {loading && <span>Document: Loading...</span>}
+              {postData && <>
+                <PostIDComponent props= {postData}/>
+                <PostIDSubComponent props = {postData}/>
+              </>
+          
+              
+              }
+             
             </div>
         
     )
