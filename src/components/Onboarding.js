@@ -8,6 +8,7 @@ import RolesSelection from "./RolesSelection";
 import BioTextArea from "./BioTextArea";
 import SelectGenres from "./SelectGenres";
 import fetchPFP from "../functions/fetchPFP"; // Import fetchPFP function
+import AuthorVerify from "./AuthorVerify.js";
 
 const Onboarding = () => {
   // State variables
@@ -139,6 +140,8 @@ const Onboarding = () => {
         <BioTextArea bio={bio} setBio={setBio} />
         <PronounsDropdown pronouns={pronouns} setPronouns={setPronouns} />
         <RolesSelection selectedRoles={selectedRoles} setSelectedRoles={setSelectedRoles} />
+        <p>{selectedRoles}</p>
+       
         <div className="mb-4">
           <h2 className="text-lg font-semibold">Select Genres</h2>
           <SelectGenres />

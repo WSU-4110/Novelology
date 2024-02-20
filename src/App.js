@@ -11,7 +11,7 @@ import Post from './pages/Post';
 import Settings from './pages/Settings';
 import UserPage from './pages/UserPage';
 import Profile from './pages/Profile';
-
+import AuthorVerification from './pages/AuthorVerification';
 const App = () => {
   return (
     <Router>
@@ -28,6 +28,7 @@ const App = () => {
           <Route path="/users/:username" element={<UserPage />} />
           <Route path="/setup-account" element={<SetUpAccount />}/>
           <Route path="/post" element={<Post/>}/>
+          <Route path="/author-verification" element={<AuthorVerification/>}/>
         </Routes>
         
       </Fragment>
