@@ -28,46 +28,44 @@ const UserCard = ({ userId }) => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      try {
-        setIsLoading(true);
-        const userRef = doc(db, 'users', userId);
-        const userSnapshot = await getDoc(userRef);
-  
-        if (userSnapshot.exists()) {
-          const userData = userSnapshot.data();
-          setUserData(userData);
-  
-          const profilePictureURL = await fetchPFP(userId);
-          if (profilePictureURL !== fetchedProfilePicture) {
-            setFetchedProfilePicture(profilePictureURL);
-          }
-  
-          setFollowersCount(userData.followers ? userData.followers.length : 0);
-          setFollowingCount(userData.following ? userData.following.length : 0);
-        } else {
-          console.error('User document not found for user ID:', userId);
+        try {
+            setIsLoading(true);
+            const userRef = doc(db, 'users', userId);
+            const userSnapshot = await getDoc(userRef);
+
+            if (userSnapshot.exists()) {
+                const userData = userSnapshot.data();
+                setUserData(userData);
+
+                const profilePictureURL = await fetchPFP(userId);
+                if (profilePictureURL !== fetchedProfilePicture) {
+                    setFetchedProfilePicture(profilePictureURL);
+                }
+
+                setFollowersCount(userData.followers ? userData.followers.length : 0);
+                setFollowingCount(userData.following ? userData.following.length : 0);
+
+                const currentUser = auth.currentUser;
+                if (currentUser && currentUser.uid !== userData.uid) {
+                    setIsFollowing(userData.followers && userData.followers.includes(currentUser.uid));
+                }
+            } else {
+                console.error('User document not found for user ID:', userId);
+            }
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+        } finally {
+            setIsLoading(false);
         }
-  
-        // Check if the current user is following the fetched user
-        const currentUser = auth.currentUser;
-        if (currentUser && userData && currentUser.uid !== userData.uid) {
-          setIsFollowing(userData.followers && userData.followers.includes(currentUser.uid));
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      } finally {
-        setIsLoading(false);
-      }
     };
-  
+
     fetchUserData();
-  }, []); // Empty dependency array to run once on mount
+}, [userId]); // Include userId in the dependency array to re-run effect when it changes
+
   
 
   const toggleFollow = async () => {
-    // Add or remove the current user from the followers list of the user being followed/unfollowed
     try {
-        // Check if user data is initialized
         if (!userData) {
             console.error('User data not initialized.');
             return;
@@ -79,58 +77,29 @@ const UserCard = ({ userId }) => {
             return;
         }
         const currentUserId = currentUser.uid;
-        console.log('Current User ID:', currentUserId);
 
-        if (!userData.UID) { // Change to userData.UID (uppercase I)
-            console.error('UID not found in user data.');
-            return;
-        }
-
-        // Get current user document
         const currentUserDocRef = doc(db, 'users', currentUserId);
-        // Get current user document snapshot
-        const currentUserDocSnapshot = await getDoc(currentUserDocRef);
+        const userDocRef = doc(db, 'users', userId);
 
-
-        if (!currentUserDocSnapshot.exists()) {
-            console.error('Current user document not found.');
-            return;
-        }
-
-        const currentUserDocData = currentUserDocSnapshot.data();
-        console.log('Current User Document Data:', currentUserDocData);
-
-        // Update Firestore documents based on follow status
         if (isFollowing) {
-            // Unfollow the user
             await updateDoc(currentUserDocRef, {
-                following: arrayRemove(userData.UID) // Change to userData.UID (uppercase I)
+                following: arrayRemove(userId)
             });
-
-            // Remove current user from the followers list of the user being unfollowed
-            const userDocRef = doc(db, 'users', userData.UID); // Change to userData.UID (uppercase I)
             await updateDoc(userDocRef, {
                 followers: arrayRemove(currentUserId)
             });
-
             console.log('User unfollowed successfully.');
         } else {
-            // Follow the user
             await updateDoc(currentUserDocRef, {
-                following: arrayUnion(userData.UID) // Change to userData.UID (uppercase I)
+                following: arrayUnion(userId)
             });
-
-            // Add current user to the followers list of the user being followed
-            const userDocRef = doc(db, 'users', userData.UID); // Change to userData.UID (uppercase I)
             await updateDoc(userDocRef, {
                 followers: arrayUnion(currentUserId)
             });
-
             console.log('User followed successfully.');
         }
 
-        // Update local state based on follow status
-        setIsFollowing(!isFollowing);
+        setIsFollowing(!isFollowing); // Toggle follow status
 
         // Update followers count
         setFollowersCount(prevCount => isFollowing ? prevCount - 1 : prevCount + 1);
@@ -138,6 +107,7 @@ const UserCard = ({ userId }) => {
         console.error('Error toggling follow:', error);
     }
 };
+
 
   
 

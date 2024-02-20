@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 import { FaInfoCircle, FaUser } from 'react-icons/fa';
 import fetchPFP from '../functions/fetchPFP';
 import fetchUIDwithUsername from '../functions/fetchUIDwithUsername';
-import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 
 const FollowButton = ({ isFollowing, toggleFollow }) => {
     return (
@@ -30,28 +29,29 @@ const UserPage = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                console.log('Fetching user data...');
+                setIsLoading(true);
+    
+                // Fetch UID using username
                 const uid = await fetchUIDwithUsername(username);
-                console.log('User UID:', uid);
-
-                const q = query(collection(db, 'users'), where('username', '==', username));
-                const querySnapshot = await getDocs(q);
-
-                if (!querySnapshot.empty) {
-                    const docData = querySnapshot.docs[0].data();
-                    console.log('User Data:', docData);
-                    setUserData(docData);
-
+    
+                // Fetch user data using UID
+                const userRef = doc(db, 'users', uid);
+                const userSnapshot = await getDoc(userRef);
+    
+                if (userSnapshot.exists()) {
+                    const userData = userSnapshot.data();
+                    setUserData(userData);
+    
                     // Fetch profile picture using fetchPFP function with the obtained UID
                     const fetchedProfilePicture = await fetchPFP(uid);
                     setProfilePictureURL(fetchedProfilePicture);
-
-                    setFollowersCount(docData.followers ? docData.followers.length : 0);
-                    setFollowingCount(docData.following ? docData.following.length : 0);
-
+    
+                    setFollowersCount(userData.followers ? userData.followers.length : 0);
+                    setFollowingCount(userData.following ? userData.following.length : 0);
+    
                     const currentUser = auth.currentUser;
-                    if (currentUser && docData.uid && currentUser.uid !== docData.uid) {
-                        setIsFollowing(docData.followers && docData.followers.includes(currentUser.uid));
+                    if (currentUser && userData.uid && currentUser.uid !== userData.uid) {
+                        setIsFollowing(userData.followers && userData.followers.includes(currentUser.uid));
                     }
                 } else {
                     console.error('User document not found for username:', username);
@@ -62,17 +62,23 @@ const UserPage = () => {
                 setIsLoading(false);
             }
         };
-
+    
         fetchUserData();
     }, [username]);
-
+    
+    // Set the initial toggle state of Follow button to "Unfollow" if the current user is in the followers list of the user's page
+    useEffect(() => {
+        if (userData && auth.currentUser) {
+            setIsFollowing(userData.followers && userData.followers.includes(auth.currentUser.uid));
+        }
+    }, [userData]);
+    
+    
 
     const toggleFollow = async () => {
-        // Add or remove the current user from the followers list of the user being followed/unfollowed
         try {
-            // Check if user data is initialized
-            if (!userData) {
-                console.error('User data not initialized.');
+            if (!userData || !userData.UID) {
+                console.error('User data or UID not initialized.');
                 return;
             }
     
@@ -81,58 +87,35 @@ const UserPage = () => {
                 console.error('Current user not authenticated.');
                 return;
             }
+    
             const currentUserId = currentUser.uid;
-            console.log('Current User ID:', currentUserId);
     
-            if (!userData.UID) { // Change to userData.UID (uppercase I)
-                console.error('UID not found in user data.');
-                return;
-            }
-    
-            // Get current user document
+            // Define document references
             const currentUserDocRef = doc(db, 'users', currentUserId);
-            // Get current user document snapshot
-            const currentUserDocSnapshot = await getDoc(currentUserDocRef);
-
-    
-            if (!currentUserDocSnapshot.exists()) {
-                console.error('Current user document not found.');
-                return;
-            }
-    
-            const currentUserDocData = currentUserDocSnapshot.data();
-            console.log('Current User Document Data:', currentUserDocData);
+            const userDocRef = doc(db, 'users', userData.UID);
     
             // Update Firestore documents based on follow status
             if (isFollowing) {
                 // Unfollow the user
                 await updateDoc(currentUserDocRef, {
-                    following: arrayRemove(userData.UID) // Change to userData.UID (uppercase I)
+                    following: arrayRemove(userData.UID)
                 });
-    
-                // Remove current user from the followers list of the user being unfollowed
-                const userDocRef = doc(db, 'users', userData.UID); // Change to userData.UID (uppercase I)
                 await updateDoc(userDocRef, {
                     followers: arrayRemove(currentUserId)
                 });
-    
                 console.log('User unfollowed successfully.');
             } else {
                 // Follow the user
                 await updateDoc(currentUserDocRef, {
-                    following: arrayUnion(userData.UID) // Change to userData.UID (uppercase I)
+                    following: arrayUnion(userData.UID)
                 });
-    
-                // Add current user to the followers list of the user being followed
-                const userDocRef = doc(db, 'users', userData.UID); // Change to userData.UID (uppercase I)
                 await updateDoc(userDocRef, {
                     followers: arrayUnion(currentUserId)
                 });
-    
                 console.log('User followed successfully.');
             }
     
-            // Update local state based on follow status
+            // Toggle follow status
             setIsFollowing(!isFollowing);
     
             // Update followers count
@@ -141,15 +124,12 @@ const UserPage = () => {
             console.error('Error toggling follow:', error);
         }
     };
-    
-    
-    
+
     if (isLoading) {
         return <div>Loading...</div>;
     }
 
     const defaultProfilePicture = require('../assets/default-profile-picture.jpg');
-
 
     return (
         <div className="max-w-md mx-auto p-4 bg-white rounded-lg shadow-md">
@@ -157,11 +137,12 @@ const UserPage = () => {
                 <div>
                     <h2 className="text-3xl font-semibold mb-4"><span className="text-blue-400">@</span> {userData.username}</h2>
                     <div className="mr-8">
-                        {profilePictureURL ? (
-                            <img src={profilePictureURL} alt="Profile" className="w-10 h-10 rounded-full mr-4" />
-                        ) : (
-                            <div className="w-10 h-10 bg-gray-300 rounded-full mr-4"></div>
-                        )}
+                                    <img 
+                                    src={profilePictureURL || defaultProfilePicture} 
+                                    alt="Profile" 
+                                    className="w-24 h-24 rounded-full" 
+                                  />
+
                     </div>
                     <div>
                         {userData.bio ? (
