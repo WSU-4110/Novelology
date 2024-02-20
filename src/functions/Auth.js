@@ -89,6 +89,10 @@ async function addUserToDatabase(uid, email, displayName, navigate) {
             following: [],
             UID: uid
         });
+
+        await setDoc(doc(db, "usernames", username.toLowerCase()),{
+            UID: uid
+        }); // Add username to usernames collection
         console.log("User added to database successfully");
 
         // Redirect to setup-account page after user is successfully added to the database
