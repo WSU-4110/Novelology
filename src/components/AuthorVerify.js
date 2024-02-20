@@ -22,12 +22,12 @@ const AuthorVerify =() => {
     return (
       <>
         <div className="verify-author">
-          <h2>Author Verification</h2>
+          <h2 id= "author-heading">Author Verification</h2>
           <br />
           <div className="upload-id">
             <form encType="multipart/form-data">
               <label>
-                <h3>Upload your govt. ID</h3>
+                <h3 class="verify-section-titles">Upload your govt. ID</h3>
               </label>
               <input
                 type="file"
@@ -39,7 +39,7 @@ const AuthorVerify =() => {
           </div>
           <br />
           <div className="author-name">
-            <h3>Type your author name</h3>
+            <h3 class="verify-section-titles">Type your author name</h3>
             <input
               type="text"
               id="author-name"
