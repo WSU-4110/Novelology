@@ -6,15 +6,13 @@ const PronounsDropdown = ({ pronouns, setPronouns }) => {
   const handleSelectChange = (e) => {
     const selectedPronouns = e.target.value;
     if (selectedPronouns === "Other") {
-      setPronouns(customPronouns); // Set pronouns to custom pronouns
-    } else {
-      setPronouns(selectedPronouns);
+      setCustomPronouns(""); // Clear custom pronouns input when 'Other' is selected
     }
+    setPronouns(selectedPronouns); // Always update selected pronouns
   };
 
   const handleCustomPronounsChange = (e) => {
     setCustomPronouns(e.target.value);
-    setPronouns(e.target.value); // Update pronouns when custom pronouns are entered
   };
 
   return (
