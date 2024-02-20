@@ -19,8 +19,29 @@ function Submit() {
   const navigate = useNavigate()
 
   let genres = []
+    const [selectedGenres, setSelectedGenres] = useState([])
+    const [genreOptions] = useState([
+      'Fantasy',
+      'Science Fiction',
+      'Mystery',
+      'Romance',
+      'Thriller',
+      'Horror',
+      
+    ])
+  
+    const handleGenreChange = (e) => {
+      const selectedGenre = e.target.value
+      if (!selectedGenres.includes(selectedGenre)) {
+        setSelectedGenres([...selectedGenres, selectedGenre])
+      }
+    }
+  
+    const handleRemoveGenre = (genre) => {
+      setSelectedGenres(selectedGenres.filter((g) => g !== genre))
+    }
   const handleChange = (e) => {
-    setFormValue(e.target.value);
+    setFormValue(e.target.value)
   }
   const handleFileChange = (e) =>{
      setFile(e.target.files[0])
@@ -39,7 +60,7 @@ function Submit() {
 		const payload = {
     text: formValue || "", 
     createdAt: serverTimestamp(),
-    genres: genres,
+    genres: selectedGenres,
     comments: [], 
     uid:user.uid,
     userEmail: user.email,
@@ -66,10 +87,13 @@ function Submit() {
     }
     fileInputRef.current.value = null
     setFile(null)
-    await addDoc(messageRef,payload)
-    
+    const result = await addDoc(messageRef,payload)
+
     setFormValue('')
- 
+    setSelectedGenres([])
+    if (result){
+      navigate('/')
+    }
   }
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -95,6 +119,29 @@ function Submit() {
         }
       
       <div className=''>
+      <div>
+      <h2>Select Book Genres</h2>
+      <label htmlFor="genres">Choose Genres:</label>
+      <select id="genres" onChange={handleGenreChange} multiple>
+        {genreOptions.map((genre) => (
+          <option key={genre} value={genre}>
+            {genre}
+          </option>
+        ))}
+      </select>
+      <div>
+        <h3>Selected Genres:</h3>
+        <ul>
+          {selectedGenres.map((genre) => (
+            <li key={genre}>
+              {genre}
+              <button onClick={() => handleRemoveGenre(genre)}>Remove</button>
+            </li>
+          ))}
+        </ul>
+      </div>
+      {console.log(selectedGenres)}
+    </div>
         <PostForm
         sendMessage={sendMessage}
         handleFileChange={handleFileChange}
