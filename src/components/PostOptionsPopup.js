@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFlag, faSave, faList, faVolumeMute } from '@fortawesome/free-solid-svg-icons';
+import { faFlag, faShare, faList, faVolumeMute } from '@fortawesome/free-solid-svg-icons';
 import ReportOptions from './ReportOptions'; // Import ReportOptions component
 
 const PostOptionsPopup = ({ onClose }) => {
@@ -52,22 +52,31 @@ const PostOptionsPopup = ({ onClose }) => {
           <li className="px-4 py-2 flex items-center hover:bg-gray-100 focus:bg-gray-100 focus:outline-none cursor-pointer transition duration-300" role="menuitem" onClick={handleReportPost}>
             <FontAwesomeIcon icon={faFlag} className="mr-2" />
             Report Post
+            {/* Render ReportOptions component if showReportOptions is true */}
+            {/*Save to DB
+              - UID of reporter
+              - Report Reason
+              - Timestamp
+            */}
           </li>
           <li className="px-4 py-2 flex items-center hover:bg-gray-100 focus:bg-gray-100 focus:outline-none cursor-pointer transition duration-300" role="menuitem" onClick={handleSavePost}>
-            <FontAwesomeIcon icon={faSave} className="mr-2" />
-            Save Post
+            <FontAwesomeIcon icon={faShare} className="mr-2" />
+            Share Post
+           
           </li>
           <li className="px-4 py-2 flex items-center hover:bg-gray-100 focus:bg-gray-100 focus:outline-none cursor-pointer transition duration-300" role="menuitem" onClick={handleAddToList}>
             <FontAwesomeIcon icon={faList} className="mr-2" />
             Add Post to List
+             {/* ask user which list they'd like to save into*/}
           </li>
           <li className="px-4 py-2 flex items-center hover:bg-gray-100 focus:bg-gray-100 focus:outline-none cursor-pointer transition duration-300" role="menuitem" onClick={handleMuteUser}>
             <FontAwesomeIcon icon={faVolumeMute} className="mr-2" />
             Mute User
           </li>
         </ul>
+
         {/* Render ReportOptions component if showReportOptions is true */}
-      {showReportOptions && <ReportOptions onClose={() => setShowReportOptions(false)} />}
+        {showReportOptions && <ReportOptions onClose={() => setShowReportOptions(false)} />}
     
         <button onClick={onClose} className="block w-full text-left mt-2 px-4 py-2 text-gray-600 hover:bg-gray-100 focus:outline-none">
           Close

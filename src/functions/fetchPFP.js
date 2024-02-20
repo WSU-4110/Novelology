@@ -2,10 +2,10 @@ import { ref, getDownloadURL } from 'firebase/storage';
 import { storage } from '../firebase';
 import { auth } from '../firebase';
 
-const fetchPFP = async () => {
+const fetchPFP = async (uid) => { // Accept UID as a parameter
   try {
-    const userId = auth.currentUser.uid;
-    
+    const userId = uid; // Use the provided UID or get it from auth
+
     if (!userId) {
       throw new Error('User is not authenticated');
     }

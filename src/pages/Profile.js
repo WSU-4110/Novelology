@@ -16,14 +16,14 @@ const Profile = () => {
         const fetchUserData = async () => {
             try {
                 if (user && !userData) {
-                    setIsLoading(true); // Set loading to true when fetching data
+                    setIsLoading(true); 
                     const userRef = doc(db, 'users', user.uid);
                     const docSnapshot = await getDoc(userRef);
 
                     if (docSnapshot.exists()) {
                         const userData = docSnapshot.data();
                         setUserData(userData);
-                        localStorage.setItem('userData', JSON.stringify(userData)); // Store userData in localStorage
+                        localStorage.setItem('userData', JSON.stringify(userData)); 
                     } else {
                         console.log('User document does not exist');
                     }
@@ -31,13 +31,13 @@ const Profile = () => {
                     const profilePictureURL = await fetchPFP(user.uid);
                     if (profilePictureURL !== fetchedProfilePicture) {
                         setFetchedProfilePicture(profilePictureURL);
-                        localStorage.setItem('profilePicture', profilePictureURL); // Update profile picture URL in localStorage
+                        localStorage.setItem('profilePicture', profilePictureURL); 
                     }
                 }
             } catch (error) {
                 console.error('Error fetching user data:', error);
             } finally {
-                setIsLoading(false); // Set loading to false after fetching data
+                setIsLoading(false); 
             }
         };
 
@@ -45,9 +45,8 @@ const Profile = () => {
     }, [user, userData, fetchedProfilePicture]);
 
     if (loading || isLoading) {
-        return <div>Loading...</div>; // Show loading indicator while fetching data
+        return <div>Loading...</div>; 
     }
-
     if (!user) {
         return (
             <div>
@@ -61,36 +60,51 @@ const Profile = () => {
 
     const defaultProfilePicture = require('../assets/default-profile-picture.jpg');
 
+    console.log('userData:', userData); // Log userData to inspect its structure
+
     return (
         <div className="profile-container bg-purple-100 p-8 rounded-lg shadow-md">
-            <h1 className="text-3xl font-bold">User Profile</h1>
+            <h1 className="text-3xl font-bold mb-4">User Profile</h1>
 
             {userData && (
-                <div>
+                <div className="flex items-center mb-8">
                     {/* Conditionally render the profile picture */}
-                    {fetchedProfilePicture !== null ? (
-                        <img src={fetchedProfilePicture} alt="Profile" className="w-24 h-24 rounded-full my-4" />
-                    ) : (
-                        <img src={defaultProfilePicture} alt="Default Profile" className="w-24 h-24 rounded-full my-4" />
-                    )}
-                    <div className='m-8'>
-                        <p><strong>Username:</strong> {userData.username}</p>
-                        <p><strong>Bio:</strong> {userData.bio}</p>
-                        <p><strong>Pronouns:</strong> {userData.pronouns}</p>
+                    <div className="mr-8">
+                        <img 
+                            src={fetchedProfilePicture || defaultProfilePicture} 
+                            alt="Profile" 
+                            className="w-24 h-24 rounded-full" 
+                        />
+                    </div>
+                    <div>
+                        <p className="mb-2"><strong>Username:</strong> {userData.username}</p>
+                        <p className="mb-2"><strong>Bio:</strong> {userData.bio || 'No bio provided'}</p>
+                        {userData.role && userData.role.length > 0 && (
+                            <div className="mb-2">
+                                <p><strong>Roles:</strong></p>
+                                <ul className="list-disc ml-4">
+                                    {userData.role.map((role, index) => (
+                                        <li key={index}>{role}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+                        {userData.pronouns && <p className="mb-2"><strong>Pronouns:</strong> {userData.pronouns}</p>}
                         <p><strong>Genres:</strong> {userData.genres ? userData.genres.join(', ') : 'No genres selected'}</p>
                     </div>
                 </div>
             )}
 
-            <Link to={`/users/${userData && userData.username}`} className="bg-blue-300 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded">
-                View Your Public Page!
-            </Link>
+            <div className="flex justify-between">
+                <Link to={`/users/${userData && userData.username}`} className="bg-blue-300 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded">
+                    View Your Public Page!
+                </Link>
 
-            <Link to="/settings" className="mt-4 bg-pink-300 hover:bg-pink-400 text-white font-bold py-2 px-4 rounded">
-                Go to Settings
-            </Link>
+                <Link to="/settings" className="bg-pink-300 hover:bg-pink-400 text-white font-bold py-2 px-4 rounded">
+                    Go to Settings
+                </Link>
+            </div>
         </div>
     );
 };
-
 export default Profile;
