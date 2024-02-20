@@ -11,6 +11,7 @@ import PostOptionsPopup from './PostOptionsPopup';
 import ReactDOM from 'react-dom';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
+import formatTimeDifference from '../functions/formatTimeDifference';
 
 class PostComponent extends Component {
   constructor(props) {
@@ -127,36 +128,6 @@ class PostComponent extends Component {
   };
   
 
-
-
-  // Function to format time difference
-  formatTimeDifference = (timestamp) => {
-
-
-
-    if (!timestamp) {
-      return 'Unknown time';
-    }
-
-    const currentTime = new Date();
-    const postTime = new Date(timestamp); // Remove seconds * 1000
-    const differenceInSeconds = Math.floor((currentTime - postTime) / 1000);
-
-    if (differenceInSeconds < 60) {
-      return 'Just Now';
-    } else if (differenceInSeconds < 3600) {
-      const minutes = Math.floor(differenceInSeconds / 60);
-      return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-    } else if (differenceInSeconds < 86400) {
-      const hours = Math.floor(differenceInSeconds / 3600);
-      return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-    } else {
-      const days = Math.floor(differenceInSeconds / 86400);
-      return `${days} day${days > 1 ? 's' : ''} ago`;
-    }
-  };
-
-
   // Fetch the post creator's profile picture using the UID
   fetchPostCreatorData = async () => {
     const { post } = this.props;
@@ -222,7 +193,7 @@ class PostComponent extends Component {
               </Link>
             )}
             <p className="text-sm text-gray-500 cursor-help" title={post.data.createdAt && post.data.createdAt.toString()}>
-              {this.formatTimeDifference(post.data.createdAt ? new Date(post.data.createdAt).getTime() : '')}
+              {formatTimeDifference(post.data.createdAt ? new Date(post.data.createdAt).getTime() : '')}
             </p>
           </div>
 
