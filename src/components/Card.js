@@ -19,6 +19,8 @@ const Card = ({ book }) => {
         if (thumbnail != undefined && authors!= undefined){
             return (
                 <>
+              <div >
+                
               <div className="card" onClick={() =>{setShow(true);setBookItem(item)}}>
                 <img src={thumbnail} alt="" />
                 <div className="card-body">
@@ -40,6 +42,8 @@ const Card = ({ book }) => {
                 </div>
               </div>
               <BookDetailsModal show={show} item={bookItem} onClose={noShow}/>
+
+              </div>
               </>
             );
         } else if (authors== undefined){
