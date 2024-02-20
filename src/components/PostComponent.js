@@ -34,12 +34,10 @@ class PostComponent extends Component {
   componentDidMount() {
     this.fetchPostCreatorData();
     this.checkLikedState(); // Move the checkLikedState call here
-    document.addEventListener('click', this.handleOutsideClick);
+    
   }
 
-  componentWillUnmount() {
-    document.removeEventListener('click', this.handleOutsideClick);
-  }
+
 
   componentDidUpdate(prevProps) {
     if (prevProps.post.id !== this.props.post.id) {
@@ -119,24 +117,14 @@ class PostComponent extends Component {
   
   
     
-
   togglePostOptionsPopup = () => {
     this.setState(prevState => ({
       showPostOptionsPopup: !prevState.showPostOptionsPopup,
     }));
   };
+  
 
-  handleOutsideClick = (e) => {
-    console.log("Clicked outside popup");
-    console.log("Popup Container:", this.popupContainer);
-    console.log("Target:", e.target);
-    if (!this.popupContainer.contains(e.target)) {
-      console.log("Clicked outside popup container");
-      this.setState({
-        showPostOptionsPopup: false,
-      });
-    }
-  };
+
 
   // Function to format time difference
   formatTimeDifference = (timestamp) => {
