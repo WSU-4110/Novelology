@@ -1,6 +1,7 @@
 .App {
   overflow-y: scroll;
   text-align: center;
+  font-family: 'Lucida Sans', cursive;
 }
 
 .App-logo {

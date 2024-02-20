@@ -12,6 +12,7 @@ import fetchUsernameWithUID from '../functions/fetchUsernameWithUID';
 import { Link } from 'react-router-dom';
 
 class CommentComponent extends Component {
+  // Create a constructor method with a state to store the user profile picture, username, and other comment data
   constructor(props) {
     super(props);
     this.state = {
@@ -24,6 +25,7 @@ class CommentComponent extends Component {
     };
   }
 
+  // Add a propTypes object to the CommentComponent class to define the currentUser and onReply props
   static propTypes = {
     currentUser: PropTypes.object.isRequired,
     onReply: PropTypes.func.isRequired,
@@ -37,6 +39,7 @@ class CommentComponent extends Component {
       const userDoc = doc(db, 'users', uid);
       const userDocSnap = await getDoc(userDoc);
 
+      // If the user document exists, set the username state variable to the username in the document data
       if (userDocSnap.exists()) {
         const userData = userDocSnap.data();
         this.setState({
@@ -55,15 +58,20 @@ class CommentComponent extends Component {
     }
   };
 
+  // Call the fetchUserData method when the component mounts
+  // The component mounts when it's first rendered to the DOM
   componentDidMount() {
     this.fetchUserData();
     this.fetchComments(); // Fetch comments and replies when component mounts
   }
 
   fetchComments = async () => {
+    // grab comment from props
+    // props are immutable, so we need to store the comment in a variable
     const { comment } = this.props;
     const comments = []; // Declare the comments variable here
   
+    // try to fetch comments and replies
     try {
       const commentsRef = collection(db, 'comments');
       const q = query(commentsRef, where('parentCommentId', '==', comment.id));
@@ -78,9 +86,11 @@ class CommentComponent extends Component {
         comments.push(commentWithReplies);
       }
   
+      // If there are no comments, set the comments state to an empty array
       if (comments.length > 0) {
         const updatedReplies = comments[0].replies || [];
-        this.setState({ comments, replies: updatedReplies, loadingReplies: false }); // Set replies state here
+        // set the state to the comments and replies to empty array, and no longer lading
+        this.setState({ comments, replies: updatedReplies, loadingReplies: false }); 
       } else {
         this.setState({ comments, loadingReplies: false });
       }
@@ -120,6 +130,9 @@ class CommentComponent extends Component {
   };
 
   handleReplyTextChange = (e) => {
+    // Update the reply text state variable when the input value changes
+    //e is the event object that is passed to the function 
+    // e.target.value is the current value of the input element
     this.setState({ replyText: e.target.value });
   };
 

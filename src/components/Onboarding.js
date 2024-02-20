@@ -8,6 +8,7 @@ import RolesSelection from "./RolesSelection";
 import BioTextArea from "./BioTextArea";
 import SelectGenres from "./SelectGenres";
 import fetchPFP from "../functions/fetchPFP"; // Import fetchPFP function
+import AuthorVerify from "./AuthorVerify.js";
 
 const Onboarding = () => {
   // State variables
@@ -90,7 +91,14 @@ const Onboarding = () => {
       } else {
         // Save data without profile picture
         await setDoc(userRef, userData, { merge: true });
-        navigate("/");
+
+        console.log("roles: " + selectedRoles)
+        if (selectedRoles.includes("Author")) {
+          navigate("/author-verification");
+        } else {
+          navigate("/");
+        }
+        
       }
     } catch (error) {
       console.error("Error submitting form:", error);

@@ -6,6 +6,7 @@ export default function SetUpAccount() {
     return (
         <div className="overflow-y-scroll">
                 <Onboarding />
+
         </div>
     );
 }

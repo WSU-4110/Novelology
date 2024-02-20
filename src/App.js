@@ -13,10 +13,19 @@ import UserPage from './pages/UserPage';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Post from './pages/Post';
+import AuthorVerification from './pages/AuthorVerification';
 const App = () => {
   return (
     <Router>
       <Fragment>
+
+        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+          <img src={require('./assets/Novelology_Logo.png')} style={{ height: '9em', width: '450px' }} />
+        </div>
+
+
+
+
         <Navbar />
         <Routes>
         <Route path="/" element={<Home />} />
@@ -32,6 +41,9 @@ const App = () => {
           <Route path="/login/:redirect" element={<Login/>}/>
           <Route path="/login/" element={<Login/>}/>
           <Route path="/post/:pid" element={<Post/>}/>
+          <Route path="/post" element={<Post/>}/>
+          <Route path="/author-verification" element={<AuthorVerification/>}/>
+
         </Routes>
         
       </Fragment>

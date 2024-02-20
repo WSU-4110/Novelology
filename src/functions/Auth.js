@@ -124,7 +124,6 @@ function handleSignUpWithEmail(htmlEmail, htmlPass, htmlUser) {
 export const handleLogout = (navigate) => {
     localStorage.removeItem('userData');
     auth.signOut();
-    navigate('/');
 };
 
 export const handleDeleteAccount = async (navigate) => {
