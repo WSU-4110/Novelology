@@ -10,22 +10,6 @@ export default function(){
     const [user] = useAuthState(auth);
 
     return(
-
-       
-    <nav className="flex flex-row gap-10 p-4">
-        <Link to="/"> Home</Link>
-        {!user ? <Modal/>: 
-
-            <>
-                <Link to="/profile">Profile</Link>
-                <button className='logout-button' onClick={handleLogout}>Sign off</button>
-                <Link to="/submit">Post</Link>
-            </>
-
-        }
-       
-    </nav>
-
         
         <nav className="flex flex-row gap-10 p-4 bg-[#F4D7B7]">
             <Link to="/"> Home</Link>
