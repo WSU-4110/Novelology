@@ -6,7 +6,7 @@ import Post from '../../pages/Post';
 import {db} from '../../firebase.js';
 export default function HotFeed(){
     const postRef = collection(db, 'posts')
-    const queryRef = query(postRef, orderBy('createdAt','asc'))
+    const queryRef = query(postRef, orderBy('createdAt','desc'))
     let posts = null
     let loading = true
     let error = null

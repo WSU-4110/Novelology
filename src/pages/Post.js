@@ -8,7 +8,7 @@ import Error from '../components/Error.js'
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useNavigate ,  useParams} from "react-router-dom";
 import PostActions from '../functions/PostActions.js';
-
+import { Link } from 'react-router-dom';
 export default function Post(postid){
     
     const { pid } = useParams()
@@ -28,7 +28,7 @@ export default function Post(postid){
     } catch (err) {
         error = err
     }
-
+    
     if (error) return <Error  />
     if (!postData) return <Error />
 
@@ -39,8 +39,11 @@ export default function Post(postid){
              
               {loading && <span>Document: Loading...</span>}
               {postData && <>
+                <Link to={`/post/${finalPid}`}>
                 <PostIDComponent props= {postData}/>
                 <PostIDSubComponent props = {postData}/>
+                </Link>
+                
               </>
           
               

@@ -36,13 +36,16 @@ export default function Home() {
         <main>
             {!user ? (
                 <div> logged out</div>
+                
             ) : (
                 <>
                     <div className='flex flex-col justify-center items-center'>
                         {user.displayName && (
                             <h1 className='text-3xl font-bold underline'>Welcome back, {user.displayName}!</h1>
                         )}
+                         <HotFeed/>
                         <Feed currentUser={user} />
+                       
                     </div>
                 </>
             )}
@@ -53,7 +56,7 @@ export default function Home() {
             <div className='bookSearch'>
                 <BookSearch/>
             </div>
-            <HotFeed/>
+            
         </main>
     )
 }

@@ -18,7 +18,7 @@ function Submit() {
   const textAreaRef = useRef(null)
   const navigate = useNavigate()
 
-
+  let genres = []
   const handleChange = (e) => {
     setFormValue(e.target.value);
   }
@@ -39,6 +39,7 @@ function Submit() {
 		const payload = {
     text: formValue || "", 
     createdAt: serverTimestamp(),
+    genres: genres,
     comments: [], 
     uid:user.uid,
     userEmail: user.email,
