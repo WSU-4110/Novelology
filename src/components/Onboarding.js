@@ -37,7 +37,8 @@ const Onboarding = () => {
             console.log("Fetched data:", userData);
             setBio(userData.bio || "");
             setPronouns(userData.pronouns || "");
-  
+            setSelectedRoles(userData.selectedRoles || []); // Fetch selected roles
+            
             const existingURL = await fetchPFP(userId);
             if (existingURL) {
               setFetchedProfilePicture(existingURL);
@@ -54,6 +55,7 @@ const Onboarding = () => {
   
     return () => unsubscribe();
   }, []);
+  
   
   
 
@@ -140,8 +142,7 @@ const Onboarding = () => {
         <BioTextArea bio={bio} setBio={setBio} />
         <PronounsDropdown pronouns={pronouns} setPronouns={setPronouns} />
         <RolesSelection selectedRoles={selectedRoles} setSelectedRoles={setSelectedRoles} />
-        <p>{selectedRoles}</p>
-       
+
         <div className="mb-4">
           <h2 className="text-lg font-semibold">Select Genres</h2>
           <SelectGenres />
