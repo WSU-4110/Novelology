@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import CommentComponent from './CommentComponent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faComment, faThumbsUp, faShare } from '@fortawesome/free-solid-svg-icons';
+import { faHeart, faShare } from '@fortawesome/free-solid-svg-icons';
 import fetchUserProfilePicture from '../functions/fetchUserProfilePicture';
 import fetchUsernameWithUID from '../functions/fetchUsernameWithUID';
 import { Link } from 'react-router-dom';
@@ -11,6 +11,7 @@ import PostOptionsPopup from './PostOptionsPopup';
 import ReactDOM from 'react-dom';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
+import formatTimeDifference from '../functions/formatTimeDifference';
 
 class PostComponent extends Component {
   constructor(props) {
@@ -34,12 +35,10 @@ class PostComponent extends Component {
   componentDidMount() {
     this.fetchPostCreatorData();
     this.checkLikedState(); // Move the checkLikedState call here
-    document.addEventListener('click', this.handleOutsideClick);
+    
   }
 
-  componentWillUnmount() {
-    document.removeEventListener('click', this.handleOutsideClick);
-  }
+
 
   componentDidUpdate(prevProps) {
     if (prevProps.post.id !== this.props.post.id) {
@@ -75,14 +74,17 @@ class PostComponent extends Component {
     }
   
     try {
+      // Update the Firestore document
       await updateDoc(postRef, { likedBy, likes: currentLikes });
       console.log("Firebase document updated successfully");
+      
       // Update the state with the new number of likes and liked state
       this.setState({ likedBy, likes: currentLikes, liked: !liked });
     } catch (error) {
       console.error("Error updating Firebase document:", error);
     }
   };
+  
   
   
   
@@ -119,52 +121,12 @@ class PostComponent extends Component {
   
   
     
-
   togglePostOptionsPopup = () => {
     this.setState(prevState => ({
       showPostOptionsPopup: !prevState.showPostOptionsPopup,
     }));
   };
-
-  handleOutsideClick = (e) => {
-    console.log("Clicked outside popup");
-    console.log("Popup Container:", this.popupContainer);
-    console.log("Target:", e.target);
-    if (!this.popupContainer.contains(e.target)) {
-      console.log("Clicked outside popup container");
-      this.setState({
-        showPostOptionsPopup: false,
-      });
-    }
-  };
-
-  // Function to format time difference
-  formatTimeDifference = (timestamp) => {
-
-
-
-    if (!timestamp) {
-      return 'Unknown time';
-    }
-
-    const currentTime = new Date();
-    const postTime = new Date(timestamp); // Remove seconds * 1000
-    const differenceInSeconds = Math.floor((currentTime - postTime) / 1000);
-
-    if (differenceInSeconds < 60) {
-      return 'Just Now';
-    } else if (differenceInSeconds < 3600) {
-      const minutes = Math.floor(differenceInSeconds / 60);
-      return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-    } else if (differenceInSeconds < 86400) {
-      const hours = Math.floor(differenceInSeconds / 3600);
-      return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-    } else {
-      const days = Math.floor(differenceInSeconds / 86400);
-      return `${days} day${days > 1 ? 's' : ''} ago`;
-    }
-  };
-
+  
 
   // Fetch the post creator's profile picture using the UID
   fetchPostCreatorData = async () => {
@@ -231,7 +193,7 @@ class PostComponent extends Component {
               </Link>
             )}
             <p className="text-sm text-gray-500 cursor-help" title={post.data.createdAt && post.data.createdAt.toString()}>
-              {this.formatTimeDifference(post.data.createdAt ? new Date(post.data.createdAt).getTime() : '')}
+              {formatTimeDifference(post.data.createdAt ? new Date(post.data.createdAt).getTime() : '')}
             </p>
           </div>
 
@@ -278,10 +240,9 @@ class PostComponent extends Component {
 
         {/* Buttons for actions */}
         <div className="pt-4">
-          <button><FontAwesomeIcon icon={faComment} /> Comment</button>
           <div>
           <button onClick={this.toggleLike}>
-        <FontAwesomeIcon icon={faThumbsUp} style={{ color: liked ? 'blue' : 'gray' }} />
+        <FontAwesomeIcon icon={faHeart} style={{ color: liked ? 'blue' : 'gray' }} />
         {liked ? ' Unlike' : ' Like'} {/* Toggle text based on whether the post is liked */}
         {likes >= 0 && <span>{likes}</span>} {/* Display number of likes if it's not negative */}
       </button>
