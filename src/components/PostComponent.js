@@ -12,6 +12,9 @@ import ReactDOM from 'react-dom';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import formatTimeDifference from '../functions/formatTimeDifference';
+import fetchPFP from '../functions/fetchPFP';
+import { runTransaction } from 'firebase/firestore';
+
 
 class PostComponent extends Component {
   constructor(props) {
@@ -38,7 +41,7 @@ class PostComponent extends Component {
     
   }
 
-
+  
 
   componentDidUpdate(prevProps) {
     if (prevProps.post.id !== this.props.post.id) {
@@ -53,33 +56,39 @@ class PostComponent extends Component {
     const currentUserId = currentUser.uid;
     const postRef = doc(db, 'posts', post.id);
   
-    let likedBy = post.data.likedBy || [];
-    let currentLikes = post.data.likes || 0;
-    let liked = likedBy.includes(currentUserId);
-  
-    console.log("Toggling like for post:", post.id);
-    console.log("Current user:", currentUser);
-  
-    if (liked) {
-      // Unlike the post
-      if (currentLikes === 0) return;
-      currentLikes--;
-      likedBy = likedBy.filter(uid => uid !== currentUserId);
-      console.log("Post unliked successfully");
-    } else {
-      // Like the post
-      currentLikes++;
-      likedBy.push(currentUserId);
-      console.log("Post liked successfully");
-    }
-  
     try {
-      // Update the Firestore document
-      await updateDoc(postRef, { likedBy, likes: currentLikes });
+      // Ensures atomic read-modify-write operations in Firestore
+      // Locks documents to prevent concurrent modifications
+      // Retries automatically if conflicts occur
+      // Allows handling errors gracefully
+      await runTransaction(db, async (transaction) => {
+        const postDoc = await transaction.get(postRef);
+        const postData = postDoc.data();
+  
+        let likedBy = postData.likedBy || [];
+        let currentLikes = postData.likes || 0;
+        let liked = likedBy.includes(currentUserId);
+  
+        if (liked) {
+          // Unlike the post
+          currentLikes--;
+          likedBy = likedBy.filter(uid => uid !== currentUserId);
+          console.log("Post unliked successfully");
+        } else {
+          // Like the post
+          currentLikes++;
+          likedBy.push(currentUserId);
+          console.log("Post liked successfully");
+        }
+  
+        // Update the Firestore document
+        transaction.update(postRef, { likedBy, likes: currentLikes });
+  
+        // Update the state with the new number of likes and liked state
+        this.setState({ likedBy, likes: currentLikes, liked: !liked });
+      });
+  
       console.log("Firebase document updated successfully");
-      
-      // Update the state with the new number of likes and liked state
-      this.setState({ likedBy, likes: currentLikes, liked: !liked });
     } catch (error) {
       console.error("Error updating Firebase document:", error);
     }
@@ -90,12 +99,10 @@ class PostComponent extends Component {
   
   
   
+  
   checkLikedState = async () => {
     const { post, currentUser } = this.props;
     const currentUserId = currentUser.uid;
-  
-    console.log("Checking liked state for post:", post.id);
-    console.log("Current user:", currentUser);
   
     try {
       const postRef = doc(db, 'posts', post.id);
@@ -134,9 +141,9 @@ class PostComponent extends Component {
     const { uid } = post.data;
 
     if (!uid) return;
-
+        
     try {
-      // Fetch profile picture
+// Fetch profile picture
       this.setState({ isLoadingProfilePicture: true });
       const profilePictureURL = await fetchUserProfilePicture(uid);
       this.setState({ creatorProfilePicture: profilePictureURL });
@@ -170,7 +177,7 @@ class PostComponent extends Component {
         {/* Post Header */}
         <div className="flex flex-row items-center mb-4 border-b border-gray-300 pb-4">
           {/* Display post creator's profile picture */}
-          {isLoadingProfilePicture ? (
+{isLoadingProfilePicture ? (
             <div className="w-10 h-10 bg-gray-300 rounded-full mr-4"></div>
           ) : profilePictureError ? (
             <p>Error loading profile picture: {profilePictureError}</p>
@@ -179,7 +186,7 @@ class PostComponent extends Component {
             <Link to={`/users/${username}`} className=' '>
               <img src={creatorProfilePicture} alt="Profile" className="w-10 h-10 rounded-full mr-4" />
             </Link>
-          )}
+)}
 
           {/* Post Creator Info */}
           <div>
