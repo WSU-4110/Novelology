@@ -6,12 +6,9 @@
 body {
   margin: 0;
   font-family:'Verdana'; 
-    /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif; !!!!!!!!!! THE FONT STYLE FOR THE WHOLE WEBSITE !!!!!!  */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #e3bd96; /*the background color for the whole website*/
+  background-color:  #F4D7B7;
 }
 
 code {

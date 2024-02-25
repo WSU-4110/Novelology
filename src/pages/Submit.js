@@ -58,14 +58,16 @@ function Submit() {
     e.preventDefault()
     if (!user || (!formValue && !file)) return
 		const payload = {
-    text: formValue || "", 
-    createdAt: serverTimestamp(),
-    genres: selectedGenres,
-    comments: [], 
-    uid:user.uid,
-    userEmail: user.email,
-    likes: 0,
-    fileName: file ? file.name : null }
+      text: formValue || "", 
+      createdAt: serverTimestamp(),
+      genres: selectedGenres,
+      comments: [], 
+      uid:user.uid,
+      userEmail: user.email,
+      likes: 0,
+      fileName: file ? file.name : null,
+      postType: file ? getFileType(file) : 'text'
+    }
     if (file){
     
       const storageRef = ref(storage, `files/${file.name}`)

@@ -203,7 +203,7 @@ class Feed extends Component {
     if (filterType === 'all') {
       this.setState({ filteredPosts: posts });
     } else {
-      const filtered = posts.filter((post) => post.data.type === filterType);
+      const filtered = posts.filter((post) => post.data.postType === filterType);
       this.setState({ filteredPosts: filtered });
     }
   };

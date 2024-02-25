@@ -10,7 +10,7 @@ import { arrayRemove, arrayUnion, updateDoc } from 'firebase/firestore';
 const FollowButton = ({ isFollowing, toggleFollow }) => {
     return (
         <button
-            className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}
+            className={`bg-blue-500 w-15 h-5 text-sm hover:bg-blue-700 text-white font-bold px-4 rounded focus:outline-none focus:shadow-outline`}
             onClick={toggleFollow}
         >
             {isFollowing ? 'Unfollow' : 'Follow'}
@@ -127,7 +127,7 @@ const MiniUserCard = ({ userId }) => {
   const defaultProfilePicture = require('../assets/default-profile-picture.jpg');
 
   return (
-    <div className="relative user-card rounded-lg shadow-md p-2 max-h-30 bg-white">
+    <div className="relative user-card rounded-lg shadow-md p-2 h-30 w-[250px] gap-2 mb-2 bg-gray-300">
       {userData ? (
         <div>
             <div className='flex flex-row align-middle h-full items-center justify-center'>
@@ -144,7 +144,7 @@ const MiniUserCard = ({ userId }) => {
                 
                 {/* Display username*/}
                 <Link to={`/users/${userData.username}`}>
-                    <h2 className="text-[1.5rem] justify-center font-semibold mb-2"><span className="text-blue-400">@</span> {userData.username}</h2>
+                    <h2 className="text-md justify-center font-semibold mb-2"><span className="text-blue-400">@</span> {userData.username}</h2>
                 </Link>
             
           {/*Display follow button if the current user is not the user being displayed*/}

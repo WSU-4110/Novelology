@@ -5,6 +5,9 @@ import { db, auth } from '../firebase';
 import { FaInfoCircle, FaUser } from 'react-icons/fa';
 import fetchPFP from '../functions/fetchPFP';
 import fetchUIDwithUsername from '../functions/fetchUIDwithUsername';
+import MiniUserCard from '../components/MiniUserCard';
+import DOMPurify from 'dompurify';
+
 
 const FollowButton = ({ isFollowing, toggleFollow }) => {
     return (
@@ -25,6 +28,8 @@ const UserPage = () => {
     const [followersCount, setFollowersCount] = useState(0);
     const [followingCount, setFollowingCount] = useState(0);
     const [profilePictureURL, setProfilePictureURL] = useState(null);
+    const [followers, setFollowers] = useState([]);
+    const [showFollowers, setShowFollowers] = useState(false);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -125,6 +130,31 @@ const UserPage = () => {
         }
     };
 
+    const toggleFollowers = async () => {
+        try {
+            if (!showFollowers) {
+                if (!userData || !userData.UID) {
+                    console.error('User data or UID not initialized.');
+                    return;
+                }
+    
+                console.log('User UID:', userData.UID);
+    
+                // Access the 'followers' array within the user document data
+                const followersData = userData.followers || [];
+                console.log('Followers Data:', followersData);
+                setFollowers(followersData);
+            }
+            setShowFollowers(prevState => !prevState);
+        } catch (error) {
+            console.error('Error fetching followers:', error);
+        }
+    };
+    
+    
+    
+    
+
     if (isLoading) {
         return <div>Loading...</div>;
     }
@@ -145,14 +175,32 @@ const UserPage = () => {
 
                     </div>
                     <div>
-                        {userData.bio ? (
-                            <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">Bio:</span> {userData.bio}</p>
+                    {userData.bio ? (
+                            <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(userData.bio) }} />
                         ) : (
-                            <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">Bio:</span> <span className="text-orange-500">No bio provided</span></p>
+                            <p className="mb-2">
+                                <FaInfoCircle className="inline-block mr-2" />
+                                <span className="font-semibold">Bio:</span> 
+                                <span className="text-orange-500">No bio provided</span>
+                            </p>
                         )}
                         {userData.pronouns && <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">Pronouns:</span> {userData.pronouns}</p>}
                         <div className="flex justify-between mb-4">
-                            <p className="font-semibold"><FaUser className="inline-block mr-2" /> Followers: {followersCount}</p>
+                             <button
+                            onClick={toggleFollowers}>
+                                <p className="font-semibold"><FaUser className="inline-block mr-2" /> Followers: {followersCount}</p>
+                           
+                                {showFollowers && (
+                                    <div>
+                                        <ul>
+                                        {followers.map((followerId, index) => (
+                                            <MiniUserCard key={index} userId={followerId} />
+                                        ))}
+                                        </ul>
+                                    </div>
+                                )}
+
+                            </button>
                             <p className="font-semibold"><FaUser className="inline-block mr-2" /> Following: {followingCount}</p>
                         </div>
                         {userData.role && userData.role.length > 0 && (

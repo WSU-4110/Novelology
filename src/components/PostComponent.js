@@ -73,12 +73,10 @@ class PostComponent extends Component {
           // Unlike the post
           currentLikes--;
           likedBy = likedBy.filter(uid => uid !== currentUserId);
-          console.log("Post unliked successfully");
         } else {
           // Like the post
           currentLikes++;
           likedBy.push(currentUserId);
-          console.log("Post liked successfully");
         }
   
         // Update the Firestore document
@@ -111,10 +109,8 @@ class PostComponent extends Component {
       if (docSnap.exists()) {
         const postData = docSnap.data();
         const likedBy = postData.likedBy || [];
-        console.log("Liked by:", likedBy);
   
         const liked = likedBy.includes(currentUserId);
-        console.log("Liked state updated:", liked);
         this.setState({ liked });
       } else {
         console.log("No such document!");
@@ -205,7 +201,8 @@ class PostComponent extends Component {
           </div>
 
           {/* Options button */}
-          <button onClick={this.togglePostOptionsPopup}>
+          <button onClick={this.togglePostOptionsPopup}
+          className="float-right">
             <FontAwesomeIcon icon={faEllipsisH} />
           </button>
           {showPostOptionsPopup && ReactDOM.createPortal(

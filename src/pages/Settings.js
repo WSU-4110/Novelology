@@ -7,6 +7,7 @@ import DeleteAccountModal from '../components/DeleteAccountModal.js';
 import { doc, getDoc, updateDoc} from 'firebase/firestore';
 import { handleDeleteAccount } from '../functions/Auth.js';
 import SelectGenres from '../components/SelectGenres.js'
+import TextEditor from '../components/TextEditor.js';
 
 import "../styles/settings.css";
 import RolesSelection from '../components/RolesSelection.js';
@@ -31,9 +32,7 @@ export default function Settings() {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-
-                
-
+                // Fetch user data and set pre-existing bio
                 const userDoc = doc(db, 'users', user.uid);
                 const docSnapshot = await getDoc(userDoc);
                 if (docSnapshot.exists()) {
@@ -41,11 +40,11 @@ export default function Settings() {
                     setUserData(userDataFromSnapshot);
                     setPronouns(userDataFromSnapshot.pronouns || '');
                     localStorage.setItem('userData', JSON.stringify(userDataFromSnapshot));
-
+    
                     if (!newBio) {
-                        setNewBio(userDataFromSnapshot.bio || '');
+                        setNewBio(userDataFromSnapshot.bio || ''); // Set pre-existing bio
                     }
-
+    
                     // Set pronouns and selected role
                     setPronouns(userDataFromSnapshot.pronouns || '');
                     setSelectedRoles(userDataFromSnapshot.role || '');
@@ -56,11 +55,12 @@ export default function Settings() {
                 console.error('Error fetching user data:', error);
             }
         };
-
+    
         if (user) {
             fetchUserData();
         }
     }, [user, newBio]);
+    
 
 
     // Extracted function to update user bio
@@ -74,6 +74,7 @@ export default function Settings() {
             console.error('Error updating user bio:', error);
         }
     };
+
 
 
       const handleRoleChange = (role) => {
@@ -142,12 +143,9 @@ export default function Settings() {
                         {userData && (
                             <>
                                 <h1 className='text-3xl font-bold m-4'>Your Bio:</h1>
-                                <input
-                                    className="w-full p-2 mt-2 border rounded"
-                                    type="text"
-                                    value={newBio}
-                                    onChange={(e) => setNewBio(e.target.value)}
-                                />
+                                <TextEditor defaultValue={newBio} onChange={setNewBio} maxChars={500} />
+
+                                
                                 <PronounsDropdown pronouns={pronouns} setPronouns={setPronouns} />
     
                                 <RolesSelection selectedRoles={selectedRoles} setSelectedRoles={setSelectedRoles} />

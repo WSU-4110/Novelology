@@ -25,15 +25,14 @@ const fetchPFP = async (uid) => { // Accept UID as a parameter
         return downloadURL; // Return download URL if found
       } catch (error) {
         // Ignore error and continue with the next file extension
-        console.error(`Profile picture with extension .${ext} not found. Trying next extension...`);
-      }
+        }
     }
     
     // If no profile picture is found with any of the extensions, use default profile picture from local assets
     const defaultProfilePicturePath = require('../assets/default-profile-picture.jpg');
     return defaultProfilePicturePath.default; // Return the local file path of the default profile picture
   } catch (error) {
-    console.error('Error fetching profile picture URL:', error);
+    
     return null;
   }
 };
