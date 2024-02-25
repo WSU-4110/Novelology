@@ -127,7 +127,7 @@ const MiniUserCard = ({ userId }) => {
   const defaultProfilePicture = require('../assets/default-profile-picture.jpg');
 
   return (
-    <div className="relative user-card rounded-lg shadow-md p-2 h-30 w-[250px] gap-2 mb-2 bg-gray-300">
+    <div className="relative user-card rounded-lg shadow-md p-2 h-30 w-[200px] gap-2 mb-2 bg-gray-300">
       {userData ? (
         <div>
             <div className='flex flex-row align-middle h-full items-center justify-center'>

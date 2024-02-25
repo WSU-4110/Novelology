@@ -30,6 +30,8 @@ const UserPage = () => {
     const [profilePictureURL, setProfilePictureURL] = useState(null);
     const [followers, setFollowers] = useState([]);
     const [showFollowers, setShowFollowers] = useState(false);
+    const [following, setFollowing] = useState([]);
+    const [showFollowing, setShowFollowing] = useState(false);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -151,7 +153,26 @@ const UserPage = () => {
         }
     };
     
+    const toggleFollowing = async () => {
+        try {
+            if (!showFollowing) {
+                if (!userData || !userData.UID) {
+                    console.error('User data or UID not initialized.');
+                    return;
+                }
     
+                console.log('User UID:', userData.UID);
+    
+                // Access the 'following' array within the user document data
+                const followingData = userData.following || [];
+                console.log('Following Data:', followingData);
+                setFollowing(followingData);
+            }
+            setShowFollowing(prevState => !prevState);
+        } catch (error) {
+            console.error('Error fetching following:', error);
+        }
+    };
     
     
 
@@ -185,6 +206,7 @@ const UserPage = () => {
                             </p>
                         )}
                         {userData.pronouns && <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">Pronouns:</span> {userData.pronouns}</p>}
+                        
                         <div className="flex justify-between mb-4">
                              <button
                             onClick={toggleFollowers}>
@@ -201,8 +223,25 @@ const UserPage = () => {
                                 )}
 
                             </button>
-                            <p className="font-semibold"><FaUser className="inline-block mr-2" /> Following: {followingCount}</p>
-                        </div>
+                            <button
+                            onClick={toggleFollowing}>
+                                
+                                <p className="font-semibold"><FaUser className="inline-block mr-2" /> Following: {followingCount}</p>
+                           
+                                {showFollowing && (
+                                    <div>
+                                        <ul>
+                                        {following.map((followingId, index) => (
+                                            <MiniUserCard key={index} userId={followingId} />
+                                        ))}
+                                        </ul>
+                                    </div>
+                                )}
+
+                            </button>
+                             </div>
+
+                                            
                         {userData.role && userData.role.length > 0 && (
                             <div className="mb-2">
                                 <p><strong>Roles:</strong></p>
