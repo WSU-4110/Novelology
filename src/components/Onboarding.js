@@ -131,7 +131,7 @@ const Onboarding = () => {
   };
 
   return (
-    <div className="mt-[-1em] max-w-md mx-auto p-6 bg-white rounded-lg shadow-xl overflow-y-scroll max-h-svh">
+    <div className="mt-4 max-w-md mx-auto p-6 bg-white shadow-xl h-fit">
       <h1 className="text-2xl font-bold mb-4">Onboarding</h1>
 
       {authError && (

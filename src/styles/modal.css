@@ -27,7 +27,7 @@ body.active-modal {
     border-radius: 3px;
     
     min-width: 350px;
-    max-height: 45%;
+    max-height:100%;
 }
 
 .close-modal {
