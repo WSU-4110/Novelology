@@ -6,6 +6,7 @@ import fetchPFP from '../functions/fetchPFP';
 import { auth } from '../firebase';
 import { Link } from 'react-router-dom';
 import { arrayRemove, arrayUnion, updateDoc } from 'firebase/firestore';
+import DOMPurify from 'dompurify';
 
 const FollowButton = ({ isFollowing, toggleFollow }) => {
     return (
@@ -132,9 +133,17 @@ const UserCard = ({ userId }) => {
             />
           </div>
           {userData.bio ? (
-            <p className="mb-2"><FaInfoCircle className="inline-block" /><span className="font-semibold"></span> {userData.bio}</p>
+            <p className="mb-2">
+              <FaInfoCircle className="inline-block" />
+              <span className="font-semibold"></span> 
+              <span dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(userData.bio) }} />
+            </p>
           ) : (
-            <p className="mb-2"><FaInfoCircle className="inline-block" /><span className="font-semibold"></span> <span className="text-orange-500">No bio provided</span></p>
+            <p className="mb-2">
+              <FaInfoCircle className="inline-block" />
+              <span className="font-semibold"></span> 
+              <span className="text-orange-500">No bio provided</span>
+            </p>
           )}
            <div className="flex justify-between mb-4">
             <p className="font-semibold"><FaUser className="inline-block mr-2" /> Followers: {followersCount}</p>
