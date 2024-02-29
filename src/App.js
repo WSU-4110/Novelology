@@ -14,6 +14,7 @@ import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Post from './pages/Post';
 import AuthorVerification from './pages/AuthorVerification';
+import Error from './components/Error';
 const App = () => {
   return (
     <Router>
@@ -43,7 +44,7 @@ const App = () => {
           <Route path="/post/:pid" element={<Post/>}/>
           <Route path="/post" element={<Post/>}/>
           <Route path="/author-verification" element={<AuthorVerification/>}/>
-
+          <Route path="*" element={<Error />} />
         </Routes>
         
         
