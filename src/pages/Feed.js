@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { collection, getDocs, addDoc, query, where, getDoc, doc} from 'firebase/firestore';
 import { db } from '../firebase';
 import PostComponent from '../components/PostComponent';
+import { FaSpinner } from 'react-icons/fa';
 
 
 class Post {
@@ -249,7 +250,9 @@ class Feed extends Component {
               </div>
             )
           ))}
-          {isLoading && <p>Loading...</p>}
+          {isLoading && 
+            <FaSpinner className="animate-spin w-24 h-24 align-middle text-gray-400"/>
+          }
           {allPostsFetched && <p>No more posts to show</p>}
         </div>
       </div>
