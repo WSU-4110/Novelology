@@ -1,5 +1,5 @@
 import React from 'react';
-import { auth, db } from '../firebase';
+import { auth, db } from '../../firebase';
 import { doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 
 const ReportOptions = ({ onClose, postId }) => {

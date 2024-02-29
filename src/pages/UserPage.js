@@ -5,7 +5,7 @@ import { db, auth } from '../firebase';
 import { FaInfoCircle, FaUser } from 'react-icons/fa';
 import fetchPFP from '../functions/fetchPFP';
 import fetchUIDwithUsername from '../functions/fetchUIDwithUsername';
-import MiniUserCard from '../components/MiniUserCard';
+import MiniUserCard from '../components/user/MiniUserCard';
 import DOMPurify from 'dompurify';
 
 

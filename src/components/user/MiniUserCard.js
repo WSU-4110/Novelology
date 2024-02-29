@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../firebase';
-import fetchPFP from '../functions/fetchPFP';
-import { auth } from '../firebase';
+import { db } from '../../firebase';
+import fetchPFP from '../../functions/fetchPFP';
+import { auth } from '../../firebase';
 import { Link } from 'react-router-dom';
-import { toggleFollow } from '../functions/toggleFollow';
+import { toggleFollow } from '../../functions/toggleFollow';
 
 // Allows users to follow or unfollow other users.
 const FollowButton = ({ isFollowing, toggleFollow }) => {
@@ -100,7 +100,7 @@ const MiniUserCard = ({ userId }) => {
     return <div>Loading...</div>;
   }
 
-  const defaultProfilePicture = require('../assets/default-profile-picture.jpg');
+  const defaultProfilePicture = require('../../assets/default-profile-picture.jpg');
 
   return (
     <div className="relative user-card rounded-lg shadow-md p-2 h-30 w-[200px] gap-2 mb-2 bg-gray-300">

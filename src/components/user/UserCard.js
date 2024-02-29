@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db } from '../../firebase';
 import { FaInfoCircle, FaUser } from 'react-icons/fa';
-import fetchPFP from '../functions/fetchPFP';
-import { auth } from '../firebase';
+import fetchPFP from '../../functions/fetchPFP';
+import { auth } from '../../firebase';
 import { Link } from 'react-router-dom';
 import { arrayRemove, arrayUnion, updateDoc } from 'firebase/firestore';
 import DOMPurify from 'dompurify';
@@ -116,7 +116,7 @@ const UserCard = ({ userId }) => {
     return <div>Loading...</div>;
   }
 
-  const defaultProfilePicture = require('../assets/default-profile-picture.jpg');
+  const defaultProfilePicture = require('../../assets/default-profile-picture.jpg');
 
   return (
     <div className="user-card border rounded-lg shadow-md p-6 w-75">

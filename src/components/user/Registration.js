@@ -1,10 +1,10 @@
 import { useRef, useState, useEffect } from "react";
-import { signUpWithEmail, handleSignUpWithPopup } from "../functions/Auth";
+import { signUpWithEmail, handleSignUpWithPopup } from "../../functions/Auth";
 import { FaGoogle, FaEye, FaEyeSlash } from 'react-icons/fa'; // Import FaEyeSlash for the hidden eye icon
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from 'firebase/auth'; 
 import { doc, getDoc } from 'firebase/firestore'; 
-import { auth, db } from '../firebase'; 
+import { auth, db } from '../../firebase'; 
 
 // Reactive input field component
 const ReactiveInputField = ({ type, placeholder, inputRef, onChange }) => {

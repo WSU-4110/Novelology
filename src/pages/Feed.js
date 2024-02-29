@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { collection, getDocs, addDoc, query, where, getDoc, doc} from 'firebase/firestore';
 import { db } from '../firebase';
-import PostComponent from '../components/PostComponent';
+import PostComponent from '../components/Posts/PostComponent';
 import { FaSpinner } from 'react-icons/fa';
 
 

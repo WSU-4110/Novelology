@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from '../firebase.js';
-import Modal from '../components/Modal.js';
-import Searchbar from '../components/Searchbar';
-import UploadPFP from '../components/UploadPFP.js';
+import Modal from '../components/shared/Modal.js';
+import Searchbar from '../components/shared/Searchbar.js';
+import UploadPFP from '../components/shared/UploadPFP.js';
 import { handleSearch } from '../functions/searchFunctions'; // Import handleSearch function
 import Feed from './Feed.js';
-import PopularUsers from '../components/PopularUsers.js';
+import PopularUsers from '../components/shared/PopularUsers.js';
 import HotFeed from '../components/Feeds/HotFeed.js';
 import BookSearch from '../components/BookSearch.js';
 

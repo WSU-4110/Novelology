@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { auth } from '../firebase';
+import { auth } from '../../firebase';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
-import defaultProfilePicture from '../assets/default-profile-picture.jpg'; // Import default profile picture
-import fetchPFP from '../functions/fetchPFP'; // Import fetchPFP function
+import defaultProfilePicture from '../../assets/default-profile-picture.jpg'; // Import default profile picture
+import fetchPFP from '../../functions/fetchPFP'; // Import fetchPFP function
 
 const UploadPFP = () => {
   const [image, setImage] = useState(null);

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { collection, query, getDocs } from 'firebase/firestore';
-import { db } from '../firebase'; // Import your Firebase instance
-import UserCard from './UserCard'; // Import the UserCard component
-import MiniUserCard from './MiniUserCard'; // Import the MiniUserCard component
+import { db } from '../../firebase'; // Import your Firebase instance
+import UserCard from '../user/UserCard'; // Import the UserCard component
+import MiniUserCard from '../user/MiniUserCard'; // Import the MiniUserCard component
 
 async function searchUsers(idQuery) {
     console.log('Searching for:', idQuery);

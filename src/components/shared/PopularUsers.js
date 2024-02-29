@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { collection, query, getDocs } from 'firebase/firestore';
-import { db } from '../firebase';
-import UserCard from './UserCard';
+import { db } from '../../firebase';
+import UserCard from '../user/UserCard';
 
 const PopularUsers = () => {
   // Replace the class-based component with a functional component

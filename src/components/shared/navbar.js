@@ -3,9 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faUser, faPlus, faSignOutAlt, faSignInAlt, faGear } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../firebase';
+import { auth } from '../../firebase';
 import Modal from './Modal';
-import { handleLogout } from '../functions/Auth';
+import { handleLogout } from '../../functions/Auth';
 import { Tooltip } from 'react-tooltip';
 
 export default function Navbar() {

@@ -2,9 +2,9 @@
 import './styles/App.css';
 import React, { Fragment, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/navbar';
+import Navbar from './components/shared/navbar';
 import Home from './pages/Home';
-import Error from './components/Error';
+import Error from './components/shared/Error';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import PrivateRoute from './components/routing/PrivateRoute';

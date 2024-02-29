@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, db } from '../firebase.js'; // Consolidated Firebase imports
 import { useNavigate } from "react-router-dom";
-import UploadPFP from '../components/UploadPFP.js';
-import DeleteAccountModal from '../components/DeleteAccountModal.js';
+import UploadPFP from '../components/shared/UploadPFP.js';
+import DeleteAccountModal from '../components/user/DeleteAccountModal.js';
 import { doc, getDoc, updateDoc} from 'firebase/firestore';
 import { handleDeleteAccount } from '../functions/Auth.js';
-import SelectGenres from '../components/SelectGenres.js'
-import TextEditor from '../components/TextEditor.js';
+import SelectGenres from '../components/user/SelectGenres.js'
+import TextEditor from '../components/shared/TextEditor.js';
 
 import "../styles/settings.css";
-import RolesSelection from '../components/RolesSelection.js';
-import PronounsDropdown from '../components/PronounsDropdown.js';
+import RolesSelection from '../components/user/RolesSelection.js';
+import PronounsDropdown from '../components/user/PronounsDropdown.js';
 
 export default function Settings() {
     const [user] = useAuthState(auth);

@@ -1,6 +1,6 @@
 import { useCollection } from 'react-firebase-hooks/firestore';
 import {collection, orderBy, query, serverTimestampmp} from 'firebase/firestore';
-import Error from '../../components/Error.js'
+import Error from '../shared/Error.js'
 import Post from '../../pages/Post';
 
 import {db} from '../../firebase.js';

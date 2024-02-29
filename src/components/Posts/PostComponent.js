@@ -3,17 +3,17 @@ import PropTypes from 'prop-types';
 import CommentComponent from './CommentComponent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faShare } from '@fortawesome/free-solid-svg-icons';
-import fetchUsernameWithUID from '../functions/fetchUsernameWithUID';
+import fetchUsernameWithUID from '../../functions/fetchUsernameWithUID';
 import { Link } from 'react-router-dom';
 import { faEllipsisH } from '@fortawesome/free-solid-svg-icons';
 import PostOptionsPopup from './PostOptionsPopup';
 import ReactDOM from 'react-dom';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../firebase';
-import formatTimeDifference from '../functions/formatTimeDifference';
-import fetchPFP from '../functions/fetchPFP';
+import { db } from '../../firebase';
+import formatTimeDifference from '../../functions/formatTimeDifference';
+import fetchPFP from '../../functions/fetchPFP';
 import { runTransaction } from 'firebase/firestore';
-import LazyImage from './LazyImage';
+import LazyImage from '../shared/LazyImage';
 
 class PostComponent extends Component {
   constructor(props) {
@@ -167,7 +167,7 @@ class PostComponent extends Component {
     const { showPostOptionsPopup } = this.state;
     const { liked, likes} = this.state;
 
-    const defaultProfilePicture = require('../assets/default-profile-picture.jpg');
+    const defaultProfilePicture = require('../../assets/default-profile-picture.jpg');
 
     return (
       <div key={post.id} className="border p-4 border-gray-300 pb-8 mb-8">

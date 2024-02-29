@@ -5,8 +5,8 @@ import {ref, getDownloadURL,uploadBytesResumable } from "firebase/storage";
 import { useUploadFile } from 'react-firebase-hooks/storage';
 import {db,auth,storage} from '../firebase';
 import {useEffect, useRef, useState} from 'react';
-import FileRenderer, {getFileType} from '../components/FileRenderer';
-import PostForm from '../components/PostForm';
+import FileRenderer, {getFileType} from '../components/shared/FileRenderer';
+import PostForm from '../components/Posts/PostForm';
 import { useNavigate } from "react-router-dom";
 function Submit() {
   const [user] = useAuthState(auth)
