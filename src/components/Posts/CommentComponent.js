@@ -2,17 +2,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faReply, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { updateDoc, doc, getDoc, deleteDoc } from 'firebase/firestore';
+import { updateDoc, doc, getDoc, deleteDoc, collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../firebase';
 import fetchUserProfilePicture from '../../functions/fetchUserProfilePicture';
 import formatTimeDifference from '../../functions/formatTimeDifference';
-import { collection, getDocs, query, where } from 'firebase/firestore';
-import { auth } from '../../firebase';
-import fetchUsernameWithUID from '../../functions/fetchUsernameWithUID';
 import { Link } from 'react-router-dom';
 
 class CommentComponent extends Component {
-  // Create a constructor method with a state to store the user profile picture, username, and other comment data
   constructor(props) {
     super(props);
     this.state = {
@@ -20,26 +16,29 @@ class CommentComponent extends Component {
       username: '',
       isReplying: false,
       replyText: '',
-      replies: [],
-      loadingReplies: true, // Set to true initially
+      replies: [], // Array to store direct replies to this comment
+      loadingReplies: true,
     };
   }
 
-  // Add a propTypes object to the CommentComponent class to define the currentUser and onReply props
   static propTypes = {
     currentUser: PropTypes.object.isRequired,
-    onReply: PropTypes.func.isRequired,
+    comment: PropTypes.object.isRequired,
+    onDelete: PropTypes.func.isRequired,
   };
+
+  componentDidMount() {
+    this.fetchUserData();
+    this.fetchReplies();
+  }
 
   fetchUserData = async () => {
     const { uid } = this.props.comment;
 
     try {
-      // Fetch user data
       const userDoc = doc(db, 'users', uid);
       const userDocSnap = await getDoc(userDoc);
 
-      // If the user document exists, set the username state variable to the username in the document data
       if (userDocSnap.exists()) {
         const userData = userDocSnap.data();
         this.setState({
@@ -49,7 +48,6 @@ class CommentComponent extends Component {
         console.error('User document does not exist');
       }
 
-      // Fetch user profile picture
       const userProfilePicture = await fetchUserProfilePicture(uid);
       this.setState({ userProfilePicture });
 
@@ -58,68 +56,44 @@ class CommentComponent extends Component {
     }
   };
 
-  // Call the fetchUserData method when the component mounts
-  // The component mounts when it's first rendered to the DOM
-  componentDidMount() {
-    this.fetchUserData();
-    this.fetchComments(); // Fetch comments and replies when component mounts
-  }
-
-  fetchComments = async () => {
-    // grab comment from props
-    // props are immutable, so we need to store the comment in a variable
+  fetchReplies = async () => {
     const { comment } = this.props;
-    const comments = []; // Declare the comments variable here
+    const replies = [];
   
-    // try to fetch comments and replies
     try {
-      const commentsRef = collection(db, 'comments');
-      const q = query(commentsRef, where('parentCommentId', '==', comment.id));
-      const querySnapshot = await getDocs(q);
-      console.log('Query snapshot:', querySnapshot.docs);
-  
-      for (const doc of querySnapshot.docs) {
-        const commentData = doc.data();
-        console.log('Fetching replies for comment:', commentData);
-        const replies = await this.fetchReplies(doc.id); // Fetch replies for the current comment
-        const commentWithReplies = { id: doc.id, ...commentData, replies };
-        comments.push(commentWithReplies);
-      }
-  
-      // If there are no comments, set the comments state to an empty array
-      if (comments.length > 0) {
-        const updatedReplies = comments[0].replies || [];
-        // set the state to the comments and replies to empty array, and no longer lading
-        this.setState({ comments, replies: updatedReplies, loadingReplies: false }); 
-      } else {
-        this.setState({ comments, loadingReplies: false });
-      }
-    } catch (error) {
-      console.error('Error fetching comments and replies:', error);
-      this.setState({ loadingReplies: false });
-    }
-  };
-  
-  fetchReplies = async (commentId) => {
-    try {
-      const commentDocRef = doc(db, 'comments', commentId);
+      // Fetch the comment document from Firestore
+      const commentDocRef = doc(db, 'comments', comment.id);
       const commentDocSnap = await getDoc(commentDocRef);
   
       if (commentDocSnap.exists()) {
         const commentData = commentDocSnap.data();
-        const replies = commentData.replies || [];
-        console.log('Fetched replies:', replies); // Log fetched replies to the console
-        return replies;
+        const nestedReplies = commentData.replies || []; // Array of nested replies
+  
+        // Iterate through each nested reply and add it to the replies array
+        for (const nestedReply of nestedReplies) {
+          // Fetch user profile picture for the nested reply author
+          const userProfilePicture = await fetchUserProfilePicture(nestedReply.uid);
+          
+          // Push the nested reply with additional data (profile picture) to the replies array
+          replies.push({
+            id: nestedReply.id, // Assuming each nested reply has its own unique ID
+            ...nestedReply,
+            userProfilePicture,
+          });
+        }
+  
+        // Update the state with the fetched replies
+        this.setState({ replies, loadingReplies: false });
       } else {
         console.error('Comment document does not exist');
-        return [];
+        this.setState({ loadingReplies: false });
       }
     } catch (error) {
       console.error('Error fetching replies:', error);
-      return [];
+      this.setState({ loadingReplies: false });
     }
   };
-
+  
 
   handleReply = () => {
     this.setState({ isReplying: true });
@@ -130,26 +104,7 @@ class CommentComponent extends Component {
   };
 
   handleReplyTextChange = (e) => {
-    // Update the reply text state variable when the input value changes
-    //e is the event object that is passed to the function 
-    // e.target.value is the current value of the input element
     this.setState({ replyText: e.target.value });
-  };
-
-  handleDeleteComment = async () => {
-    const { comment, onDelete } = this.props;
-
-    try {
-      await deleteDoc(doc(db, 'comments', comment.id));
-
-      // Log success message to console
-      console.log('Comment deleted successfully.');
-
-      // Update parent component to remove the deleted comment from its state
-      onDelete(comment.id);
-    } catch (error) {
-      console.error('Error deleting comment:', error);
-    }
   };
 
   handleSubmitReply = async () => {
@@ -157,110 +112,150 @@ class CommentComponent extends Component {
     const { replyText } = this.state;
 
     try {
-      // Get reference to the comment document in Firestore
       const commentDocRef = doc(db, 'comments', comment.id);
-
-      // Get a snapshot of the comment document
       const commentDocSnap = await getDoc(commentDocRef);
 
-      // Check if the comment document exists
       if (commentDocSnap.exists()) {
-        // Get the data of the comment document
         const commentData = commentDocSnap.data();
-
-        // Get the current replies of the comment from the document data, or initialize an empty array if replies don't exist
         const updatedReplies = commentData.replies || [];
 
-        // Add the new reply to the updated replies array
         updatedReplies.push({
           uid: currentUser.uid,
           text: replyText,
           createdAt: new Date(),
         });
 
-        // Update the comment document in Firestore with the updated replies
         await updateDoc(commentDocRef, {
           replies: updatedReplies,
         });
 
-        // Refresh comments after updating to reflect the changes
-        this.fetchComments();
-
-        // Update component state to reflect that reply submission is complete and clear the reply text input
+        this.fetchReplies();
         this.setState({
           isReplying: false,
           replyText: '',
         });
       } else {
-        // Log an error if the comment document does not exist
         console.error('Comment document does not exist');
       }
     } catch (error) {
-      // Log an error if there's any issue submitting the reply
       console.error('Error submitting reply:', error);
     }
   };
 
-  render() {
+  handleDeleteComment = async () => {
+    const { comment, onDelete } = this.props;
+
+    try {
+      await deleteDoc(doc(db, 'comments', comment.id));
+      console.log('Comment deleted successfully.');
+      onDelete(comment.id);
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+    }
+  };
+
+  handleDeleteReply = async (replyId) => {
+    try {
+      const { comment } = this.props;
+      const commentDocRef = doc(db, 'comments', comment.id);
+      const commentDocSnap = await getDoc(commentDocRef);
+  
+      if (commentDocSnap.exists()) {
+        const commentData = commentDocSnap.data();
+        const updatedReplies = commentData.replies.filter(reply => reply.id !== replyId);
+  
+        await updateDoc(commentDocRef, {
+          replies: updatedReplies,
+        });
+  
+        // Fetch replies again to reflect changes
+        this.fetchReplies();
+      } else {
+        console.error('Comment document does not exist');
+      }
+    } catch (error) {
+      console.error('Error deleting reply:', error);
+    }
+  };
+  
+
+  renderReplies = (replies) => {
     const { currentUser } = this.props;
-    const { userProfilePicture, username, isReplying, replyText, replies, loadingReplies } = this.state;
-
-    // Function to check if the current user is the author of the comment
-    const isAuthor = currentUser && currentUser.uid === this.props.comment.uid;
-
-    return (
-      <li className="h-full  flex flex-row space-x-4 py-2 max-w-3/4 border">
-        <Link to={`/users/${username}`} className='ml-2 w-12 h-12  m-auto '>
-          {userProfilePicture && <img src={userProfilePicture} alt="Profile" className="rounded-full w-12 h-12" />}
-        </Link>
-
-        <div className="flex-grow border p-1">
-          <div className="flex justify-between">
-            <Link to={`/users/${username}`} className="text-lg font-bold">{username}</Link>
-            <span className="text-sm text-gray-500">{formatTimeDifference(this.props.comment.createdAt)}</span>
-          </div>
-
-          <p className="text-sm">{this.props.comment.text}</p>
-
-          {isAuthor && (
-            <button onClick={this.handleDeleteComment} className="text-sm text-red-500 mr-1 border rounded-md">
-              <FontAwesomeIcon icon={faTrash} />
+  
+    return replies.map(reply => (
+      <div key={reply.id} className="flex flex-col items-start bg-gray-100 rounded-lg p-4 mb-4">
+        <p className="text-gray-800">{reply.text}</p>
+        <div className="flex items-center mt-2">
+          {reply.userProfilePicture && (
+            <img src={reply.userProfilePicture} alt="User" className="w-6 h-6 rounded-full mr-2" />
+          )}
+          <p className="text-sm text-gray-600">Posted by: {reply.username}</p>
+          <p className="text-sm text-gray-600 ml-auto">{formatTimeDifference(reply.createdAt)}</p> {/* Timestamp */}
+          {/* Delete button */}
+          {currentUser && currentUser.uid === reply.uid && (
+            <button onClick={() => this.handleDeleteReply(reply.id)} className="text-sm text-red-500 border rounded-md ml-2">
+              Delete
             </button>
           )}
-
-          {!isReplying && (
-            <button onClick={this.handleReply} className="text-sm text-gray-400 mr-1 border rounded-md">
-              <FontAwesomeIcon icon={faReply} />
-            </button>
-          )}
-
-          {isReplying && (
-            <div>
-              <input type="text" value={replyText} onChange={this.handleReplyTextChange} placeholder="Reply to this comment..." />
-              <button onClick={this.handleSubmitReply}>Submit</button>
-              <button onClick={this.handleCloseReply}>Cancel</button>
-            </div>
-          )}
-
-          {loadingReplies && <p>Loading replies...</p>} {/* Show loading indicator while fetching replies */}
-
-          {!loadingReplies && replies.length === 0 && <p>No replies yet.</p>} {/* Show message if no replies */}
-
-          {replies.map(reply => (
-            <div key={reply.id} className="flex flex-col items-start bg-gray-100 rounded-lg p-4 mb-4">
-              <p className="text-gray-800">{reply.text}</p>
-              <div className="flex items-center mt-2">
-                {reply.userProfilePicture && (
-                  <img src={reply.userProfilePicture} alt="User" className="w-6 h-6 rounded-full mr-2" />
-                )}
-                <p className="text-sm text-gray-600">Posted by: {reply.username}</p>
-              </div>
-            </div>
-          ))}
         </div>
-      </li>
-    );
+        {/* Recursively render nested replies */}
+        {reply.replies && this.renderReplies(reply.replies)}
+      </div>
+    ));
+  };
+  
+
+render() {
+  const { currentUser, comment } = this.props;
+  const { userProfilePicture, username, isReplying, replyText, replies, loadingReplies } = this.state;
+  const isAuthor = currentUser && currentUser.uid === comment.uid;
+
+  return (
+    <li className="flex flex-row space-x-4 py-2 border">
+      <Link to={`/users/${username}`} className="w-12 h-12 m-auto">
+        {userProfilePicture && <img src={userProfilePicture} alt="Profile" className="rounded-full w-12 h-12" />}
+      </Link>
+
+      <div className="flex-grow border p-4">
+        <div className="flex justify-between">
+          <Link to={`/users/${username}`} className="text-lg font-bold">{username}</Link>
+          <span className="text-sm text-gray-500">{formatTimeDifference(comment.createdAt)}</span>
+        </div>
+
+        <p className="text-sm">{comment.text}</p>
+
+        {isAuthor && (
+          <button onClick={this.handleDeleteComment} className="text-sm text-red-500 border rounded-md">
+            <FontAwesomeIcon icon={faTrash} />
+          </button>
+        )}
+
+        {!isReplying && (
+          <button onClick={this.handleReply} className="text-sm text-gray-400 border rounded-md">
+            <FontAwesomeIcon icon={faReply} />
+          </button>
+        )}
+
+        {isReplying && (
+          <div>
+            <input type="text" value={replyText} onChange={this.handleReplyTextChange} placeholder="Reply to this comment..." />
+            <button onClick={this.handleSubmitReply} className="text-sm border rounded-md">Submit</button>
+            <button onClick={this.handleCloseReply} className="text-sm border rounded-md">Cancel</button>
+          </div>
+        )}
+
+        {loadingReplies && <p>Loading replies...</p>}
+
+        {/* Render replies */}
+        {replies.length > 0 && !loadingReplies && this.renderReplies(replies)}
+
+        {/* Show message if no replies */}
+        {!loadingReplies && replies.length === 0 && <p>No replies yet.</p>}
+      </div>
+    </li>
+  );
 }
+
 }
 
 export default CommentComponent;
