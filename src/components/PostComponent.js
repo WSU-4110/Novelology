@@ -175,13 +175,15 @@ class PostComponent extends Component {
         <div className="flex flex-row items-center mb-4 border-b border-gray-300 pb-4">
           {/* Display post creator's profile picture */}
 
-            <Link to={`/users/${username}`} className=' '>
-            <img 
-              src={creatorProfilePicture || defaultProfilePicture} 
-              alt="Profile" 
-              className="w-12 h-12 rounded-full" 
-            />
-               </Link>
+          <Link to={`/users/${username}`} className=' '>
+          <LazyImage
+            src={creatorProfilePicture || defaultProfilePicture}
+            alt="Profile"
+            width={40} // Adjust the width as needed
+            height={40} // Adjust the height as needed
+            className="rounded-full" // Apply rounded styling
+          />
+        </Link>
 
           {/* Post Creator Info */}
           <div>
