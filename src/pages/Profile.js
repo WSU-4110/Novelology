@@ -5,6 +5,7 @@ import { auth, db } from '../firebase.js';
 import { doc, getDoc } from 'firebase/firestore';
 import fetchPFP from '../functions/fetchPFP';
 import fetchUsernameWithUID from '../functions/fetchUsernameWithUID.js';
+import DOMPurify from 'dompurify';
 
 const Profile = () => {
     const [user, loading] = useAuthState(auth);
@@ -78,7 +79,14 @@ const Profile = () => {
                     </div>
                     <div>
                         <p className="mb-2"><strong>Username:</strong> {userData.username}</p>
-                        <p className="mb-2"><strong>Bio:</strong> {userData.bio || 'No bio provided'}</p>
+                        {userData.bio ? (
+                            <p dangerouslySetInnerHTML={{ __html: `<strong>Bio:</strong> ${DOMPurify.sanitize(userData.bio)}` }}></p>
+                        ) : (
+                            <p className="mb-2">
+                            <span className="font-semibold">Bio:</span> 
+                            <span className="text-orange-500">No bio provided</span>
+                        </p>
+                        )}
                         {userData.role && userData.role.length > 0 && (
                             <div className="mb-2">
                                 <p><strong>Roles:</strong></p>

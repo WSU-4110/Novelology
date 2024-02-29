@@ -36,12 +36,10 @@ export default function Home() {
 
     return (
         <main>
-            <div className='flex flex-col'>
-                <div className="mt-8 flex flex-row gap-8">
+            <div>
+            <div className='bookSearch'>
                     <h1 className="mb-4">Search Users</h1>
                     <Searchbar onSearch={(query) => handleSearch(query, setSearchResults, setSearchStatus)} />
-                </div>
-                <div className='bookSearch'>
                     <BookSearch/>
                 </div>
             </div>
@@ -50,7 +48,7 @@ export default function Home() {
                 
             ) : (
                 <>
-                    <div className='flex flex-col justify-center items-center'>                
+                    <div className='w-full flex flex-col justify-center items-center'>                
                         <Feed currentUser={user} />
                         <PopularUsers criteria='followers' />
                        

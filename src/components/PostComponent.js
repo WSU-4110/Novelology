@@ -3,13 +3,12 @@ import PropTypes from 'prop-types';
 import CommentComponent from './CommentComponent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faShare } from '@fortawesome/free-solid-svg-icons';
-import fetchUserProfilePicture from '../functions/fetchUserProfilePicture';
 import fetchUsernameWithUID from '../functions/fetchUsernameWithUID';
 import { Link } from 'react-router-dom';
 import { faEllipsisH } from '@fortawesome/free-solid-svg-icons';
 import PostOptionsPopup from './PostOptionsPopup';
 import ReactDOM from 'react-dom';
-import { doc, updateDoc, getDoc } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import formatTimeDifference from '../functions/formatTimeDifference';
 import fetchPFP from '../functions/fetchPFP';
@@ -141,7 +140,7 @@ class PostComponent extends Component {
     try {
 // Fetch profile picture
       this.setState({ isLoadingProfilePicture: true });
-      const profilePictureURL = await fetchUserProfilePicture(uid);
+      const profilePictureURL = await fetchPFP(uid);
       this.setState({ creatorProfilePicture: profilePictureURL });
 
       // Fetch username
@@ -168,21 +167,21 @@ class PostComponent extends Component {
     const { showPostOptionsPopup } = this.state;
     const { liked, likes} = this.state;
 
+    const defaultProfilePicture = require('../assets/default-profile-picture.jpg');
+
     return (
       <div key={post.id} className="border p-4 border-gray-300 pb-8 mb-8">
         {/* Post Header */}
         <div className="flex flex-row items-center mb-4 border-b border-gray-300 pb-4">
           {/* Display post creator's profile picture */}
-{isLoadingProfilePicture ? (
-            <div className="w-10 h-10 bg-gray-300 rounded-full mr-4"></div>
-          ) : profilePictureError ? (
-            <p>Error loading profile picture: {profilePictureError}</p>
-          ) : (
-            creatorProfilePicture && 
+
             <Link to={`/users/${username}`} className=' '>
-              <img src={creatorProfilePicture} alt="Profile" className="w-10 h-10 rounded-full mr-4" />
-            </Link>
-)}
+            <img 
+              src={creatorProfilePicture || defaultProfilePicture} 
+              alt="Profile" 
+              className="w-12 h-12 rounded-full" 
+            />
+               </Link>
 
           {/* Post Creator Info */}
           <div>

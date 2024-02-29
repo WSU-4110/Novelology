@@ -20,14 +20,14 @@ const App = () => {
       <Fragment>
 
         <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-          <img src={require('./assets/Novelology_Logo.png')} style={{ height: '12em', width: '350px' }} />
+          <img src={require('./assets/Novelology_Logo.png')} style={{ height: '12em', width: '12em'}} />
         </div>
 
 
 
-
+        
         <Navbar />
-        <Routes>
+        <Routes className="flex">
         <Route path="/" element={<Home />} />
           {/* Use PrivateRoute to wrap the route that requires authentication */}
           <Route element={<PrivateRoute />} >
@@ -37,7 +37,7 @@ const App = () => {
           <Route path="/profile" element={<Profile/>}/>
           <Route path="/users/:username" element={<UserPage />} />
           <Route path="/setup-account" element={<SetUpAccount />}/>
-          <Route path="/submit" element={<Submit/>}/>
+          <Route path="/create-post" element={<Submit/>}/>
           <Route path="/login/:redirect" element={<Login/>}/>
           <Route path="/login/" element={<Login/>}/>
           <Route path="/post/:pid" element={<Post/>}/>
@@ -45,6 +45,7 @@ const App = () => {
           <Route path="/author-verification" element={<AuthorVerification/>}/>
 
         </Routes>
+        
         
       </Fragment>
     </Router>

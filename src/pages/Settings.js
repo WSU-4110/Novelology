@@ -133,16 +133,16 @@ export default function Settings() {
 
 
     return (
-        <div className="min-h-screen w-full bg-gray-100 flex justify-center">
+        <div className="min-h-screen w-full bg-gray-100 flex justify-center pl-16 pr-16">
             <div className="w-full p-6 shadow-xl">
                 {!user ? navigate('/') : (
                     <>
-                        <h1 className="text-2xl font-bold mb-4">Profile</h1>
+                        <h1 className="text-3xl font-bold mb-4">Account Settings</h1>
                         <UploadPFP />
                         <p>Email: {user.email}</p>
                         {userData && (
                             <>
-                                <h1 className='text-3xl font-bold m-4'>Your Bio:</h1>
+                                <h1 className='text-2xl font-bold m-4'>Your Bio:</h1>
                                 <TextEditor defaultValue={newBio} onChange={setNewBio} maxChars={500} />
 
                                 

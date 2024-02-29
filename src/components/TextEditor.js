@@ -63,9 +63,6 @@ const TextEditor = ({ defaultValue, onChange, maxChars }) => {
         style={{ minHeight: '400px' }}
         onInput={handleTextChange}
       ></div>
-      {charCount < 10 && (
-        <p className="text-red-500">Minimum 10 characters required!</p>
-      )}
       {charCount > maxChars && (
         <p className="text-red-500">Maximum {maxChars} characters allowed!</p>
       )}

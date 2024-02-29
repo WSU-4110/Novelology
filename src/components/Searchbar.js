@@ -61,7 +61,7 @@ function Searchbar({ onSearch }) {
     };
 
     return (
-        <div className="relative flex z-10">
+        <div className="flex w-10 z-0">
             <form onSubmit={handleSubmit} className="flex items-center">
                 <input 
                     type="text" 

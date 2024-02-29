@@ -132,7 +132,7 @@ const UploadPFP = () => {
       <input type="file" accept="image/*" id="profilePicture" onChange={handleChange} />
       <button onClick={handleDeleteProfilePicture} className='bg-red-600 w-40 h-6 rounded-sm text-white mt-2'>Delete Profile Picture</button>
      
-      <button onClick={handleUpload} className='bg-green-600 w-16 h-6 rounded-sm text-white'>Upload</button>
+      <button onClick={handleUpload} className='bg-green-600 w-fit p-1 h-6 rounded-sm text-white'>Upload</button>
       <h2>Current Profile Picture: </h2>
       {existingProfilePicture ? (
         <img
