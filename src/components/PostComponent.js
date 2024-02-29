@@ -13,7 +13,7 @@ import { db } from '../firebase';
 import formatTimeDifference from '../functions/formatTimeDifference';
 import fetchPFP from '../functions/fetchPFP';
 import { runTransaction } from 'firebase/firestore';
-
+import LazyImage from './LazyImage';
 
 class PostComponent extends Component {
   constructor(props) {
@@ -212,8 +212,9 @@ class PostComponent extends Component {
 
         {/* Render media component if available */}
         {post.data.image && (
-          <img src={post.data.image} alt="Post Image" className="max-w-full mb-4 border m-auto" />
+          <LazyImage src={post.data.image} alt="Post Image" className="max-w-full mb-4 border m-auto" />
         )}
+
 
         {/* Render post content */}
         <p>{post.data.text}</p>

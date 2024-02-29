@@ -2,13 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { collection, getDocs, addDoc, query, where, getDoc, doc} from 'firebase/firestore';
 import { db } from '../firebase';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faComment, faThumbsUp, faShare, faReply } from '@fortawesome/free-solid-svg-icons';
-import fetchUserProfilePicture from '../functions/fetchUserProfilePicture';
-import fetchUsernameWithUID from '../functions/fetchUsernameWithUID';
-import { updateDoc } from 'firebase/firestore';
-import CommentComponent from '../components/CommentComponent';
 import PostComponent from '../components/PostComponent';
+
 
 class Post {
   constructor(id, data) {
