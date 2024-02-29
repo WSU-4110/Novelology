@@ -23,7 +23,7 @@ const App = () => {
   return (
     <Router>
       <Fragment>
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <div className="flex justify-center align-middle">
           <img src={require('./assets/Novelology_Logo.png')} alt="Novelology Logo" style={{ height: '12em', width: '12em' }} />
         </div>
         <Suspense fallback={<FontAwesomeIcon icon={faSpinner} spin />}>
