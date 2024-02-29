@@ -27,15 +27,13 @@ const App = () => {
         
         <Navbar />
         <Routes className="flex">
-        <Route path="/" element={<Home />} />
-          {/* Use PrivateRoute to wrap the route that requires authentication */}
+          <Route path="/" element={<Home />} />
           <Route element={<PrivateRoute />} >
             <Route path="/setup-account" element={<SetUpAccount/>} /> {/* Route for Onboarding component */}
           </Route>
           <Route path="/settings" element={<Settings/>} />
           <Route path="/profile" element={<Profile/>}/>
           <Route path="/users/:username" element={<UserPage />} />
-          <Route path="/setup-account" element={<SetUpAccount />}/>
           <Route path="/create-post" element={<Submit/>}/>
           <Route path="/login/:redirect" element={<Login/>}/>
           <Route path="/login/" element={<Login/>}/>
