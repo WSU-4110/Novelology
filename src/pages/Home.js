@@ -35,7 +35,7 @@ export default function Home() {
     }
 
     return (
-        <main>
+        <main >
             <div className='flex flex-col'>
                 <div className="mt-8 flex flex-row gap-8">
                     <h1 className="mb-4">Search Users</h1>
