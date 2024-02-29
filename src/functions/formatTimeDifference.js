@@ -1,28 +1,16 @@
-  // Function to format time difference
-    const formatTimeDifference = (timestamp) => {
+const formatTimeDifference = (timestamp, currentTime = Date.now()) => {
+  if (!timestamp) return 'Unknown time';
+  
+  const differenceInSeconds = (currentTime - timestamp) / 1000;
+  const days = differenceInSeconds / 86400 | 0;
 
+  if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
 
+  const hours = differenceInSeconds / 3600 | 0;
+  if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
 
-    if (!timestamp) {
-      return 'Unknown time';
-    }
+  const minutes = differenceInSeconds / 60 | 0;
+  return `${minutes || 'Just Now'} minute${minutes !== 1 ? 's' : ''} ago`;
+};
 
-    const currentTime = new Date();
-    const postTime = new Date(timestamp); // Remove seconds * 1000
-    const differenceInSeconds = Math.floor((currentTime - postTime) / 1000);
-
-    if (differenceInSeconds < 60) {
-      return 'Just Now';
-    } else if (differenceInSeconds < 3600) {
-      const minutes = Math.floor(differenceInSeconds / 60);
-      return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-    } else if (differenceInSeconds < 86400) {
-      const hours = Math.floor(differenceInSeconds / 3600);
-      return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-    } else {
-      const days = Math.floor(differenceInSeconds / 86400);
-      return `${days} day${days > 1 ? 's' : ''} ago`;
-    }
-  };
-
-  export default formatTimeDifference;
+export default formatTimeDifference;
