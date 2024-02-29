@@ -7,6 +7,8 @@ import { db } from '../../firebase';
 import fetchUserProfilePicture from '../../functions/fetchUserProfilePicture';
 import formatTimeDifference from '../../functions/formatTimeDifference';
 import { Link } from 'react-router-dom';
+import { runTransaction } from 'firebase/firestore';
+import { faThumbsUp } from '@fortawesome/free-solid-svg-icons';
 
 class CommentComponent extends Component {
   constructor(props) {
@@ -18,6 +20,8 @@ class CommentComponent extends Component {
       replyText: '',
       replies: [], // Array to store direct replies to this comment
       loadingReplies: true,
+      liked: false,
+      likesCount: 0,
     };
   }
 
@@ -30,6 +34,7 @@ class CommentComponent extends Component {
   componentDidMount() {
     this.fetchUserData();
     this.fetchReplies();
+    this.checkIfLiked();
   }
 
   fetchUserData = async () => {
@@ -94,6 +99,111 @@ class CommentComponent extends Component {
     }
   };
   
+  checkIfLiked = async () => {
+    // Check if the comment is liked by the current user
+    const { comment, currentUser } = this.props;
+
+    try {
+      const commentDocRef = doc(db, 'comments', comment.id);
+      const commentDocSnap = await getDoc(commentDocRef);
+
+      if (commentDocSnap.exists()) {
+        const commentData = commentDocSnap.data();
+        const liked = commentData.likedBy && commentData.likedBy.includes(currentUser.uid);
+        this.setState({ liked, likesCount: commentData.likesCount });
+      }
+    } catch (error) {
+      console.error('Error checking if liked:', error);
+    }
+  };
+
+  handleLikeComment = async () => {
+    const { comment, currentUser } = this.props;
+    const { liked } = this.state;
+  
+    try {
+      const commentDocRef = doc(db, 'comments', comment.id);
+  
+      await runTransaction(db, async (transaction) => {
+        const commentDoc = await transaction.get(commentDocRef);
+  
+        if (!commentDoc.exists()) {
+          throw new Error('Comment document does not exist');
+        }
+  
+        const commentData = commentDoc.data();
+        const currentLikes = commentData.likesCount || 0;
+        const likedBy = commentData.likedBy || [];
+  
+        if (liked) {
+          // Unlike the comment
+          transaction.update(commentDocRef, {
+            likesCount: currentLikes - 1,
+            likedBy: likedBy.filter(id => id !== currentUser.uid),
+          });
+        } else {
+          // Like the comment
+          transaction.update(commentDocRef, {
+            likesCount: currentLikes + 1,
+            likedBy: [...likedBy, currentUser.uid],
+          });
+        }
+      });
+  
+      // Update local state to reflect changes in the liked status and likes count
+      this.setState(prevState => ({ liked: !prevState.liked, likesCount: liked ? prevState.likesCount - 1 : prevState.likesCount + 1 }));
+    } catch (error) {
+      console.error('Error liking comment:', error);
+    }
+  };
+
+  handleLikeReply = async (replyId) => {
+    const { currentUser } = this.props;
+    const { replies } = this.state;
+  
+    try {
+      // Find the reply by ID
+      const reply = replies.find(reply => reply.id === replyId);
+  
+      if (reply) {
+        const replyDocRef = doc(db, 'replies', reply.id);
+  
+        await runTransaction(db, async (transaction) => {
+          const replyDoc = await transaction.get(replyDocRef);
+  
+          if (!replyDoc.exists()) {
+            throw new Error('Reply document does not exist');
+          }
+  
+          const replyData = replyDoc.data();
+          const currentLikes = replyData.likesCount || 0;
+          const likedBy = replyData.likedBy || [];
+  
+          if (reply.liked) {
+            // Unlike the reply
+            transaction.update(replyDocRef, {
+              likesCount: currentLikes - 1,
+              likedBy: likedBy.filter(id => id !== currentUser.uid),
+            });
+          } else {
+            // Like the reply
+            transaction.update(replyDocRef, {
+              likesCount: currentLikes + 1,
+              likedBy: [...likedBy, currentUser.uid],
+            });
+          }
+        });
+  
+        // Update state to reflect changes in the liked status and likes count
+        reply.likesCount = reply.liked ? reply.likesCount - 1 : reply.likesCount + 1;
+        reply.liked = !reply.liked;
+        this.setState({ replies: [...replies] });
+      }
+    } catch (error) {
+      console.error('Error liking reply:', error);
+    }
+  };
+
 
   handleReply = () => {
     this.setState({ isReplying: true });
@@ -178,10 +288,14 @@ class CommentComponent extends Component {
     }
   };
   
+  
+  toggleShowReplies = () => {
+    // Toggle showReplies state to show/hide replies
+    this.setState(prevState => ({ showReplies: !prevState.showReplies }));
+  };
 
   renderReplies = (replies) => {
-    const { currentUser } = this.props;
-  
+    // Render replies recursively
     return replies.map(reply => (
       <div key={reply.id} className="flex flex-col items-start bg-gray-100 rounded-lg p-4 mb-4">
         <p className="text-gray-800">{reply.text}</p>
@@ -191,23 +305,25 @@ class CommentComponent extends Component {
           )}
           <p className="text-sm text-gray-600">Posted by: {reply.username}</p>
           <p className="text-sm text-gray-600 ml-auto">{formatTimeDifference(reply.createdAt)}</p> {/* Timestamp */}
-          {/* Delete button */}
-          {currentUser && currentUser.uid === reply.uid && (
-            <button onClick={() => this.handleDeleteReply(reply.id)} className="text-sm text-red-500 border rounded-md ml-2">
-              Delete
+          {this.props.currentUser.uid === reply.uid && (
+            <button onClick={() => this.handleDeleteReply(reply.id)} className="text-red-500 ml-2">
+              <FontAwesomeIcon icon={faTrash} />
             </button>
           )}
         </div>
+        {/* Reply button */}
+        <button onClick={() => this.handleReplyToReply(reply.id)} className="text-sm text-gray-400 border rounded-md mt-2">
+          <FontAwesomeIcon icon={faReply} /> Reply
+        </button>
         {/* Recursively render nested replies */}
         {reply.replies && this.renderReplies(reply.replies)}
       </div>
     ));
   };
   
-
 render() {
   const { currentUser, comment } = this.props;
-  const { userProfilePicture, username, isReplying, replyText, replies, loadingReplies } = this.state;
+  const { userProfilePicture, username, isReplying, replyText, replies, loadingReplies, showReplies, liked, likesCount } = this.state;
   const isAuthor = currentUser && currentUser.uid === comment.uid;
 
   return (
@@ -223,6 +339,12 @@ render() {
         </div>
 
         <p className="text-sm">{comment.text}</p>
+
+           {/* Like Comment Button */}
+        <button onClick={this.handleLikeComment} className="text-sm">
+          <FontAwesomeIcon icon={liked ? faThumbsUp : faThumbsUp} /> {/* Adjust icons as needed */}
+          <span className="ml-1">{likesCount} Likes</span>
+        </button>
 
         {isAuthor && (
           <button onClick={this.handleDeleteComment} className="text-sm text-red-500 border rounded-md">
@@ -244,13 +366,18 @@ render() {
           </div>
         )}
 
-        {loadingReplies && <p>Loading replies...</p>}
+         {/* Show Replies Button */}
+         {replies.length > 0 && (
+            <button onClick={this.toggleShowReplies} className="text-sm text-blue-500 underline mt-2">
+              {showReplies ? 'Hide Replies' : 'Show Replies'}
+            </button>
+          )}
 
-        {/* Render replies */}
-        {replies.length > 0 && !loadingReplies && this.renderReplies(replies)}
+          {/* Render Replies if Show Replies is true */}
+          {showReplies && replies.length > 0 && !loadingReplies && this.renderReplies(replies)}
 
-        {/* Show message if no replies */}
-        {!loadingReplies && replies.length === 0 && <p>No replies yet.</p>}
+          {/* Show message if no replies */}
+          {!loadingReplies && replies.length === 0 && <p>No replies yet.</p>}
       </div>
     </li>
   );
