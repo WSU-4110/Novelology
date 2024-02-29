@@ -66,7 +66,8 @@ function Submit() {
       userEmail: user.email,
       likes: 0,
       fileName: file ? file.name : null,
-      postType: file ? getFileType(file) : 'text'
+      postType: file ? getFileType(file) : 'text',
+      reports: []
     }
     if (file){
     

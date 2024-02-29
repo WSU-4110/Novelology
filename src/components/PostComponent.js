@@ -207,7 +207,7 @@ class PostComponent extends Component {
             <FontAwesomeIcon icon={faEllipsisH} />
           </button>
           {showPostOptionsPopup && ReactDOM.createPortal(
-            <PostOptionsPopup onClose={this.togglePostOptionsPopup} />,
+            <PostOptionsPopup onClose={this.togglePostOptionsPopup} postId={post.id}/>,
             this.popupContainer
           )}
         </div>

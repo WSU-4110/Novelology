@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFlag, faShare, faList, faVolumeMute } from '@fortawesome/free-solid-svg-icons';
 import ReportOptions from './ReportOptions'; // Import ReportOptions component
 
-const PostOptionsPopup = ({ onClose }) => {
+const PostOptionsPopup = ({ onClose, postId}) => {
   const [showReportOptions, setShowReportOptions] = useState(false);
 
   const handleReportPost = () => {
@@ -76,7 +76,7 @@ const PostOptionsPopup = ({ onClose }) => {
         </ul>
 
         {/* Render ReportOptions component if showReportOptions is true */}
-        {showReportOptions && <ReportOptions onClose={() => setShowReportOptions(false)} />}
+        {showReportOptions && <ReportOptions onClose={() => setShowReportOptions(false)} postId={postId}/>}
     
         <button onClick={onClose} className="block w-full text-left mt-2 px-4 py-2 text-gray-600 hover:bg-gray-100 focus:outline-none">
           Close
