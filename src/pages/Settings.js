@@ -25,29 +25,25 @@ export default function Settings() {
     const navigate = useNavigate();
 
 
-
+    const [customPronouns, setCustomPronouns] = useState("");
     const [pronouns, setPronouns] = useState('');
     const [selectedRoles, setSelectedRoles] = useState([]);
 
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                // Fetch user data and set pre-existing bio
                 const userDoc = doc(db, 'users', user.uid);
                 const docSnapshot = await getDoc(userDoc);
                 if (docSnapshot.exists()) {
                     const userDataFromSnapshot = docSnapshot.data();
                     setUserData(userDataFromSnapshot);
-                    setPronouns(userDataFromSnapshot.pronouns || '');
+                    setPronouns(userDataFromSnapshot.pronouns || ''); // Set pronouns from Firestore
+                    setCustomPronouns(userDataFromSnapshot.customPronouns || ''); // Set custom pronouns from Firestore
                     localStorage.setItem('userData', JSON.stringify(userDataFromSnapshot));
-    
+        
                     if (!newBio) {
                         setNewBio(userDataFromSnapshot.bio || ''); // Set pre-existing bio
                     }
-    
-                    // Set pronouns and selected role
-                    setPronouns(userDataFromSnapshot.pronouns || '');
-                    setSelectedRoles(userDataFromSnapshot.role || '');
                 } else {
                     console.error('User document does not exist.');
                 }
@@ -55,7 +51,7 @@ export default function Settings() {
                 console.error('Error fetching user data:', error);
             }
         };
-    
+        
         if (user) {
             fetchUserData();
         }
@@ -92,10 +88,11 @@ export default function Settings() {
             const userDoc = doc(db, 'users', user.uid);
             await updateDoc(userDoc, {
                 bio: newBio,
-                pronouns: pronouns,
+                pronouns: pronouns === "Other" ? customPronouns : pronouns,
+                customPronouns: pronouns === "Other" ? customPronouns : "", // Save custom pronouns if "Other" is selected
                 role: selectedRoles // Save selected roles to the database
             });
-            setUserData({ ...userData, bio: newBio, pronouns: pronouns, role: selectedRoles });
+            setUserData({ ...userData, bio: newBio, pronouns: pronouns, customPronouns: pronouns === "Other" ? customPronouns : "", role: selectedRoles });
             setShowSavedMessage(true);
             setTimeout(() => {
                 setShowSavedMessage(false);
@@ -104,6 +101,7 @@ export default function Settings() {
             console.error('Error updating user data:', error);
         }
     }
+    
 
     const checkUsernameAvailability = async () => {
         try {
@@ -146,8 +144,12 @@ export default function Settings() {
                                 <TextEditor defaultValue={newBio} onChange={setNewBio} maxChars={500} />
 
                                 
-                                <PronounsDropdown pronouns={pronouns} setPronouns={setPronouns} />
-    
+                                <PronounsDropdown
+                                    pronouns={pronouns}
+                                    setPronouns={setPronouns}
+                                    customPronouns={customPronouns}
+                                    setCustomPronouns={setCustomPronouns}
+                                />
                                 <RolesSelection selectedRoles={selectedRoles} setSelectedRoles={setSelectedRoles} />
 
     
