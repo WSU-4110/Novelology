@@ -4,7 +4,6 @@ import { db } from '../firebase';
 import fetchPFP from '../functions/fetchPFP';
 import { auth } from '../firebase';
 import { Link } from 'react-router-dom';
-import { arrayRemove, arrayUnion, updateDoc } from 'firebase/firestore';
 import { toggleFollow } from '../functions/toggleFollow';
 
 // Allows users to follow or unfollow other users.
@@ -25,8 +24,8 @@ const MiniUserCard = ({ userId }) => {
   const [fetchedProfilePicture, setFetchedProfilePicture] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
-  const [followersCount, setFollowersCount] = useState(0);
-  const [followingCount, setFollowingCount] = useState(0);
+  const [setFollowersCount] = useState(0);
+  const [setFollowingCount] = useState(0);
 
   // Fetch user data and profile picture
   // UseEffect runs when the component mounts and when the userId changes
@@ -66,7 +65,7 @@ const MiniUserCard = ({ userId }) => {
     };
 
     fetchUserData();
-}, [userId]); // Include userId in the dependency array to re-run effect when it changes
+}, [userId, fetchedProfilePicture, setFollowersCount, setFollowingCount]); // Include userId in the dependency array to re-run effect when it changes
 
     const toggleFollowHandler = async () => {
         try {

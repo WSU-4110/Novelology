@@ -4,8 +4,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/navbar';
 import Home from './pages/Home';
 import PrivateRoute from './components/routing/PrivateRoute'; 
-import Modal from './components/Modal'; 
-import Onboarding from './components/Onboarding'; 
 import SetUpAccount from './pages/SetUpAccount';
 import Submit from './pages/Submit';
 import Settings from './pages/Settings';
@@ -21,7 +19,7 @@ const App = () => {
       <Fragment>
 
         <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-          <img src={require('./assets/Novelology_Logo.png')} style={{ height: '12em', width: '12em'}} />
+          <img src={require('./assets/Novelology_Logo.png')} alt="Novelology Logo" style={{ height: '12em', width: '12em'}} />
         </div>
 
 
