@@ -4,7 +4,7 @@ import PostIDComponent from '../components/PostID/PostIDComponent.js';
 import PostIDSubComponent from '../components/PostID/PostIDSubComponent.js';
 import {  doc } from 'firebase/firestore';
 import { useDocument } from 'react-firebase-hooks/firestore';
-import Error from '../components/Error.js'
+import Error from '../components/shared/Error.js'
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useNavigate ,  useParams} from "react-router-dom";
 import PostActions from '../functions/PostActions.js';

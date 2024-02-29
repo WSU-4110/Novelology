@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { db, auth, storage } from "../firebase"; 
+import { db, auth, storage } from "../../firebase.js"; 
 import { getDoc, doc, setDoc } from "firebase/firestore"; // Import necessary Firestore functions
-import UploadPFP from "./UploadPFP";
-import PronounsDropdown from "./PronounsDropdown";
-import RolesSelection from "./RolesSelection";
-import BioTextArea from "./BioTextArea";
-import SelectGenres from "./SelectGenres";
-import fetchPFP from "../functions/fetchPFP"; // Import fetchPFP function
-import AuthorVerify from "./AuthorVerify.js";
+import UploadPFP from "../shared/UploadPFP.js";
+import PronounsDropdown from "./PronounsDropdown.js";
+import RolesSelection from "./RolesSelection.js";
+import BioTextArea from "../BioTextArea.js";
+import SelectGenres from "./SelectGenres.js";
+import fetchPFP from "../../functions/fetchPFP.js"; // Import fetchPFP function
+import AuthorVerify from "../AuthorVerify.js";
 
 const Onboarding = () => {
   // State variables

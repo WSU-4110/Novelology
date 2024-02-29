@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faReply, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { updateDoc, doc, getDoc, deleteDoc } from 'firebase/firestore';
-import { db } from '../firebase';
-import fetchUserProfilePicture from '../functions/fetchUserProfilePicture';
-import formatTimeDifference from '../functions/formatTimeDifference';
+import { db } from '../../firebase';
+import fetchUserProfilePicture from '../../functions/fetchUserProfilePicture';
+import formatTimeDifference from '../../functions/formatTimeDifference';
 import { collection, getDocs, query, where } from 'firebase/firestore';
-import { auth } from '../firebase';
-import fetchUsernameWithUID from '../functions/fetchUsernameWithUID';
+import { auth } from '../../firebase';
+import fetchUsernameWithUID from '../../functions/fetchUsernameWithUID';
 import { Link } from 'react-router-dom';
 
 class CommentComponent extends Component {

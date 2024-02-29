@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { doc, getDoc } from "firebase/firestore";
-import { db, auth } from "../firebase";
+import { db, auth } from "../../firebase";
 
 const RolesSelection = ({ selectedRoles, setSelectedRoles }) => {
   const handleRoleChange = (role) => {
