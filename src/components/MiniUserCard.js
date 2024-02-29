@@ -5,6 +5,7 @@ import fetchPFP from '../functions/fetchPFP';
 import { auth } from '../firebase';
 import { Link } from 'react-router-dom';
 import { arrayRemove, arrayUnion, updateDoc } from 'firebase/firestore';
+import { toggleFollow } from '../functions/toggleFollow';
 
 // Allows users to follow or unfollow other users.
 const FollowButton = ({ isFollowing, toggleFollow }) => {
@@ -67,55 +68,31 @@ const MiniUserCard = ({ userId }) => {
     fetchUserData();
 }, [userId]); // Include userId in the dependency array to re-run effect when it changes
 
-  
-    // Function to toggle follow status
-  const toggleFollow = async () => {
-    try {
-        if (!userData) {
-            console.error('User data not initialized.');
-            return;
+    const toggleFollowHandler = async () => {
+        try {
+            if (!userData) {
+                console.error('User data not initialized.');
+                return;
+            }
+
+            const currentUser = auth.currentUser;
+            if (!currentUser) {
+                console.error('Current user not authenticated.');
+                return;
+            }
+
+            const currentUserId = currentUser.uid;
+            await toggleFollow(currentUserId, userId, isFollowing);
+
+            // Toggle the follow state
+            setIsFollowing(!isFollowing);
+
+            // Update followers count
+            setFollowersCount(prevCount => isFollowing ? prevCount - 1 : prevCount + 1);
+        } catch (error) {
+            console.error('Error toggling follow:', error);
         }
-
-        const currentUser = auth.currentUser;
-        if (!currentUser) {
-            console.error('Current user not authenticated.');
-            return;
-        }
-        const currentUserId = currentUser.uid;
-
-        const currentUserDocRef = doc(db, 'users', currentUserId);
-        const userDocRef = doc(db, 'users', userId);
-
-        if (isFollowing) {
-            // if the user IS following the other user, unfollow them
-            // by removing the other user's ID from the current user's following array
-            // and removing the current user's ID from the other user's followers array
-            await updateDoc(currentUserDocRef, {
-                following: arrayRemove(userId)
-            });
-            await updateDoc(userDocRef, {
-                followers: arrayRemove(currentUserId)
-            });
-            console.log('User unfollowed successfully.');
-        } else { //otherwise follow them
-            await updateDoc(currentUserDocRef, {
-                following: arrayUnion(userId)
-            });
-            await updateDoc(userDocRef, {
-                followers: arrayUnion(currentUserId)
-            });
-            console.log('User followed successfully.');
-        }
-
-        // toggle the follow state either way
-        setIsFollowing(!isFollowing); // Toggle follow status
-
-        // Update followers count
-        setFollowersCount(prevCount => isFollowing ? prevCount - 1 : prevCount + 1);
-    } catch (error) {
-        console.error('Error toggling follow:', error);
-    }
-};
+    };
 
 
   
@@ -149,7 +126,7 @@ const MiniUserCard = ({ userId }) => {
             
           {/*Display follow button if the current user is not the user being displayed*/}
           {auth.currentUser && auth.currentUser.uid !== userData.uid && (
-            <FollowButton isFollowing={isFollowing} toggleFollow={toggleFollow} />
+            <FollowButton isFollowing={isFollowing} toggleFollow={toggleFollowHandler} />
           )}
           </div>
           </div>
