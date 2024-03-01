@@ -151,16 +151,19 @@ export default function Settings() {
     
 
     const handleChangePassword = async (currentPassword, newPassword, confirmPassword) => {
-        // Check if new password and confirm password match
-        if (newPassword !== confirmPassword) {
-            console.error("New password and confirm password do not match.");
-            return;
-        }
-    
-        // Get the current user
-        const currentUser = auth.currentUser;
-    
         try {
+            // Check if new password and confirm password match
+            if (newPassword !== confirmPassword) {
+                throw new Error("New password and confirm password do not match.");
+            }
+    
+            // Get the current user
+            const currentUser = auth.currentUser;
+    
+            if (!currentUser) {
+                throw new Error("User is not authenticated.");
+            }
+    
             // Prompt the user to reauthenticate before changing the password
             let reauthCredential;
             const providerId = currentUser.providerData[0].providerId;
@@ -176,8 +179,7 @@ export default function Settings() {
                 reauthCredential = EmailAuthProvider.credential(email, currentPassword);
             } else {
                 // Unsupported provider
-                console.error("Unsupported provider for reauthentication.");
-                return;
+                throw new Error("Unsupported provider for reauthentication.");
             }
     
             // Reauthenticate user if needed
@@ -191,11 +193,14 @@ export default function Settings() {
             // Display success message
             console.log("Password changed successfully!");
         } catch (error) {
-            console.error("Error changing password:", error.code, error.message);
+            console.error("Error changing password:", error.message);
             if (error.code === "auth/wrong-password") {
                 console.error("Invalid current password.");
+            } else if (error.code === "auth/requires-recent-login") {
+                console.error("Reauthentication is required. Please sign in again.");
             } else {
                 console.error("Unexpected error occurred while changing password.");
+                console.error("Error details:", error);
             }
         }
     };
