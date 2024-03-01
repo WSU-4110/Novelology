@@ -8,6 +8,8 @@ import { deleteDoc, doc, getDoc, updateDoc} from 'firebase/firestore';
 import { handleDeleteAccount } from '../functions/Auth.js';
 import SelectGenres from '../components/user/SelectGenres.js'
 import TextEditor from '../components/shared/TextEditor.js';
+import { updatePassword, reauthenticateWithCredential, reauthenticateWithRedirect, GoogleAuthProvider, EmailAuthProvider } from 'firebase/auth';
+import { getRedirectResult } from 'firebase/auth';
 
 import "../styles/settings.css";
 import RolesSelection from '../components/user/RolesSelection.js';
@@ -148,6 +150,58 @@ export default function Settings() {
     };
     
 
+    const handleChangePassword = async (currentPassword, newPassword, confirmPassword) => {
+        // Check if new password and confirm password match
+        if (newPassword !== confirmPassword) {
+            console.error("New password and confirm password do not match.");
+            return;
+        }
+    
+        // Get the current user
+        const currentUser = auth.currentUser;
+    
+        try {
+            // Prompt the user to reauthenticate before changing the password
+            let reauthCredential;
+            const providerId = currentUser.providerData[0].providerId;
+    
+            if (providerId === GoogleAuthProvider.PROVIDER_ID) {
+                // Reauthenticate with Google using redirect
+                const googleAuthProvider = new GoogleAuthProvider();
+                await reauthenticateWithRedirect(currentUser, googleAuthProvider);
+                await getRedirectResult(auth);
+            } else if (providerId === EmailAuthProvider.PROVIDER_ID) {
+                // Reauthenticate with email and password
+                const email = currentUser.email;
+                reauthCredential = EmailAuthProvider.credential(email, currentPassword);
+            } else {
+                // Unsupported provider
+                console.error("Unsupported provider for reauthentication.");
+                return;
+            }
+    
+            // Reauthenticate user if needed
+            if (reauthCredential) {
+                await reauthenticateWithCredential(currentUser, reauthCredential);
+            }
+    
+            // Update the user's password using Firebase Auth
+            await updatePassword(currentUser, newPassword);
+    
+            // Display success message
+            console.log("Password changed successfully!");
+        } catch (error) {
+            console.error("Error changing password:", error.code, error.message);
+            if (error.code === "auth/wrong-password") {
+                console.error("Invalid current password.");
+            } else {
+                console.error("Unexpected error occurred while changing password.");
+            }
+        }
+    };
+    
+    
+
 
     return (
         <div className="min-h-screen w-full bg-gray-100 flex justify-center pl-16 pr-16">
@@ -215,6 +269,22 @@ export default function Settings() {
                                     onClose={() => setShowDeleteModal(false)}
                                     onDelete={() => handleDeleteAccount(navigate)} // Pass a function reference
                                 />
+
+                                {/* Change Password*/}
+                                {user.providerData[0].providerId === EmailAuthProvider.PROVIDER_ID && (
+                                <div className="change-password-section">
+                                    <h1 className='text-2xl font-bold m-4'>Change Password:</h1>
+                                    <input type="password" id="currentPassword" className="border rounded p-2 mt-1" placeholder="Current Password" />
+                                    <input type="password" id="newPassword" className="border rounded p-2 mt-1" placeholder="New Password" />
+                                    <input type="password" id="confirmPassword" className="border rounded p-2 mt-1" placeholder="Confirm New Password" />
+                                    <button
+                                        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-4"
+                                        onClick={() => handleChangePassword(document.getElementById("currentPassword"), document.getElementById("newPassword").value, document.getElementById("confirmPassword").value)} 
+                                    > 
+                                    Change Password!
+                                    </button>
+                                </div>
+                            )}
                             </>
                         )}
                     </>
@@ -222,4 +292,4 @@ export default function Settings() {
             </div>
         </div>
     );
-                                    }    
+}
