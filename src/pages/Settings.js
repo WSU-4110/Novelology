@@ -4,7 +4,7 @@ import { auth, db } from '../firebase.js'; // Consolidated Firebase imports
 import { useNavigate } from "react-router-dom";
 import UploadPFP from '../components/shared/UploadPFP.js';
 import DeleteAccountModal from '../components/user/DeleteAccountModal.js';
-import { doc, getDoc, updateDoc} from 'firebase/firestore';
+import { deleteDoc, doc, getDoc, updateDoc} from 'firebase/firestore';
 import { handleDeleteAccount } from '../functions/Auth.js';
 import SelectGenres from '../components/user/SelectGenres.js'
 import TextEditor from '../components/shared/TextEditor.js';
@@ -109,16 +109,32 @@ export default function Settings() {
             const docSnapshot = await getDoc(usernameDoc);
             setUsernameAvailability(!docSnapshot.exists()); // Update username availability state based on snapshot
         } catch (error) {
-            console.error('Error checking username availability:', error);
+            console.error('Username not availible', error);
         }
     };
 
     const handleUsernameChangeRequest = async () => {
+
+        checkUsernameAvailability();
+
+        if (usernameAvailability == true) {
+
         try {
             // Update user's data in Firestore to include the desired username
             await updateDoc(doc(db, 'users', user.uid), {
                 username: desiredUsername // Update the username field directly
             });
+
+            
+            // Remove the old username from the usernames collection
+            await deleteDoc(doc(db, 'usernames', userData.username.toLowerCase()));
+
+            // Add the username to the usernames collection
+            await updateDoc(doc(db, 'usernames', desiredUsername.toLowerCase()), {
+                uid: user.uid
+            });
+
+
             setShowSavedMessage(true);
             setTimeout(() => {
                 setShowSavedMessage(false);
@@ -126,6 +142,9 @@ export default function Settings() {
         } catch (error) {
             console.error('Error requesting username change:', error);
         }
+    } else {
+        console.error('Username not availible');
+    }
     };
     
 
