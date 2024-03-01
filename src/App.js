@@ -14,7 +14,8 @@ import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Post from './pages/Post';
 import AuthorVerification from './pages/AuthorVerification';
-import SampleHome2 from './pages/sampleHome2.js';
+import SampleHome from './pages/sampleHome.js';
+import  SignIn  from './pages/Signin.js';
 const App = () => {
   return (
     <Router>
@@ -44,8 +45,8 @@ const App = () => {
           <Route path="/post/:pid" element={<Post/>}/>
           <Route path="/post" element={<Post/>}/>
           <Route path="/author-verification" element={<AuthorVerification/>}/>
-          <Route path="/samplehome" element={<SampleHome2/>}/>
-
+          <Route path="/samplehome" element={<SampleHome/>}/>
+          <Route path="/sign_in" element={<SignIn/>}/>
         </Routes>
         
       </Fragment>
