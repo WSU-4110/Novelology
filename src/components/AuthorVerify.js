@@ -1,7 +1,7 @@
 import React,{useEffect, useState} from 'react';
 import { Link } from "react-router-dom";
 import axios from "axios";
-import Onboarding from './Onboarding';
+import Onboarding from './user/Onboarding';
 import "../styles/author-verify.css";
 
 const AuthorVerify =() => {

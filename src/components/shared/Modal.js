@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { SignIn } from './SignIn';
-import { Registration } from './Registration';
-import '../styles/modal.css';
+import { SignIn } from '../user/SignIn';
+import { Registration } from '../user/Registration';
+import '../../styles/modal.css';
 
 function Modal() {
     // State variables for modal visibility and mode (sign-in or sign-up)

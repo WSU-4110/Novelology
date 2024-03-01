@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from '../firebase';
+import { auth } from '../../firebase';
 import { FaGoogle } from 'react-icons/fa';
-import { handleSignInWithPopup } from "../functions/Auth";
+import { handleSignInWithPopup } from "../../functions/Auth";
 
 
 export function SignIn() {

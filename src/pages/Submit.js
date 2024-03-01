@@ -5,8 +5,8 @@ import {ref, getDownloadURL,uploadBytesResumable } from "firebase/storage";
 import { useUploadFile } from 'react-firebase-hooks/storage';
 import {db,auth,storage} from '../firebase';
 import {useEffect, useRef, useState} from 'react';
-import FileRenderer, {getFileType} from '../components/FileRenderer';
-import PostForm from '../components/PostForm';
+import FileRenderer, {getFileType} from '../components/shared/FileRenderer';
+import PostForm from '../components/Posts/PostForm';
 import { useNavigate } from "react-router-dom";
 function Submit() {
   const [user] = useAuthState(auth)
@@ -58,14 +58,17 @@ function Submit() {
     e.preventDefault()
     if (!user || (!formValue && !file)) return
 		const payload = {
-    text: formValue || "", 
-    createdAt: serverTimestamp(),
-    genres: selectedGenres,
-    comments: [], 
-    uid:user.uid,
-    userEmail: user.email,
-    likes: 0,
-    fileName: file ? file.name : null }
+      text: formValue || "", 
+      createdAt: serverTimestamp(),
+      genres: selectedGenres,
+      comments: [], 
+      uid:user.uid,
+      userEmail: user.email,
+      likes: 0,
+      fileName: file ? file.name : null,
+      postType: file ? getFileType(file) : 'text',
+      reports: []
+    }
     if (file){
     
       const storageRef = ref(storage, `files/${file.name}`)

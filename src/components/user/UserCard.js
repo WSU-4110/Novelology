@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db } from '../../firebase';
 import { FaInfoCircle, FaUser } from 'react-icons/fa';
-import fetchPFP from '../functions/fetchPFP';
-import { auth } from '../firebase';
+import fetchPFP from '../../functions/fetchPFP';
+import { auth } from '../../firebase';
 import { Link } from 'react-router-dom';
 import { arrayRemove, arrayUnion, updateDoc } from 'firebase/firestore';
+import DOMPurify from 'dompurify';
 
 const FollowButton = ({ isFollowing, toggleFollow }) => {
     return (
@@ -115,14 +116,14 @@ const UserCard = ({ userId }) => {
     return <div>Loading...</div>;
   }
 
-  const defaultProfilePicture = require('../assets/default-profile-picture.jpg');
+  const defaultProfilePicture = require('../../assets/default-profile-picture.jpg');
 
   return (
-    <div className="user-card border rounded-lg shadow-md p-6">
+    <div className="user-card border rounded-lg shadow-md p-6 w-75">
       {userData ? (
         <div>
         <Link to={`/users/${userData.username}`}>
-          <h2 className="text-3xl font-semibold mb-4"><span className="text-blue-400">@</span> {userData.username}</h2>
+          <h2 className="text-2xl font-semibold mb-4"><span className="text-blue-400">@</span> {userData.username}</h2>
         </Link>
           <div className="mr-8">
             <img 
@@ -132,12 +133,19 @@ const UserCard = ({ userId }) => {
             />
           </div>
           {userData.bio ? (
-            <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">Bio:</span> {userData.bio}</p>
+            <p className="mb-2">
+              <FaInfoCircle className="inline-block" />
+              <span className="font-semibold"></span> 
+              <span dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(userData.bio) }} />
+            </p>
           ) : (
-            <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">Bio:</span> <span className="text-orange-500">No bio provided</span></p>
+            <p className="mb-2">
+              <FaInfoCircle className="inline-block" />
+              <span className="font-semibold"></span> 
+              <span className="text-orange-500">No bio provided</span>
+            </p>
           )}
-          {userData.pronouns && <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">Pronouns:</span> {userData.pronouns}</p>}
-          <div className="flex justify-between mb-4">
+           <div className="flex justify-between mb-4">
             <p className="font-semibold"><FaUser className="inline-block mr-2" /> Followers: {followersCount}</p>
             <p className="font-semibold"><FaUser className="inline-block mr-2" /> Following: {followingCount}</p>
           </div>

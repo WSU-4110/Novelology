@@ -1,5 +1,5 @@
 
-import Onboarding from "../components/Onboarding.js";
+import Onboarding from "../components/user/Onboarding.js";
 
 export default function SetUpAccount() {
 
