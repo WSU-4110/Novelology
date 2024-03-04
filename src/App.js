@@ -8,7 +8,8 @@ import Error from './components/shared/Error';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import PrivateRoute from './components/routing/PrivateRoute';
-
+import SampleHome from './pages/sampleHome.js'
+import SignIn from './pages/Signin.js';
 // Lazy-loaded components
 const SetUpAccount = React.lazy(() => import('./pages/SetUpAccount'));
 const Submit = React.lazy(() => import('./pages/Submit'));

@@ -10,7 +10,7 @@ import Feed from './Feed.js';
 import PopularUsers from '../components/shared/PopularUsers.js';
 import HotFeed from '../components/Feeds/HotFeed.js';
 import BookSearch from '../components/BookSearch.js';
-
+import SampleHome from './sampleHome.js';
 
 export default function Home() {
     const [user, loading, error] = useAuthState(auth);

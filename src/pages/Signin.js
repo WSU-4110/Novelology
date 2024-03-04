@@ -1,6 +1,27 @@
 import * as React from "react";
+import { useNavigate } from 'react-router-dom';
+import { useRef, useState } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from '../firebase';
+import { FaGoogle } from 'react-icons/fa';
+import { handleSignInWithPopup } from "../functions/Auth.js";
 
 function SignIn(props) {
+  const [loading, setLoading] = useState(false);
+
+  const emailRef = useRef();
+  const passwordRef = useRef();
++
+  async function handleSignInWithEmailAndPassword() {
+    setLoading(true);
+    try {
+      await signInWithEmailAndPassword(auth, emailRef.current.value, passwordRef.current.value);
+    } catch (error) {
+      alert("Error signing in with email: " + error.message);
+    }
+    setLoading(false);
+  }
+
   return (
     <div className="flex justify-center items-center px-16 py-12 text-xl text-white bg-maroon max-md:px-5">
       <div className="flex flex-col mt-6 max-w-full w-[408px]">
@@ -19,6 +40,12 @@ function SignIn(props) {
             hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-lg px-16 py-4 me-2 mb-2 
             dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-lightcolor dark:hover:border-gray-600 
             dark:focus:ring-lightcolor"
+
+            
+              onClick={(event) => {
+              event.preventDefault(); // Prevent default form submission
+              handleSignInWithPopup().catch((error) => console.error('Error during sign-in:', error));
+          }}
           >
             Sign in with Google
           </button>
@@ -27,28 +54,32 @@ function SignIn(props) {
           _________ OR __________
         </div>
         
-        <div className="mt-8 text-2xl">Username</div>
+        <div className="mt-8 text-2xl">Email Address</div>
         <input
                   type="text"
                   id="username"
                   class="bg-lightcolor border border-gray-300 text-gray-900 text-sm rounded-full 
               focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-lightcolor dark:border-gray-600 
               dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Username"
+              ref={emailRef}
+                  placeholder="email"
                 />
         {/* <div className="shrink-0 mt-3.5 h-10 rounded-3xl" /> */}
         <div className="mt-12 text-2xl max-md:mt-10">Password</div>
         <input
-                  type="text"
+                  type="password"
                   id="password"
+                  ref={passwordRef}
                   class="bg-lightcolor border border-gray-300 text-gray-900 text-sm rounded-full 
               focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-lightcolor dark:border-gray-600 
               dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Password"
                 />
         {/* <div className="shrink-0 mt-2 h-10 rounded-3xl" /> */}
-        <button className="self-center px-12 pt-3 pb-1 mt-12 text-2xl text-center rounded-3xl border border-white border-solid bg-maroon max-md:px-5 max-md:mt-10">
-          Log In
+        <button className="self-center px-12 pt-3 pb-1 mt-12 text-2xl text-center rounded-3xl border border-white border-solid bg-maroon max-md:px-5 max-md:mt-10"
+        type="button" disabled={loading} onClick={handleSignInWithEmailAndPassword}
+        >
+          Sign In
         </button>
         <div className="self-center mt-20 w-full text-center max-md:mt-10">
           Don’t have an account?

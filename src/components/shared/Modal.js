@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { SignIn } from '../user/SignIn';
 import { Registration } from '../user/Registration';
+
 import '../../styles/modal.css';
 
 function Modal() {

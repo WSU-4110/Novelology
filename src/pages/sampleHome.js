@@ -1,10 +1,16 @@
 import * as React from "react";
+import LoggedOutNavBar from "../components/LoggedOutNavBar.js";
+import Footer from "../components/Footer.js";
+import { useNavigate } from 'react-router-dom';
 
 function SampleHome(props) {
+
   return (
-    <div className="flex flex-col bg-lightcolor">
+    <>
+    <LoggedOutNavBar />
+    <div className="flex flex-col mt-0 bg-lightcolor">
       <div className="flex z-10 flex-col pb-7 w-full max-md:max-w-full">
-        <div className="flex justify-center items-center px-16 py-1.0 w-full whitespace-nowrap bg-maroon max-md:px-5 max-md:max-w-full ">
+        {/* <div className="flex justify-center items-center px-16 py-1.0 w-full whitespace-nowrap bg-maroon max-md:px-5 max-md:max-w-full ">
           <div className="flex gap-5 justify-between w-full max-w-[1097px] max-md:flex-wrap max-md:max-w-full">
             <div className="flex gap-4 justify-between items-center max-md:flex-wrap max-md:max-w-full">
               <img
@@ -64,9 +70,9 @@ function SampleHome(props) {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
-        <div className="overflow-hidden relative flex-col justify-center items-center px-16 pt-52 pb-52 w-full text-6xl text-black min-h-[705px] max-md:px-5 max-md:py-10 max-md:max-w-full max-md:text-4xl">
+        <div className="overflow-hidden relative flex-col justify-center items-center px-16 pt-52 pb-52 mt-0 w-full text-6xl text-black min-h-[705px] max-md:px-5 max-md:py-10 max-md:max-w-full max-md:text-4xl">
           <img
             loading="lazy"
             srcSet={require("../assets/home_page.jpg")}
@@ -252,8 +258,8 @@ function SampleHome(props) {
         </div>
         
       </div>
-      
-      <div className="flex flex-col items-end px-16 pt-10 pb-2.5 w-full bg-maroon max-md:px-5 max-md:max-w-full">
+      {/* <Footer /> */}
+      {/* <div className="flex flex-col items-end px-16 pt-10 pb-2.5 w-full bg-maroon max-md:px-5 max-md:max-w-full">
         <div className="mr-32 max-w-full w-[795px] max-md:mr-2.5">
           <div className="flex gap-5 max-md:flex-col max-md:gap-0 max-md:">
             <div className="flex flex-col w-[82%] max-md:ml-0 max-md:w-full">
@@ -282,9 +288,11 @@ function SampleHome(props) {
             </div>
           </div>
         </div>
-        {/*  */}
-      </div>
+        {/*  
+      </div> */}
     </div>
+    <Footer />
+    </>
   );
 }
 
