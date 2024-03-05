@@ -5,7 +5,7 @@ const FileRenderer = ({file}) => {
 	const fileURL = URL.createObjectURL(file)
 	if (fileType === 'image'){
 		return(
-			<img src={fileURL} className="max-w-xs"alt='Uploaded Image'/>
+			<img src={fileURL} className="max-w-xs rounded-lg"alt='Uploaded Image'/>
 		)
 	}
 	else if (fileType === 'video'){
