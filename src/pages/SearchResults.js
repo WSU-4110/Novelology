@@ -1,5 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import  fetchUIDwithUsername  from '../functions/fetchUIDwithUsername';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../firebase';
+
+async function searchUsers(searchQuery) {
+    console.log('Searching for:', searchQuery);
+    const q = typeof searchQuery === 'string' ? searchQuery.trim() : '';
+    const results = [];
+
+    if (q !== '') {
+        const qRef = collection(db, 'usernames'); // Replace 'usernames' with your collection name
+        try {
+            const qSnapshot = await getDocs(qRef);
+            console.log('Snapshot:', qSnapshot);
+            qSnapshot.forEach(doc => {
+                // Check if document ID starts with the query or contains the query
+                if (doc.id.startsWith(q.toLowerCase()) || doc.id.includes(q)) { 
+                    results.push({ id: doc.id, UID: doc.data().UID });
+                }
+            });
+            console.log('Results:', results);
+            return results;
+        } catch (error) {
+            console.error('Error searching users:', error);
+            return [];
+        }
+    } else {
+        return [];
+    }
+}
+
+
 
 const SearchResults = () => {
     const [searchResults, setSearchResults] = useState([]);
@@ -50,7 +82,7 @@ const SearchResults = () => {
         performSearch(query, defaultFilter, selectedGenres); // Include selectedGenre in the call to performSearch
     }, []); // Empty dependency array ensures useEffect runs only once on component mount
 
-    const performSearch = (query, filter, genres) => {
+    const performSearch = async (query, filter, genres) => {
         const encodedQuery = encodeURIComponent(query);
         let apiUrl = '';
     
@@ -104,6 +136,15 @@ const SearchResults = () => {
                     }
                 })
                 .catch(err => console.error('Error fetching data:', err));
+        } else {
+            // handle other search filters
+            if (filter === 'users') {
+                // Handle user search by searching usernames in firebase
+                console.log('Searching for users...' + query);
+                const uid = await fetchUIDwithUsername(query.toLowerCase());
+                console.log('UID:', uid);
+                searchUsers(uid);
+            }
         }
     };
     
@@ -170,6 +211,10 @@ const SearchResults = () => {
                     <input type="radio" id="authors" name="filter" value="authors" onChange={handleFilterChange} checked={selectedFilter === 'authors'} className="mr-2 cursor-pointer" />
                     <label htmlFor="authors" className="cursor-pointer">Authors</label>
                 </div>
+                <div className="mb-2">
+                    <input type="radio" id="users" name="filter" value="users" onChange={handleFilterChange} checked={selectedFilter === 'users'} className="mr-2 cursor-pointer" />
+                    <label htmlFor="users" className="cursor-pointer">Users</label>
+                    </div>
             </div>
         </div>
     );
