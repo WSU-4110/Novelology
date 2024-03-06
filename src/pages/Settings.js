@@ -221,7 +221,6 @@ export default function Settings() {
                                 <h1 className='text-2xl font-bold m-4'>Your Bio:</h1>
                                 <TextEditor defaultValue={newBio} onChange={setNewBio} maxChars={500} />
 
-                                
                                 <PronounsDropdown
                                     pronouns={pronouns}
                                     setPronouns={setPronouns}

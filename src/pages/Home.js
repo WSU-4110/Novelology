@@ -6,8 +6,6 @@ import Searchbar from '../components/shared/Searchbar.js';
 import { handleSearch } from '../functions/searchFunctions'; // Import handleSearch function
 import Feed from './Feed.js';
 import PopularUsers from '../components/shared/PopularUsers.js';
-import BookSearch from '../components/BookSearch.js';
-
 
 export default function Home() {
     const [user, loading, error] = useAuthState(auth);
@@ -34,10 +32,8 @@ export default function Home() {
     return (
         <main>
             <div>
-            <div className='bookSearch'>
-                    <h1 className="mb-4">Search Users</h1>
+                <div>
                     <Searchbar onSearch={(query) => handleSearch(query, setSearchResults, setSearchStatus)} />
-                    <BookSearch/>
                 </div>
             </div>
             {!user ? (
