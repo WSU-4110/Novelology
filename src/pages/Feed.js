@@ -175,15 +175,14 @@ class Feed extends Component {
     }
   };
 
-  handleCommentChange = (e, postId) => {
-    const { value } = e.target;
-    this.setState((prevState) => ({
-      newComments: {
-        ...prevState.newComments,
-        [postId]: value,
-      },
-    }));
-  };
+  // takes the event and the postId as arguments
+  // immediately destructures the value from the event object
+  // then updates the newComments state object with the new value for the postId.
+  handleCommentChange = ({ target: { value } }, postId) =>
+  this.setState(({ newComments }) => ({
+    newComments: { ...newComments, [postId]: value }
+  }));
+
 
   handleDeleteComment = async (deletedCommentId) => {
     const { comments } = this.state;
@@ -203,25 +202,41 @@ class Feed extends Component {
       this.setState({ filteredPosts: filtered });
     }
   };
-
   handleSortBy = (sortByType) => {
     const { filteredPosts } = this.state;
     let sortedPosts;
-    if (sortByType === 'time') {
+  
+    if (sortByType === 'newest') {
       sortedPosts = [...filteredPosts].sort((a, b) => b.data.createdAt - a.data.createdAt);
-    } else if (sortByType === 'popularity') {
-      // Implement sorting by popularity logic
+    } else if (sortByType === 'oldest') {
+      sortedPosts = [...filteredPosts].sort((a, b) => a.data.createdAt - b.data.createdAt);
+    } 
+    else if (sortByType === 'popularity') {
+      sortedPosts = [...filteredPosts].sort((postA, postB) => {
+        const likesCountA = postA.data.likes || 0; // Default to 0 if likes array is empty or undefined
+        const likesCountB = postB.data.likes || 0; // Default to 0 if likes array is empty or undefined
+        return likesCountB - likesCountA; // Sort in descending order based on likes count
+      });
     }
+  
     this.setState({ filteredPosts: sortedPosts });
   };
   
 
   handleScroll = () => {
+    const { isLoading, allPostsFetched } = this.state;
     const postContainer = this.postContainerRef.current;
-    if (!this.state.isLoading && !this.state.allPostsFetched && postContainer && window.innerHeight + window.scrollY >= postContainer.offsetHeight) {
+  
+    // Check if the user is scrolling near the bottom of the post container
+    const isScrollingNearBottom = postContainer &&
+      window.innerHeight + window.scrollY >= postContainer.offsetHeight;
+  
+      // Fetch more posts if the user is scrolling near the bottom
+    if (!isLoading && !allPostsFetched && isScrollingNearBottom) {
       this.fetchPosts();
     }
   };
+  
 
   render() {
     const { filteredPosts, isLoading, allPostsFetched, comments, newComments } = this.state;
@@ -233,6 +248,14 @@ class Feed extends Component {
           <button className="mr-2" onClick={() => this.handleFilterByType('all')}>All</button>
           <button className="mr-2" onClick={() => this.handleFilterByType('image')}>Images</button>
           <button onClick={() => this.handleFilterByType('video')}>Videos</button>
+        </div>
+        <div className="mb-4">
+          <label className="mr-4">Sort by:</label>
+          <select onChange={(e) => this.handleSortBy(e.target.value)}>
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="popularity">Popularity</option>
+          </select>
         </div>
         <div ref={this.postContainerRef} className="post-container" style={{ minHeight: 'calc(100vh - 100px)' }}>
           {filteredPosts.map((post, index) => (
