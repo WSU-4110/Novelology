@@ -31,16 +31,21 @@ export default function Settings() {
     const [pronouns, setPronouns] = useState('');
     const [selectedRoles, setSelectedRoles] = useState([]);
 
+    //useEffect is called when the component is mounted
     useEffect(() => {
         const fetchUserData = async () => {
             try {
+                // Fetch user data from Firestore
                 const userDoc = doc(db, 'users', user.uid);
                 const docSnapshot = await getDoc(userDoc);
+
+                //if the document exists, set the user data to the document data
                 if (docSnapshot.exists()) {
                     const userDataFromSnapshot = docSnapshot.data();
                     setUserData(userDataFromSnapshot);
                     setPronouns(userDataFromSnapshot.pronouns || ''); // Set pronouns from Firestore
                     setCustomPronouns(userDataFromSnapshot.customPronouns || ''); // Set custom pronouns from Firestore
+                    setSelectedRoles(userDataFromSnapshot.role || []); // Set roles from Firestore
                     localStorage.setItem('userData', JSON.stringify(userDataFromSnapshot));
         
                     if (!newBio) {
@@ -73,8 +78,8 @@ export default function Settings() {
         }
     };
 
-
-
+    // This function is called when a role is selected or deselected
+    // It updates the selectedRoles state and the user's data in Firestore
       const handleRoleChange = (role) => {
         setSelectedRoles(prevRoles => {
             if (prevRoles.includes(role)) {
@@ -219,7 +224,11 @@ export default function Settings() {
                         {userData && (
                             <>
                                 <h1 className='text-2xl font-bold m-4'>Your Bio:</h1>
-                                <TextEditor defaultValue={newBio} onChange={setNewBio} maxChars={500} />
+                                <TextEditor
+                                defaultValue={userData.bio}
+                                onChange={(content) => console.log('Content changed:', content)}
+                                maxChars={1000}
+                                />
 
                                 <PronounsDropdown
                                     pronouns={pronouns}
