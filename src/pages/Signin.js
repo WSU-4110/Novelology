@@ -8,10 +8,10 @@ import { handleSignInWithPopup } from "../functions/Auth.js";
 
 function SignIn(props) {
   const [loading, setLoading] = useState(false);
-
+  const navigate = useNavigate();
   const emailRef = useRef();
   const passwordRef = useRef();
-+
+
   async function handleSignInWithEmailAndPassword() {
     setLoading(true);
     try {
@@ -44,7 +44,7 @@ function SignIn(props) {
             
               onClick={(event) => {
               event.preventDefault(); // Prevent default form submission
-              handleSignInWithPopup().catch((error) => console.error('Error during sign-in:', error));
+              handleSignInWithPopup(navigate,setLoading).catch((error) => console.error('Error during sign-in:', error));
           }}
           >
             Sign in with Google
