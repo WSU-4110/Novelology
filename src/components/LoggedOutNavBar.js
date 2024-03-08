@@ -40,8 +40,8 @@ const LoggedOutNavBar=()=> {
                       
                       <form class="flex flex-col gap-3 md:flex-row">
                       <select
-                          id="pricingType"
-                          name="pricingType"
+                          id="searchType"
+                          name="searchType"
                           class="w-1/5 h-10 border-2 border-maroon bg-lightcolor focus:outline-none focus:border-maroon text-black rounded-full px-2 md:px-3 py-0 md:py-1 tracking-wider"
                         >
                           <option value="All" selected="">

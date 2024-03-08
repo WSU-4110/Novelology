@@ -1,111 +1,126 @@
 import * as React from "react";
+import Footer from "../components/Footer.js";
 
 function userOnboarding(props) {
+  document.addEventListener("DOMContentLoaded", function () {
+    const navigateButton = document.getElementById("dropdown-button");
+
+    navigateButton.addEventListener("click", function () {
+      // Scroll to the target div
+      document.getElementById("dropdown").scrollIntoView({ behavior: "smooth" });
+    });
+  });
   return (
-    <div className="flex flex-col pb-14 bg-white">
-      <div className="flex flex-col justify-center items-start px-16 py-2.5 w-full text-3xl text-white bg-stone-700 max-md:px-5 max-md:max-w-full">
-        <div className="flex gap-5 justify-between ml-32 max-w-full w-[648px] max-md:flex-wrap">
-          <img
-            loading="lazy"
-            srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&"
-            className="shrink-0 aspect-[1.08] w-[85px]"
-          />
-          <div className="flex-auto my-auto">User Onboarding</div>
+    <>
+      <div className="flex flex-col bg-white">
+        <div className="flex flex-col justify-center items-start px-16 py-2.5 w-full text-3xl text-white bg-maroon max-md:px-5 max-md:max-w-full">
+          <div className="flex gap-5 justify-between ml-32 max-w-full w-[648px] max-md:flex-wrap">
+            <img
+              loading="lazy"
+              srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&"
+              className="shrink-0 aspect-[1.08] w-[85px]"
+            />
+            <div className="flex justify-center items-center">
+              User Onboarding
+            </div>
+          </div>
         </div>
-      </div>
-      <div className="flex flex-col items-center px-16 pt-20 pb-9 w-full bg-[linear-gradient(0deg,#F4F3EE_0%,#F4F3EE_100%,#89023E)] max-md:px-5 max-md:max-w-full">
-        <div className="flex flex-col mt-12 max-w-full w-[928px] max-md:mt-10">
-          <div className="flex justify-center items-center px-16 py-6 shadow-sm bg-stone-700 bg-opacity-50 max-md:px-5 max-md:max-w-full">
-            <div className="flex flex-col max-w-full w-[721px]">
-              <div className="self-center text-3xl text-center text-black whitespace-nowrap">
-                Upload your profile picture
-              </div>
-              <div className="max-md:max-w-full">
-                <div className="flex gap-5 max-md:flex-col max-md:gap-0">
-                  <div className="flex flex-col w-[45%] max-md:ml-0 max-md:w-full">
-                    <div className="shrink-0 mx-auto rounded-full aspect-square bg-zinc-300 h-[250px] w-[262px] max-md:mt-10" />
-                  </div>
-                  <div className="flex flex-col ml-5 w-[55%] max-md:ml-0 max-md:w-full">
-                    <div className="flex flex-col grow items-center mt-6 text-3xl text-center text-black whitespace-nowrap max-md:mt-10">
-                      <div className="justify-center self-stretch px-8 py-3.5 rounded-3xl bg-stone-700 bg-opacity-70 max-md:px-5">
-                        View Current Picture
-                      </div>
-                      <div className="justify-center px-8 py-3.5 mt-6 rounded-3xl bg-stone-700 bg-opacity-70 max-md:px-5">
-                        Upload picture
-                      </div>
-                      <div className="justify-center px-8 py-2.5 mt-5 rounded-3xl bg-stone-700 bg-opacity-70 max-md:px-5">
-                        Remove picture
-                      </div>
-                    </div>
-                  </div>
-                </div>
+        <div className="flex flex-col items-center px-5 pt-16 w-full bg-[linear-gradient(0deg,#F4F3EE_0%,#F4F3EE_100%,#89023E)] max-md:max-w-full">
+          <div className="flex flex-col rounded-lg shadow-2xl px-20 py-4 max-w-full text-center text-black shadow-sm bg-maroon bg-opacity-50 w-[569px] max-md:px-5">
+            <div className="self-center text-xl">
+              Upload your profile picture
+            </div>
+            <div className="flex gap-5 justify-between items-start mt-3 w-full text-xl whitespace-nowrap">
+              <div className="shrink-0 rounded-full bg-zinc-300 h-[117px] w-[123px]" />
+              <div className="flex flex-col flex-1 items-center mt-3">
+                <button className="justify-center text-lg self-stretch px-2.5 py-1 rounded-xl bg-maroon bg-opacity-70">
+                  View Current Picture
+                </button>
+                <button className="justify-center text-lg px-3 py-1 mt-3 rounded-xl bg-maroon bg-opacity-70">
+                  Upload picture
+                </button>
+                <button className="justify-center text-lg px-3 py-1 mt-2 rounded-xl bg-maroon bg-opacity-70">
+                  Remove picture
+                </button>
               </div>
             </div>
           </div>
-          <div className="items-center px-16 pt-7 pb-56 mt-32 text-3xl text-center text-black whitespace-nowrap shadow-sm bg-stone-700 bg-opacity-50 max-md:px-5 max-md:pb-10 max-md:mt-10 max-md:max-w-full">
+
+          <div className="items-center rounded-lg shadow-2xl px-16 pt-2.5 pb-8 mt-24 max-w-full text-xl text-center text-black whitespace-nowrap shadow-sm bg-maroon bg-opacity-50 w-[738px] max-md:px-5 max-md:mt-10">
             Bio
+            <label
+              for="bio"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            ></label>
+            <textarea
+              id="message"
+              rows="4"
+              class="block p-2.5 w-full text-sm text-gray-900 bg-maroon bg-opacity-30 rounded-lg border border-maroon focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Tell us something about yourself..."
+            ></textarea>
           </div>
-        </div>
-      </div>
-      <div className="flex flex-col items-center px-16 pt-12 w-full text-3xl text-black bg-[linear-gradient(0deg,#F4F3EE_0%,#F4F3EE_100%,#89023E)] max-md:px-5 max-md:max-w-full">
-        <div className="flex z-10 flex-col items-center mb-0 w-full max-w-[1120px] max-md:mb-2.5 max-md:max-w-full">
-          <div className="items-start px-16 pt-7 pb-24 max-w-full text-center whitespace-nowrap shadow-sm bg-stone-700 bg-opacity-50 w-[546px] max-md:pr-5 max-md:pl-6">
-            Are you a reader or author?
-          </div>
-          <div className="items-center px-16 pt-7 pb-24 mt-44 max-w-full text-center whitespace-nowrap shadow-sm bg-stone-700 bg-opacity-50 w-[548px] max-md:px-5 max-md:mt-10">
-            Your Pronouns *
-          </div>
-          <div className="mt-16 max-md:mt-10">
-            Tell us some of your interests:
-          </div>
-          <div className="flex flex-col items-start self-stretch px-16 pt-9 pb-20 mt-14 text-center shadow-sm bg-stone-700 bg-opacity-50 max-md:px-5 max-md:mt-10 max-md:max-w-full">
-            <div className="flex gap-5 justify-between mb-24 ml-12 max-w-full w-[806px] max-md:flex-wrap max-md:mb-10">
-              <div className="flex-auto">Preferred Genres</div>
-              <div className="flex-auto">Choose from </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="flex flex-col pt-20 w-full bg-[linear-gradient(0deg,#F4F3EE_0%,#F4F3EE_100%,#89023E)] max-md:max-w-full">
-        <div className="self-center mt-48 max-w-full w-[930px] max-md:mt-10">
-          <div className="flex gap-5 max-md:flex-col max-md:gap-0">
-            <div className="flex flex-col w-[57%] max-md:ml-0 max-md:w-full">
-              <div className="grow justify-center items-center px-16 py-6 w-full text-5xl text-center text-black whitespace-nowrap rounded-3xl border-black border-solid shadow-sm bg-stone-700 bg-opacity-80 border-[3px] max-md:px-5 max-md:mt-10 max-md:text-4xl">
-                SUBMIT
+          <div className="flex flex-col rounded-lg shadow-2xl px-16 pt-4 pb-10 mt-28 max-w-full text-center text-black whitespace-nowrap shadow-sm bg-maroon bg-opacity-50 w-[456px] max-md:px-5 max-md:mt-10">
+            <div className="text-xl">Are you a reader or author?</div>
+            <div className="flex gap-5 justify-between mt-6 text-lg">
+              <div className="flex w-1/2 gap-5">
+                Reader
+                <input
+                  type="radio"
+                  value="reader"
+                  name="roles"
+                  class="w-8 h-8 text-blue-600 bg-maroon border-maroon focus:ring-maroon dark:focus:ring-maroon dark:ring-offset-maroon focus:ring-2 dark:bg-maroon dark:border-maroon"
+                />
               </div>
-            </div>
-            <div className="flex flex-col ml-5 w-[43%] max-md:ml-0 max-md:w-full">
-              <div className="grow justify-center items-center px-16 py-6 w-full text-5xl text-center text-black whitespace-nowrap rounded-3xl border-black border-solid shadow-sm bg-stone-700 bg-opacity-80 border-[3px] max-md:px-5 max-md:mt-10 max-md:text-4xl">
-                RESET
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex z-10 justify-center items-center px-16 py-10 mt-44 mb-0 w-full bg-stone-700 max-md:px-5 max-md:mt-10 max-md:mb-2.5 max-md:max-w-full">
-          <div className="max-w-full w-[884px]">
-            <div className="flex gap-5 max-md:flex-col max-md:gap-0">
-              <div className="flex flex-col w-[77%] max-md:ml-0 max-md:w-full">
-                <div className="flex flex-col mt-6 text-3xl text-white max-md:mt-10 max-md:max-w-full">
-                  <div className="max-md:max-w-full">
-                    Connect with us: info@novelology.com{" "}
-                  </div>
-                  <div className="mt-9 max-md:max-w-full">
-                    Learn more about us on
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col ml-5 w-[23%] max-md:ml-0 max-md:w-full">
-                <img
-                  loading="lazy"
-                  srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/b9de546299d3772d0d0a43bd90f06e05a170da1f6e243157b4e8b66597d1f1a5?apiKey=00dd8100ff0f48749da2736e824a4b02&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/b9de546299d3772d0d0a43bd90f06e05a170da1f6e243157b4e8b66597d1f1a5?apiKey=00dd8100ff0f48749da2736e824a4b02&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/b9de546299d3772d0d0a43bd90f06e05a170da1f6e243157b4e8b66597d1f1a5?apiKey=00dd8100ff0f48749da2736e824a4b02&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/b9de546299d3772d0d0a43bd90f06e05a170da1f6e243157b4e8b66597d1f1a5?apiKey=00dd8100ff0f48749da2736e824a4b02&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/b9de546299d3772d0d0a43bd90f06e05a170da1f6e243157b4e8b66597d1f1a5?apiKey=00dd8100ff0f48749da2736e824a4b02&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/b9de546299d3772d0d0a43bd90f06e05a170da1f6e243157b4e8b66597d1f1a5?apiKey=00dd8100ff0f48749da2736e824a4b02&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/b9de546299d3772d0d0a43bd90f06e05a170da1f6e243157b4e8b66597d1f1a5?apiKey=00dd8100ff0f48749da2736e824a4b02&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/b9de546299d3772d0d0a43bd90f06e05a170da1f6e243157b4e8b66597d1f1a5?apiKey=00dd8100ff0f48749da2736e824a4b02&"
-                  className="grow shrink-0 max-w-full aspect-[1.01] w-[184px] max-md:mt-10"
+              <div className="flex w-1/2 gap-5">
+                Author
+                <input
+                  type="radio"
+                  value="author"
+                  name="roles"
+                  class="w-8 h-8 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                 />
               </div>
             </div>
           </div>
+          <div className="flex flex-row justify-center rounded-lg shadow-2xl items-center px-12 py-7 mt-14 w-[200px] text-xl text-center text-black whitespace-nowrap bg-maroon bg-opacity-50 w-[474px] max-md:px-5 max-md:mt-10">
+            <div className="w-1/2">Your Pronouns</div>
+            <div className="w-1/2">
+            <select
+              id="pronouns"
+              name="pronouns"
+              class="w-3/4 h-10 border-2 border-maroon bg-lightcolor focus:outline-none focus:border-maroon text-black rounded-full px-2 md:px-3 py-0 md:py-1 tracking-wider"
+            >
+              <option value="null" selected="">
+                Choose
+              </option>
+              <option value="he/him">He/Him</option>
+              <option value="she/her">She/Her</option>
+              <option value="they/them">They/Them</option>
+              <option value="other">Other</option>
+            </select>
+            </div>
+          </div>
+          <div className="mt-12 text-xl text-black whitespace-nowrap max-md:mt-10">
+            Tell us some of your interests:
+          </div>
+          <div className="flex flex-col rounded-lg shadow-2xl items-center px-16 pt-7 pb-20 mt-6 max-w-full text-xl text-center text-black shadow-sm bg-maroon bg-opacity-50 w-[908px] max-md:px-5">
+            <div className="flex gap-5 justify-between mb-4 max-w-full w-[600px] max-md:flex-wrap">
+              <div>Preferred Genres</div>
+              <div>Choose from </div>
+            </div>
+          </div>
+          <div className="flex gap-5 justify-between my-20 max-w-full text-xl text-center text-black whitespace-nowrap w-[631px] max-md:flex-wrap max-md:mt-10">
+            <button className="flex-1 justify-center hover:bg-maroon hover:bg-opacity-30 active:bg-maroon active:bg-opacity-60 focus:outline-none focus:ring focus:ring-maroon px-16 py-4 rounded-xl border-black border-solid shadow-sm bg-maroon bg-opacity-80 border-[3px] max-md:pr-6 max-md:pl-6">
+              SUBMIT
+            </button>
+            <button className="flex-1 justify-center hover:bg-maroon hover:bg-opacity-30 active:bg-maroon active:bg-opacity-60 focus:outline-none focus:ring focus:ring-maroon  items-center px-16 py-4 rounded-xl border-black border-solid shadow-sm bg-maroon bg-opacity-80 border-[3px] max-md:px-5">
+              RESET
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 }
 
