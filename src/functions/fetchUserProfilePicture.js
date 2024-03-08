@@ -17,17 +17,15 @@ const fetchUserProfilePicture = async (userId) => {
       try {
         // Get the download URL for the profile picture
         const downloadURL = await getDownloadURL(profilePictureRef);
-        console.log(`Profile picture found with extension .${ext}: ${downloadURL}`);
         return downloadURL; // Return download URL if found
       } catch (error) {
-        console.error(`Profile picture with extension .${ext} not found. Trying next extension...`);
+        // Ignore error and continue with the next file extension
       }
     }
 
     // If no profile picture found, return the default profile picture URL
     return getDefaultProfilePictureURL();
   } catch (error) {
-    console.error('Error fetching profile picture URL:', error);
     // Return the default profile picture URL in case of an error
     return getDefaultProfilePictureURL();
   }

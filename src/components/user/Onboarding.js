@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { db, auth, storage } from "../firebase"; 
+import { db, auth, storage } from "../../firebase.js"; 
 import { getDoc, doc, setDoc } from "firebase/firestore"; // Import necessary Firestore functions
-import UploadPFP from "./UploadPFP";
-import PronounsDropdown from "./PronounsDropdown";
-import RolesSelection from "./RolesSelection";
-import BioTextArea from "./BioTextArea";
-import SelectGenres from "./SelectGenres";
-import fetchPFP from "../functions/fetchPFP"; // Import fetchPFP function
-import AuthorVerify from "./AuthorVerify.js";
+import UploadPFP from "../shared/UploadPFP.js";
+import PronounsDropdown from "./PronounsDropdown.js";
+import RolesSelection from "./RolesSelection.js";
+import BioTextArea from "../BioTextArea.js";
+import SelectGenres from "./SelectGenres.js";
+import fetchPFP from "../../functions/fetchPFP.js"; // Import fetchPFP function
+import AuthorVerify from "../AuthorVerify.js";
 
 const Onboarding = () => {
   // State variables
@@ -91,7 +91,14 @@ const Onboarding = () => {
       } else {
         // Save data without profile picture
         await setDoc(userRef, userData, { merge: true });
-        navigate("/");
+
+        console.log("roles: " + selectedRoles)
+        if (selectedRoles.includes("Author")) {
+          navigate("/author-verification");
+        } else {
+          navigate("/");
+        }
+        
       }
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -124,7 +131,7 @@ const Onboarding = () => {
   };
 
   return (
-    <div className="mt-[-1em] max-w-md mx-auto p-6 bg-white rounded-lg shadow-xl overflow-y-scroll max-h-svh">
+    <div className="mt-4 max-w-md mx-auto p-6 bg-white shadow-xl h-fit">
       <h1 className="text-2xl font-bold mb-4">Onboarding</h1>
 
       {authError && (
