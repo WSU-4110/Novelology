@@ -26,7 +26,7 @@ const LoggedOutNavBar=()=> {
                     style={{ height: "5em", width: "5em" }}
                     className="self-stretch aspect-[1.08] w-[85px]"
                   />
-                  <div className="flex gap-3 self-stretch my-auto text-base">
+                  <div className="flex my-auto text-base gap-3">
                     {/* <input
                   type="text"
                   id="search_input"
@@ -38,11 +38,11 @@ const LoggedOutNavBar=()=> {
 
                     <check>
                       
-                      <form class="flex flex-col md:flex-row gap-1">
+                      <form class="flex flex-col gap-3 md:flex-row">
                       <select
                           id="pricingType"
                           name="pricingType"
-                          class="h-10 border-2 border-maroon bg-lightcolor focus:outline-none focus:border-maroon text-black rounded-full px-2 md:px-3 py-0 md:py-1 tracking-wider"
+                          class="w-1/5 h-10 border-2 border-maroon bg-lightcolor focus:outline-none focus:border-maroon text-black rounded-full px-2 md:px-3 py-0 md:py-1 tracking-wider"
                         >
                           <option value="All" selected="">
                             All
@@ -54,7 +54,7 @@ const LoggedOutNavBar=()=> {
 
                         </select>
 
-                        <div class="flex">
+                        <div class="flex w-4/5 gap-2">
                           <input
                             type="text"
                             id="search_input"

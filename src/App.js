@@ -10,6 +10,9 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import PrivateRoute from './components/routing/PrivateRoute';
 import SampleHome from './pages/sampleHome.js'
 import SignIn from './pages/Signin.js';
+import LoggedOutNavBar from "./components/LoggedOutNavBar.js";
+import UserOnboarding from "./pages/userOnboarding.js";
+
 // Lazy-loaded components
 const SetUpAccount = React.lazy(() => import('./pages/SetUpAccount'));
 const Submit = React.lazy(() => import('./pages/Submit'));
@@ -25,8 +28,10 @@ const App = () => {
     <Router>
       <Fragment>
       <div className="flex justify-center align-middle">
-          <img src={require('./assets/Novelology_Logo.png')} alt="Novelology Logo" style={{ height: '12em', width: '12em' }} />
+          <img src={require('./assets/novelology_newlogo.png')} alt="Novelology Logo" style={{ height: '12em', width: '12em' }} />
         </div>
+            {/* <LoggedOutNavBar /> */}
+
         <Suspense fallback={<FontAwesomeIcon icon={faSpinner} spin />}>
           <Navbar />
           <Routes className="flex">
@@ -46,6 +51,8 @@ const App = () => {
             <Route path="*" element={<Error />} />          
             <Route path="/samplehome" element={<SampleHome/>}/>
           <Route path="/sign_in" element={<SignIn/>}/>
+          <Route path="/onboarding" element={<UserOnboarding/>}/>
+
           
           </Routes>
         </Suspense>

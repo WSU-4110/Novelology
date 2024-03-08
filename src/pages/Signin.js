@@ -16,6 +16,7 @@ function SignIn(props) {
     setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, emailRef.current.value, passwordRef.current.value);
+      navigate('/');
     } catch (error) {
       alert("Error signing in with email: " + error.message);
     }
@@ -36,7 +37,7 @@ function SignIn(props) {
         <div className="justify-center px-7 py-2.5 mt-14 text-center text-black whitespace-nowrap rounded-3xl max-md:px-5 max-md:mt-10">
           <button
             type="button"
-            class="text-gray-900 bg-lightcolor border border-gray-300 focus:outline-none 
+            className="text-gray-900 bg-lightcolor border border-gray-300 focus:outline-none 
             hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-lg px-16 py-4 me-2 mb-2 
             dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-lightcolor dark:hover:border-gray-600 
             dark:focus:ring-lightcolor"
@@ -58,7 +59,7 @@ function SignIn(props) {
         <input
                   type="text"
                   id="username"
-                  class="bg-lightcolor border border-gray-300 text-gray-900 text-sm rounded-full 
+                  className="bg-lightcolor border border-gray-300 text-gray-900 text-sm rounded-full 
               focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-lightcolor dark:border-gray-600 
               dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               ref={emailRef}
@@ -70,7 +71,7 @@ function SignIn(props) {
                   type="password"
                   id="password"
                   ref={passwordRef}
-                  class="bg-lightcolor border border-gray-300 text-gray-900 text-sm rounded-full 
+                  className="bg-lightcolor border border-gray-300 text-gray-900 text-sm rounded-full 
               focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-lightcolor dark:border-gray-600 
               dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Password"
@@ -83,7 +84,7 @@ function SignIn(props) {
         </button>
         <div className="self-center mt-20 w-full text-center max-md:mt-10">
           Don’t have an account?
-          <button class="focus:outline-none 
+          <button className="focus:outline-none 
             hover:border-white focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-lg px-16 py-4 me-2 mb-2 mt-4
             dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-lightcolor dark:hover:border-gray-600 
             dark:focus:ring-lightcolor"> Sign Up</button>
