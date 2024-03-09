@@ -13,7 +13,7 @@ async function searchUsers(searchQuery) {
         const qRef = collection(db, 'usernames'); // Replace 'usernames' with your collection name
         try {
             const qSnapshot = await getDocs(qRef);
-            console.log('Snapshot:', qSnapshot);
+            
             qSnapshot.forEach(doc => {
                 // Check if document ID starts with the query or contains the query
                 if (doc.id.startsWith(q.toLowerCase()) || doc.id.includes(q)) { 
@@ -34,10 +34,13 @@ async function searchUsers(searchQuery) {
 
 
 const SearchResults = () => {
-    const [searchResults, setSearchResults] = useState([]);
+    const [searchResults, setSearchResults] = useState({ books: [] });
+    
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedFilter, setSelectedFilter] = useState('all');
     const [selectedGenres, setSelectedGenres] = useState([]); // State to hold the selected genres
+    const [users, setUsers] = useState([]); // Add this line to declare the 'users' state variable
+
 
     const SelectGenres = ({ selectedGenres: selectedGenresProp, setSelectedGenres: setSelectedGenresProp }) => {
         const genres = ['Horror', 'Fiction', 'Romance', 'Mystery', 'Fantasy']; // Example genres
@@ -80,78 +83,53 @@ const SearchResults = () => {
         setSelectedFilter(defaultFilter);
 
         performSearch(query, defaultFilter, selectedGenres); // Include selectedGenre in the call to performSearch
-    }, []); // Empty dependency array ensures useEffect runs only once on component mount
+    }, [selectedGenres]); // Empty dependency array ensures useEffect runs only once on component mount
 
     const performSearch = async (query, filter, genres) => {
         const encodedQuery = encodeURIComponent(query);
         let apiUrl = '';
+        let genreQuery = genres && genres.length > 0 ? genres.join('+') : '';
+        let bookResults = [];
+        let userResults = [];
     
-        console.log('genres:', genres);
-
-        if (filter === 'titles') {
-            // Check if genres are selected and construct the query accordingly
-            let genreQuery = genres && genres.length > 0 ? genres.join('+') : '';
-            
-            console.log('genreQuery:', genreQuery);
-            apiUrl = `https://www.googleapis.com/books/v1/volumes?q=${encodedQuery}+subject:${genreQuery}&orderBy=newest&maxResults=3`;
-        } else if (filter === 'authors') {
-            apiUrl = `https://www.googleapis.com/books/v1/volumes?q=inauthor:${encodedQuery}&orderBy=newest&maxResults=3`;
-        } else if (filter === 'genre') {
-            // Include genreQuery for the 'genre' filter as well
-            let genreQuery = '';
-            if (genres && genres.length > 0) {
-                genreQuery = genres.join('+');
-            }
-            console.log('genreQuery:', genreQuery);
-            apiUrl = `https://www.googleapis.com/books/v1/volumes?q=${encodedQuery}+subject:${genreQuery}&orderBy=newest&maxResults=3`;
-        }
+        console.log('Filter:', filter);
+        console.log('Genres:', genres);
     
-        if (apiUrl) {
+        if (filter === 'all' || filter === 'titles' || filter === 'authors' || filter === 'genre') {
+            apiUrl = `https://www.googleapis.com/books/v1/volumes?q=${encodedQuery}${filter === 'genre' ? '+subject:' + genreQuery : ''}&orderBy=newest&maxResults=3`;
+    
             console.log('API URL:', apiUrl);
-            axios.get(apiUrl)
-                .then(res => {
-                    console.log('API response:', res); // Log the entire response object
-                    if (res.data && res.data.items) {
-                        const items = res.data.items;
-                        let resultList = [];
-                        if (filter === 'all' || filter === 'titles') {
-                            resultList = items.map(item => ({
-                                id: item.id,
-                                title: item.volumeInfo.title,
-                                authors: item.volumeInfo.authors ? item.volumeInfo.authors.join(', ') : 'Unknown Author',
-                            }));
-                        } else if (filter === 'authors') {
-                            resultList = items.map(item => ({
-                                id: item.id,
-                                name: item.volumeInfo.authors ? item.volumeInfo.authors.join(', ') : 'Unknown Author',
-                            }));
-                        } else if (filter === 'genre') {
-                            resultList = items.map(item => ({
-                                id: item.id,
-                                title: item.volumeInfo.title,
-                                authors: item.volumeInfo.authors ? item.volumeInfo.authors.join(', ') : 'Unknown Author',
-                            }));
-                        }
-                        setSearchResults(resultList);
-                    }
-                })
-                .catch(err => console.error('Error fetching data:', err));
-        } else {
-            // handle other search filters
-            if (filter === 'users') {
-                // Handle user search by searching usernames in firebase
-                console.log('Searching for users...' + query);
-                const uid = await fetchUIDwithUsername(query.toLowerCase());
-                console.log('UID:', uid);
-                searchUsers(uid);
+    
+            try {
+                const res = await axios.get(apiUrl);
+                console.log('API response:', res);
+                if (res.data && res.data.items) {
+                    const items = res.data.items;
+                    bookResults = items.map(item => ({
+                        id: item.id,
+                        title: item.volumeInfo.title,
+                        authors: item.volumeInfo.authors ? item.volumeInfo.authors.join(', ') : 'Unknown Author',
+                    }));
+                }
+            } catch (err) {
+                console.error('Error fetching books:', err);
             }
         }
+    
+        if (filter === 'all' || filter === 'users') {
+            try {
+                userResults = await searchUsers(query);
+                console.log('User results:', userResults);
+            } catch (err) {
+                console.error('Error fetching users:', err);
+            }
+        }
+    
+        // Save the search results to local storage
+        localStorage.setItem('lastSearchResults', JSON.stringify({ books: bookResults, users: userResults }));
+    
+        setSearchResults({ books: bookResults, users: userResults });
     };
-    
-    
-    
-    
-    
     
     
     const handleFilterChange = event => {
@@ -180,17 +158,32 @@ const SearchResults = () => {
                         Search
                     </button>
                 </form>
-                {searchResults && searchResults.length > 0 ? (
-    <ul>
-        {searchResults.map((result, index) => (
-            <li key={index} className="mb-2">
-                {result.title}
-            </li>
-        ))}
-    </ul>
-) : (
-    <p>No search results found.</p>
-)}
+                {searchResults && searchResults.books && (selectedFilter === 'all' || selectedFilter === 'titles') ? (
+                    <div>
+                        <h2>Books</h2>
+                        <ul>
+                            {searchResults.books.map((book, index) => (
+                                <li key={index}>{book.title}</li>
+                            ))}
+                        </ul>
+                    </div>
+                ) : (selectedFilter !== 'users' && (
+                    <p>No book search results found.</p>
+                ))}
+
+                
+                {searchResults && searchResults.users && searchResults.users.length > 0 ? (
+                    <div>
+                        <h2>Users</h2>
+                        <ul>
+                            {searchResults.users.map((user, index) => (
+                                <li key={index}>{user.id} - {user.UID}</li>
+                            ))}
+                        </ul>
+                    </div>
+                ) : (
+                    <p>No user search results found.</p>
+                )}
 
             </div>
     
@@ -198,7 +191,7 @@ const SearchResults = () => {
             <div className="w-1/4 p-6">
                 <h2 className="text-lg font-semibold mb-4">Show results for</h2>
                 <SelectGenres selectedGenres={selectedGenres} setSelectedGenres={setSelectedGenres} />
-
+    
                 <div className="mb-2">
                     <input type="radio" id="all" name="filter" value="all" onChange={handleFilterChange} checked={selectedFilter === 'all'} className="mr-2 cursor-pointer" />
                     <label htmlFor="all" className="cursor-pointer">All</label>
@@ -218,6 +211,7 @@ const SearchResults = () => {
             </div>
         </div>
     );
+    
 };
 
 export default SearchResults;
