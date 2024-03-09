@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
+import Card from '../components/Card';
 
 async function searchUsers(searchQuery) {
     
@@ -105,13 +106,8 @@ const SearchResults = () => {
                 const res = await axios.get(apiUrl);
                 console.log('API response:', res);
                 if (res.data && res.data.items) {
-                    const items = res.data.items;
-                    bookResults = items.map(item => ({
-                        id: item.id,
-                        title: item.volumeInfo.title,
-                        authors: item.volumeInfo.authors ? item.volumeInfo.authors.join(', ') : 'Unknown Author',
-                    }));
-                }
+                    bookResults = res.data.items; // No longer doing the map here
+                  }
             } catch (err) {
                 console.error('Error fetching books:', err);
             }
@@ -159,15 +155,10 @@ const SearchResults = () => {
                     </button>
                 </form>
                 {searchResults && searchResults.books && (selectedFilter === 'all' || selectedFilter === 'titles') ? (
-                    <div>
-                        <h2>Books</h2>
-                        <ul>
-                            {searchResults.books.map((book, index) => (
-                                <li key={index}>{book.title}</li>
-                            ))}
-                        </ul>
+                    <div className="flex flex-wrap -m-4">
+                        <Card book={searchResults.books} />
                     </div>
-                ) : (selectedFilter !== 'users' && (
+                    ) : (selectedFilter !== 'users' && (
                     <p>No book search results found.</p>
                 ))}
 
