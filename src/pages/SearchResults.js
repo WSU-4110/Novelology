@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import  fetchUIDwithUsername  from '../functions/fetchUIDwithUsername';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 
 async function searchUsers(searchQuery) {
-    console.log('Searching for:', searchQuery);
+    
+    // Fetch the user data from the database
     const q = typeof searchQuery === 'string' ? searchQuery.trim() : '';
     const results = [];
 
+    // query is not empty
     if (q !== '') {
-        const qRef = collection(db, 'usernames'); // Replace 'usernames' with your collection name
+        const qRef = collection(db, 'usernames');
         try {
+            // snapshot of the usernames collection
             const qSnapshot = await getDocs(qRef);
             
             qSnapshot.forEach(doc => {
@@ -20,7 +22,6 @@ async function searchUsers(searchQuery) {
                     results.push({ id: doc.id, UID: doc.data().UID });
                 }
             });
-            console.log('Results:', results);
             return results;
         } catch (error) {
             console.error('Error searching users:', error);
@@ -34,26 +35,29 @@ async function searchUsers(searchQuery) {
 
 
 const SearchResults = () => {
+    // States for search results, search query, selected filter, selected genres, and users
     const [searchResults, setSearchResults] = useState({ books: [] });
-    
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedFilter, setSelectedFilter] = useState('all');
-    const [selectedGenres, setSelectedGenres] = useState([]); // State to hold the selected genres
-    const [users, setUsers] = useState([]); // Add this line to declare the 'users' state variable
+    const [selectedGenres, setSelectedGenres] = useState([]);
+    const [users, setUsers] = useState([]);
 
 
+    // select genre(s) component
     const SelectGenres = ({ selectedGenres: selectedGenresProp, setSelectedGenres: setSelectedGenresProp }) => {
         const genres = ['Horror', 'Fiction', 'Romance', 'Mystery', 'Fantasy']; // Example genres
     
+        // add the genre to the selectedGenres array
         const handleGenreSelect = genre => {
-            console.log('Selected Genre:', genre);
             setSelectedGenresProp(prevGenres => [...prevGenres, genre]);
         };
     
+        // for each item in the selectedGenres array, remove the genre from the array
         const handleGenreUnselect = genre => {
             setSelectedGenresProp(prevGenres => prevGenres.filter(item => item !== genre));
         };
     
+        // Display the genres as buttons
         return (
             <div>
                 <h2 className="text-lg font-semibold mb-4">Select Genres</h2>
@@ -82,6 +86,7 @@ const SearchResults = () => {
         setSearchQuery(query);
         setSelectedFilter(defaultFilter);
 
+        // call performSearch with the selectedGenres
         performSearch(query, defaultFilter, selectedGenres); // Include selectedGenre in the call to performSearch
     }, [selectedGenres]); // Empty dependency array ensures useEffect runs only once on component mount
 
@@ -92,13 +97,9 @@ const SearchResults = () => {
         let bookResults = [];
         let userResults = [];
     
-        console.log('Filter:', filter);
-        console.log('Genres:', genres);
-    
+        // based on the filter, set the API URL accordingly
         if (filter === 'all' || filter === 'titles' || filter === 'authors' || filter === 'genre') {
             apiUrl = `https://www.googleapis.com/books/v1/volumes?q=${encodedQuery}${filter === 'genre' ? '+subject:' + genreQuery : ''}&orderBy=newest&maxResults=3`;
-    
-            console.log('API URL:', apiUrl);
     
             try {
                 const res = await axios.get(apiUrl);
@@ -119,7 +120,6 @@ const SearchResults = () => {
         if (filter === 'all' || filter === 'users') {
             try {
                 userResults = await searchUsers(query);
-                console.log('User results:', userResults);
             } catch (err) {
                 console.error('Error fetching users:', err);
             }
