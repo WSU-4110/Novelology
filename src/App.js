@@ -18,6 +18,7 @@ const Profile = React.lazy(() => import('./pages/Profile'));
 const Login = React.lazy(() => import('./pages/Login'));
 const Post = React.lazy(() => import('./pages/Post'));
 const AuthorVerification = React.lazy(() => import('./pages/AuthorVerification'));
+const SearchResults = React.lazy(() => import('./pages/SearchResults'));
 
 const App = () => {
   return (
@@ -42,6 +43,11 @@ const App = () => {
             <Route path="/post/:pid" element={<Post />} />
             <Route path="/post" element={<Post />} />
             <Route path="/author-verification" element={<AuthorVerification />} />
+            <Route path="/search/*" element={<SearchResults />}>
+              <Route path=":query" element={<SearchResults />} />
+            </Route>
+
+
             <Route path="*" element={<Error />} />
           </Routes>
         </Suspense>

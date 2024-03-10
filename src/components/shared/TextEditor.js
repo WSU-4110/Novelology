@@ -1,73 +1,44 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Component } from 'react';
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 
-const TextEditor = ({ defaultValue, onChange, maxChars }) => {
-  const editorRef = useRef(null);
-  const [charCount, setCharCount] = useState(0);
-  const [quillInstance, setQuillInstance] = useState(null);
+class TextEditor extends Component {
+  constructor(props) {
+    super(props);
+    this.editorRef = React.createRef();
+    this.editor = null;
+  }
 
-  useEffect(() => {
-    if (!editorRef.current) return;
+  componentDidMount() {
+    const { defaultValue, onChange } = this.props;
 
-    const editor = new Quill(editorRef.current, {
+    this.editor = new Quill(this.editorRef.current, {
       theme: 'snow',
-      modules: {
-        toolbar: [
-          ['bold', 'italic', 'underline', 'strike'],
-          [{ list: 'bullet' }],
-          [{ align: [] }],
-          ['link']
-        ]
+      placeholder: 'Write something...',
+    });
+
+    this.editor.on('text-change', () => {
+      if (onChange) {
+        onChange(this.editor.root.innerHTML);
       }
     });
 
-    const handleChange = () => {
-      const text = editor.getText();
-      setCharCount(text.length);
-      onChange(editor.root.innerHTML);
-    };
-
-    editor.on('text-change', handleChange);
-
     if (defaultValue) {
-      editor.clipboard.dangerouslyPasteHTML(defaultValue);
+      this.editor.root.innerHTML = defaultValue;
     }
+  }
 
-    setQuillInstance(editor);
-
-    return () => {
-      if (editor.root.parentNode) {
-        editor.root.parentNode.removeChild(editor.root);
-      }
-      editor.off('text-change', handleChange);
-    };
-  }, [defaultValue, onChange]);
-
-  const handleTextChange = () => {
-    const text = editorRef.current.innerText || '';
-    if (text.length > maxChars) {
-      editorRef.current.innerText = text.slice(0, maxChars);
+  componentWillUnmount() {
+    if (this.editor) {
+      this.editor.off('text-change');
+      this.editor = null;
     }
-    onChange(editorRef.current.innerHTML);
-  };
+  }
 
-  return (
-    <div>
-      <p>Characters: {charCount}</p>
-      {charCount > maxChars && (
-        <p className="text-red-500">Exceeding char limit!</p>
-      )}
-      <div
-        ref={editorRef}
-        style={{ minHeight: '400px' }}
-        onInput={handleTextChange}
-      ></div>
-      {charCount > maxChars && (
-        <p className="text-red-500">Maximum {maxChars} characters allowed!</p>
-      )}
-    </div>
-  );
-};
+  render() {
+    return <div ref={this.editorRef} />;
+  }
+}
 
 export default TextEditor;
+  

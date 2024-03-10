@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { collection, query, where, getDocs, doc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
+import { doc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 import { FaInfoCircle, FaUser } from 'react-icons/fa';
 import fetchPFP from '../functions/fetchPFP';
