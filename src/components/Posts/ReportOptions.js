@@ -1,12 +1,14 @@
 import React from 'react';
 import { auth, db } from '../../firebase';
 import { doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { toast } from 'react-toastify';
 
 const ReportOptions = ({ onClose, postId }) => {
     const handleReportOption = async (option) => {
         try {
             if (!postId) {
                 console.error('postId is undefined or null');
+                toast.error('Error: postId is undefined or null.');
                 return;
             }
 
@@ -15,21 +17,20 @@ const ReportOptions = ({ onClose, postId }) => {
 
             if (!postDocSnap.exists()) {
                 console.error('Post not found');
-                alert('Error: Post not found.');
+                toast.error('Error: Post not found.');
                 return;
             }
 
-            // Use updateDoc with arrayUnion to append the new report to the reports array
             await updateDoc(postRef, {
-                reports: arrayUnion({ reason: option, timestamp: Date.now(), reporter: auth.currentUser.uid})
+                reports: arrayUnion({ reason: option, timestamp: Date.now(), reporter: auth.currentUser.uid })
             });
 
             console.log('Reported option:', option);
+            toast.success('Report submitted successfully.');
             onClose();
-            alert('Report submitted successfully.');
         } catch (error) {
             console.error('Error reporting post:', error.message);
-            alert('Error reporting post: ' + error.message);
+            toast.error('Error reporting post: ' + error.message);
         }
     };
 

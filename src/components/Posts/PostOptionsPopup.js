@@ -40,12 +40,6 @@ const PostOptionsPopup = ({ onClose, postId}) => {
     setShowReportOptions(false);
   };
 
-  const handleReportReason = (reason) => {
-    // Logic to handle reporting with specific reason
-    console.log('Reported post with reason:', reason);
-    onClose();
-  };
-
   const handleSavePost = () => {
     // Add logic to handle saving the post
     toast.success('Post saved successfully');
