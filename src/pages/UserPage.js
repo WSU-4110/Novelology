@@ -8,10 +8,11 @@ import fetchUIDwithUsername from '../functions/fetchUIDwithUsername';
 import MiniUserCard from '../components/user/MiniUserCard';
 import DOMPurify from 'dompurify';
 import { toast } from 'react-toastify';
+import ReactDOM from 'react-dom';
 
 
 const OptionsModal = ({ isMuted, toggleMute, reportUser, onClose }) => {
-    return (
+    return ReactDOM.createPortal(
       <div className="relative top-0 right-0 bg-white shadow-lg p-4 rounded z-10">
         <ul>
           <li className="cursor-pointer mb-2" onClick={toggleMute}>
@@ -24,7 +25,8 @@ const OptionsModal = ({ isMuted, toggleMute, reportUser, onClose }) => {
         <button className="mt-4 w-full bg-gray-200 p-2 rounded" onClick={onClose}>
           Close
         </button>
-      </div>
+      </div>,
+      document.getElementById('portal')
     );
   };
   
@@ -276,7 +278,7 @@ const UserPage = () => {
       };
 
     return (
-        <div className="max-w-md mx-auto p-4 bg-white rounded-lg shadow-md">
+        <div className="max-w-md mx-auto p-4 bg-white rounded-lg shadow-md relative">
             {userData ? (
                 <div>
                     <h2 className="text-3xl font-semibold mb-4"><span className="text-blue-400">@</span> {userData.username}</h2>
@@ -289,7 +291,7 @@ const UserPage = () => {
 
                     </div>
 
-                    <div>
+                    <div id='portal'>
 
                     <button className="relative top-4 right-4" onClick={() => setShowOptionsModal(!showOptionsModal)}>
                         <FaEllipsisV />
