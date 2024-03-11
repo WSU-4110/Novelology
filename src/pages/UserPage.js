@@ -316,38 +316,48 @@ const UserPage = () => {
                         {userData.pronouns && <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">Pronouns:</span> {userData.pronouns}</p>}
                         
                         <div className="flex justify-between mb-4">
-                             <button
-                            onClick={toggleFollowers}>
+                            <div>
+                                <button
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                onClick={toggleFollowers}
+                                >
                                 <p className="font-semibold"><FaUser className="inline-block mr-2" /> Followers: {followersCount}</p>
-                           
+                                </button>
+
                                 {showFollowers && (
-                                    <div>
-                                        <ul>
-                                        {followers.map((followerId, index) => (
-                                            <MiniUserCard key={index} userId={followerId} />
-                                        ))}
-                                        </ul>
-                                    </div>
+                                <div className="mt-2 max-h-48 overflow-y-auto">
+                                    <ul className="list-none">
+                                    {followers.map((followerId, index) => (
+                                        <li key={index} className="mb-2">
+                                        <MiniUserCard userId={followerId} />
+                                        </li>
+                                    ))}
+                                    </ul>
+                                </div>
                                 )}
+                            </div>
 
-                            </button>
-                            <button
-                            onClick={toggleFollowing}>
-                                
+                            <div>
+                                <button
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                onClick={toggleFollowing}
+                                >
                                 <p className="font-semibold"><FaUser className="inline-block mr-2" /> Following: {followingCount}</p>
-                           
-                                {showFollowing && (
-                                    <div>
-                                        <ul>
-                                        {following.map((followingId, index) => (
-                                            <MiniUserCard key={index} userId={followingId} />
-                                        ))}
-                                        </ul>
-                                    </div>
-                                )}
+                                </button>
 
-                            </button>
-                             </div>
+                                {showFollowing && (
+                                <div className="mt-2 max-h-48 overflow-y-auto">
+                                    <ul className="list-none">
+                                    {following.map((followingId, index) => (
+                                        <li key={index} className="mb-2">
+                                        <MiniUserCard userId={followingId} />
+                                        </li>
+                                    ))}
+                                    </ul>
+                                </div>
+                                )}
+                            </div>
+                            </div>
 
                                             
                         {userData.role && userData.role.length > 0 && (
