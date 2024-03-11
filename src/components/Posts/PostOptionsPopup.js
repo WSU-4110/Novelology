@@ -1,10 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import ReactDOM from 'react-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFlag, faShare, faList, faVolumeMute } from '@fortawesome/free-solid-svg-icons';
-import ReportOptions from './ReportOptions'; // Import ReportOptions component
+import ReportOptions from './ReportOptions';
+import { toast } from 'react-toastify';
+
+
+const useClickOutside = (ref, handler) => {
+  useEffect(() => {
+    const listener = (event) => {
+      if (!ref.current || ref.current.contains(event.target)) {
+        return;
+      }
+      handler(event);
+    };
+    document.addEventListener('mousedown', listener);
+    return () => {
+      document.removeEventListener('mousedown', listener);
+    };
+  }, [ref, handler]);
+};
 
 const PostOptionsPopup = ({ onClose, postId}) => {
   const [showReportOptions, setShowReportOptions] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const popupRef = useRef(null);
+
+  useClickOutside(popupRef, onClose);
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
 
   const handleReportPost = () => {
     setShowReportOptions(true);
@@ -22,7 +48,7 @@ const PostOptionsPopup = ({ onClose, postId}) => {
 
   const handleSavePost = () => {
     // Add logic to handle saving the post
-    console.log('Save Post');
+    toast.success('Post saved successfully');
     onClose();
   };
 
@@ -37,52 +63,61 @@ const PostOptionsPopup = ({ onClose, postId}) => {
     console.log('Mute User');
     onClose();
   };
-
-  const handleClickOutside = (event) => {
-    if (!event.target.closest('.popup-inner')) {
-      onClose();
-    }
-  };
-
-  return (
-    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 bg-opacity-50 bg-black" onClick={handleClickOutside}>
-      {/* Popup content */}
-      <div className="bg-white p-4 rounded shadow-md popup-inner" onClick={(e) => e.stopPropagation()}>
-        <ul className="py-1" role="none">
-          <li className="px-4 py-2 flex items-center hover:bg-gray-100 focus:bg-gray-100 focus:outline-none cursor-pointer transition duration-300" role="menuitem" onClick={handleReportPost}>
+  return ReactDOM.createPortal(
+    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 bg-opacity-50 bg-black">
+      <div
+        className={`bg-white p-4 rounded shadow-md popup-inner transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+        onClick={(e) => e.stopPropagation()}
+        ref={popupRef}
+      >
+        <ul className="py-1" role="menu">
+          <li
+            className="px-4 py-2 flex items-center hover:bg-gray-100 focus:bg-gray-100 focus:outline-none cursor-pointer transition duration-300"
+            role="menuitem"
+            onClick={handleReportPost}
+          >
             <FontAwesomeIcon icon={faFlag} className="mr-2" />
             Report Post
-            {/* Render ReportOptions component if showReportOptions is true */}
-            {/*Save to DB
-              - UID of reporter
-              - Report Reason
-              - Timestamp
-            */}
           </li>
-          <li className="px-4 py-2 flex items-center hover:bg-gray-100 focus:bg-gray-100 focus:outline-none cursor-pointer transition duration-300" role="menuitem" onClick={handleSavePost}>
+          <li
+            className="px-4 py-2 flex items-center hover:bg-gray-100 focus:bg-gray-100 focus:outline-none cursor-pointer transition duration-300"
+            role="menuitem"
+            onClick={handleSavePost}
+          >
             <FontAwesomeIcon icon={faShare} className="mr-2" />
-            Share Post
-           
+            Save Post
           </li>
-          <li className="px-4 py-2 flex items-center hover:bg-gray-100 focus:bg-gray-100 focus:outline-none cursor-pointer transition duration-300" role="menuitem" onClick={handleAddToList}>
+          <li
+            className="px-4 py-2 flex items-center hover:bg-gray-100 focus:bg-gray-100 focus:outline-none cursor-pointer transition duration-300"
+            role="menuitem"
+            onClick={handleAddToList}
+          >
             <FontAwesomeIcon icon={faList} className="mr-2" />
             Add Post to List
-             {/* ask user which list they'd like to save into*/}
           </li>
-          <li className="px-4 py-2 flex items-center hover:bg-gray-100 focus:bg-gray-100 focus:outline-none cursor-pointer transition duration-300" role="menuitem" onClick={handleMuteUser}>
+          <li
+            className="px-4 py-2 flex items-center hover:bg-gray-100 focus:bg-gray-100 focus:outline-none cursor-pointer transition duration-300"
+            role="menuitem"
+            onClick={handleMuteUser}
+          >
             <FontAwesomeIcon icon={faVolumeMute} className="mr-2" />
             Mute User
           </li>
         </ul>
 
-        {/* Render ReportOptions component if showReportOptions is true */}
-        {showReportOptions && <ReportOptions onClose={() => setShowReportOptions(false)} postId={postId}/>}
-    
-        <button onClick={onClose} className="block w-full text-left mt-2 px-4 py-2 text-gray-600 hover:bg-gray-100 focus:outline-none">
+        {showReportOptions && (
+          <ReportOptions onClose={() => setShowReportOptions(false)} postId={postId} />
+        )}
+
+        <button
+          onClick={onClose}
+          className="block w-full text-left mt-2 px-4 py-2 text-gray-600 hover:bg-gray-100 focus:outline-none"
+        >
           Close
         </button>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

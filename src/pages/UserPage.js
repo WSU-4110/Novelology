@@ -35,43 +35,45 @@ const UserPage = () => {
 
     useEffect(() => {
         const fetchUserData = async () => {
-            try {
-                setIsLoading(true);
-    
-                // Fetch UID using username
-                const uid = await fetchUIDwithUsername(username);
-    
-                // Fetch user data using UID
-                const userRef = doc(db, 'users', uid);
-                const userSnapshot = await getDoc(userRef);
-    
-                if (userSnapshot.exists()) {
-                    const userData = userSnapshot.data();
-                    setUserData(userData);
-    
-                    // Fetch profile picture using fetchPFP function with the obtained UID
-                    const fetchedProfilePicture = await fetchPFP(uid);
-                    setProfilePictureURL(fetchedProfilePicture);
-    
-                    setFollowersCount(userData.followers ? userData.followers.length : 0);
-                    setFollowingCount(userData.following ? userData.following.length : 0);
-    
-                    const currentUser = auth.currentUser;
-                    if (currentUser && userData.uid && currentUser.uid !== userData.uid) {
-                        setIsFollowing(userData.followers && userData.followers.includes(currentUser.uid));
-                    }
-                } else {
-                    console.error('User document not found for username:', username);
-                }
-            } catch (error) {
-                console.error('Error fetching user data:', error);
-            } finally {
-                setIsLoading(false);
+          try {
+            setIsLoading(true);
+      
+            // Fetch UID using username
+            const uid = await fetchUIDwithUsername(username);
+            if (!uid) throw new Error(`No UID found for username: ${username}`);
+      
+            // Fetch user data using UID
+            const userRef = doc(db, 'users', uid);
+            const userSnapshot = await getDoc(userRef);
+      
+            if (userSnapshot.exists()) {
+              const userData = userSnapshot.data();
+              setUserData(userData);
+      
+              // Fetch profile picture using fetchPFP function with the obtained UID
+              const fetchedProfilePicture = await fetchPFP(uid);
+              setProfilePictureURL(fetchedProfilePicture || require('../assets/default-profile-picture.jpg'));
+      
+              setFollowersCount(userData.followers?.length || 0);
+              setFollowingCount(userData.following?.length || 0);
+      
+              const currentUser = auth.currentUser;
+              setIsFollowing(currentUser && userData.followers?.includes(currentUser.uid));
+            } else {
+              console.error('User document not found for username:', username);
+              setUserData(undefined); // Handle not found case
             }
+          } catch (error) {
+            console.error('Error fetching user data:', error);
+            setUserData(undefined); // Set userData to undefined on error
+          } finally {
+            setIsLoading(false);
+          }
         };
-    
+      
         fetchUserData();
-    }, [username]);
+      }, [username]);
+      
     
     // Set the initial toggle state of Follow button to "Unfollow" if the current user is in the followers list of the user's page
     useEffect(() => {
