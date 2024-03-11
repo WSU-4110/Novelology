@@ -44,13 +44,14 @@ const PostOptionsPopup = ({ onClose, postId}) => {
 
   const handleSavePost = () => {
     // Add logic to handle saving the post
-    toast.success('Post saved successfully');
+    toast.info('Feature coming soon');
     onClose();
   };
 
   const handleAddToList = () => {
     // Add logic to handle adding the post to a list
     console.log('Add Post to List');
+    toast.info('Feature coming soon');
     onClose();
   };
 
@@ -66,6 +67,7 @@ const PostOptionsPopup = ({ onClose, postId}) => {
       const postRef = doc(db, 'posts', postId);
       const postDocSnap = await getDoc(postRef);
   
+      // if the post document doesn't exist, log an error and return
       if (!postDocSnap.exists()) {
         console.error('Post not found');
         toast.error('Error: Post not found.');
@@ -73,18 +75,22 @@ const PostOptionsPopup = ({ onClose, postId}) => {
       }
   
       const postData = postDocSnap.data();
+      // if theres no uid in the post data, log an error and return
       if (!postData || !postData.uid) {
         console.error('Author UID not found in post document');
         toast.error('Error: Author UID not found in post document.');
         return;
       }
   
+
+      // Get the author's UID from the post data document
       const authorUid = postData.uid;
   
       // Fetch the current user's document
       const userRef = doc(db, 'users', auth.currentUser.uid);
       const userDocSnap = await getDoc(userRef);
   
+      // if the user document doesn't exist, log an error and return
       if (!userDocSnap.exists()) {
         console.error('User not found');
         toast.error('Error: User not found.');
