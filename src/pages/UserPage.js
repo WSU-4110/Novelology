@@ -355,7 +355,11 @@ const UserPage = () => {
                                 <p><strong>Roles:</strong></p>
                                 <ul className="list-disc ml-4">
                                     {userData.role.map((role, index) => (
-                                        <li key={index}>{role}</li>
+                                        <li key={index} className="inline-block mr-2 mb-2">
+                                            <span className="bg-purple-200 text-purple-700 py-1 px-3 rounded-full text-sm">
+                                                {role}
+                                            </span>
+                                        </li>
                                     ))}
                                 </ul>
                             </div>
