@@ -2,12 +2,32 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { doc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
 import { db, auth } from '../firebase';
-import { FaInfoCircle, FaUser } from 'react-icons/fa';
+import { FaInfoCircle, FaUser, FaEllipsisV } from 'react-icons/fa';
 import fetchPFP from '../functions/fetchPFP';
 import fetchUIDwithUsername from '../functions/fetchUIDwithUsername';
 import MiniUserCard from '../components/user/MiniUserCard';
 import DOMPurify from 'dompurify';
+import { toast } from 'react-toastify';
 
+
+const OptionsModal = ({ isMuted, toggleMute, reportUser, onClose }) => {
+    return (
+      <div className="relative top-0 right-0 bg-white shadow-lg p-4 rounded z-10">
+        <ul>
+          <li className="cursor-pointer mb-2" onClick={toggleMute}>
+            {isMuted ? 'Unmute' : 'Mute'}
+          </li>
+          <li className="cursor-pointer" onClick={reportUser}>
+            Report
+          </li>
+        </ul>
+        <button className="mt-4 w-full bg-gray-200 p-2 rounded" onClick={onClose}>
+          Close
+        </button>
+      </div>
+    );
+  };
+  
 
 const FollowButton = ({ isFollowing, toggleFollow }) => {
     return (
@@ -32,6 +52,8 @@ const UserPage = () => {
     const [showFollowers, setShowFollowers] = useState(false);
     const [following, setFollowing] = useState([]);
     const [showFollowing, setShowFollowing] = useState(false);
+    const [isMuted, setIsMuted] = useState(false);
+    const [showOptionsModal, setShowOptionsModal] = useState(false);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -75,6 +97,24 @@ const UserPage = () => {
       }, [username]);
       
     
+      useEffect(() => {
+        // Check if the user is muted
+        const checkIfMuted = async () => {
+          const currentUser = auth.currentUser;
+          if (currentUser && userData) {
+            const userRef = doc(db, 'users', currentUser.uid);
+            const userDoc = await getDoc(userRef);
+            if (userDoc.exists()) {
+              const userDocData = userDoc.data();
+              setIsMuted(userDocData.muted && userDocData.muted.includes(userData.UID));
+            }
+          }
+        };
+    
+        checkIfMuted();
+      }, [userData]);
+    
+
     // Set the initial toggle state of Follow button to "Unfollow" if the current user is in the followers list of the user's page
     useEffect(() => {
         if (userData && auth.currentUser) {
@@ -184,6 +224,57 @@ const UserPage = () => {
 
     const defaultProfilePicture = require('../assets/default-profile-picture.jpg');
 
+    const toggleMute = async () => {
+        try {
+          if (!userData || !userData.UID) {
+            console.error('User data or UID not initialized.');
+            return;
+          }
+      
+          const currentUser = auth.currentUser;
+          if (!currentUser) {
+            console.error('Current user not authenticated.');
+            return;
+          }
+      
+          const currentUserId = currentUser.uid;
+          const userRef = doc(db, 'users', currentUserId);
+          const userDoc = await getDoc(userRef);
+      
+          if (!userDoc.exists()) {
+            console.error('User document not found.');
+            return;
+          }
+      
+          const userDocData = userDoc.data();
+          const mutedList = userDocData.muted || [];
+      
+          if (mutedList.includes(userData.UID)) {
+            // Unmute the user
+            await updateDoc(userRef, {
+              muted: arrayRemove(userData.UID),
+            });
+            setIsMuted(false);
+            toast.success('User unmuted successfully.');
+          } else {
+            // Mute the user
+            await updateDoc(userRef, {
+              muted: arrayUnion(userData.UID),
+            });
+            setIsMuted(true);
+            toast.success('User muted successfully.');
+          }
+        } catch (error) {
+          console.error('Error muting/unmuting user:', error);
+          toast.error('Error muting/unmuting user.');
+        }
+      };
+
+      const reportUser = () => {
+        // Your reportUser logic
+        toast.info('Reported user.');
+      };
+
     return (
         <div className="max-w-md mx-auto p-4 bg-white rounded-lg shadow-md">
             {userData ? (
@@ -197,7 +288,20 @@ const UserPage = () => {
                                   />
 
                     </div>
+
                     <div>
+
+                    <button className="relative top-4 right-4" onClick={() => setShowOptionsModal(!showOptionsModal)}>
+                        <FaEllipsisV />
+                    </button> 
+                    {showOptionsModal && (
+                        <OptionsModal
+                        isMuted={isMuted}
+                        toggleMute={toggleMute}
+                        reportUser={reportUser}
+                        onClose={() => setShowOptionsModal(false)}
+                        />
+                    )}
                     {userData.bio ? (
                             <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(userData.bio) }} />
                         ) : (
