@@ -4,6 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFlag, faShare, faList, faVolumeMute } from '@fortawesome/free-solid-svg-icons';
 import ReportOptions from './ReportOptions';
 import { toast } from 'react-toastify';
+import { db, auth } from '../../firebase';
+import { doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 
 
 const useClickOutside = (ref, handler) => {
@@ -52,11 +54,68 @@ const PostOptionsPopup = ({ onClose, postId}) => {
     onClose();
   };
 
-  const handleMuteUser = () => {
-    // Add logic to handle muting the user
-    console.log('Mute User');
-    onClose();
+  const handleMuteUser = async () => {
+    try {
+      if (!postId) {
+        console.error('postId is undefined or null');
+        toast.error('Error: postId is undefined or null.');
+        return;
+      }
+  
+      // Fetch the post document to get the author's UID
+      const postRef = doc(db, 'posts', postId);
+      const postDocSnap = await getDoc(postRef);
+  
+      if (!postDocSnap.exists()) {
+        console.error('Post not found');
+        toast.error('Error: Post not found.');
+        return;
+      }
+  
+      const postData = postDocSnap.data();
+      if (!postData || !postData.uid) {
+        console.error('Author UID not found in post document');
+        toast.error('Error: Author UID not found in post document.');
+        return;
+      }
+  
+      const authorUid = postData.uid;
+  
+      // Fetch the current user's document
+      const userRef = doc(db, 'users', auth.currentUser.uid);
+      const userDocSnap = await getDoc(userRef);
+  
+      if (!userDocSnap.exists()) {
+        console.error('User not found');
+        toast.error('Error: User not found.');
+        return;
+      }
+  
+      const currentUserData = userDocSnap.data();
+      const mutedUsers = currentUserData.muted || [];
+  
+      // Check if the author's UID is already in the muted array
+      if (mutedUsers.includes(authorUid)) {
+        toast.info('User is already muted.');
+        return;
+      }
+  
+      // Update the authenticated user's document to add the author's UID to the muted array
+      await updateDoc(userRef, {
+        muted: arrayUnion(authorUid),
+      });
+  
+      console.log('Muted user:', authorUid);
+      toast.success('User muted successfully.');
+      onClose();
+    } catch (error) {
+      console.error('Error muting user:', error.message);
+      toast.error('Error muting user: ' + error.message);
+    }
   };
+  
+  
+  
   return ReactDOM.createPortal(
     <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 bg-opacity-50 bg-black">
       <div

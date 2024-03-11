@@ -61,15 +61,20 @@ class Feed extends Component {
       await new Promise((resolve) => setTimeout(resolve, 1000));
   
       const currentUserID = this.props.currentUser.uid;
-      
-      // Fetch the following list from the current user document
+  
+      // Fetch the following list and muted list from the current user document
       const userDocRef = doc(db, 'users', currentUserID);
       const userDocSnapshot = await getDoc(userDocRef);
-      const followingList = userDocSnapshot.exists() ? userDocSnapshot.data().following : [];
+      const userData = userDocSnapshot.exists() ? userDocSnapshot.data() : {};
+      const followingList = userData.following || [];
+      const mutedList = userData.muted || [];
   
-      // Fetch posts from users in the following list
+      // Filter out muted users from the following list
+      const filteredFollowingList = followingList.filter(userID => !mutedList.includes(userID));
+  
+      // Fetch posts from users in the filtered following list
       const fetchedPosts = [];
-      for (const followedUserID of followingList) {
+      for (const followedUserID of filteredFollowingList) {
         const q = query(collection(db, 'posts'), where('uid', '==', followedUserID));
         const userPostsSnapshot = await getDocs(q);
         userPostsSnapshot.forEach((doc) => {
@@ -99,6 +104,7 @@ class Feed extends Component {
       this.setState({ isLoading: false });
     }
   };
+  
   
   
   fetchCommentsForPost = async (post) => {
