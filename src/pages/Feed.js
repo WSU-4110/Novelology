@@ -208,6 +208,7 @@ class Feed extends Component {
       this.setState({ filteredPosts: filtered });
     }
   };
+
   handleSortBy = (sortByType) => {
     const { filteredPosts } = this.state;
     let sortedPosts;
@@ -216,17 +217,26 @@ class Feed extends Component {
       sortedPosts = [...filteredPosts].sort((a, b) => b.data.createdAt - a.data.createdAt);
     } else if (sortByType === 'oldest') {
       sortedPosts = [...filteredPosts].sort((a, b) => a.data.createdAt - b.data.createdAt);
-    } 
-    else if (sortByType === 'popularity') {
-      sortedPosts = [...filteredPosts].sort((postA, postB) => {
-        const likesCountA = postA.data.likes || 0; // Default to 0 if likes array is empty or undefined
-        const likesCountB = postB.data.likes || 0; // Default to 0 if likes array is empty or undefined
-        return likesCountB - likesCountA; // Sort in descending order based on likes count
+    } else if (sortByType === 'popularity') {
+      sortedPosts = [...filteredPosts].sort((a, b) => (b.data.likes || 0) - (a.data.likes || 0));
+    } else if (sortByType === 'comments') {
+      sortedPosts = [...filteredPosts].sort((a, b) => (b.data.commentsCount || 0) - (a.data.commentsCount || 0));
+    } else if (sortByType === 'engagement') {
+      sortedPosts = [...filteredPosts].sort((a, b) => {
+        const engagementA = (a.data.likes || 0) + (a.data.commentsCount || 0);
+        const engagementB = (b.data.likes || 0) + (b.data.commentsCount || 0);
+        return engagementB - engagementA;
       });
+    } else if (sortByType === 'textLength') {
+      sortedPosts = [...filteredPosts].sort((a, b) => b.data.text.length - a.data.text.length);
+    } else {
+      sortedPosts = filteredPosts; // Default case
     }
   
     this.setState({ filteredPosts: sortedPosts });
   };
+  
+
   
 
   handleScroll = () => {
@@ -261,6 +271,8 @@ class Feed extends Component {
             <option value="newest">Newest</option>
             <option value="oldest">Oldest</option>
             <option value="popularity">Popularity</option>
+            <option value="comments">Comments</option>
+            <option value="engagement">Engagement</option>
           </select>
         </div>
         <div ref={this.postContainerRef} className="post-container" style={{ minHeight: 'calc(100vh - 100px)' }}>
