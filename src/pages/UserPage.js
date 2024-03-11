@@ -56,6 +56,9 @@ const UserPage = () => {
     const [showFollowing, setShowFollowing] = useState(false);
     const [isMuted, setIsMuted] = useState(false);
     const [showOptionsModal, setShowOptionsModal] = useState(false);
+    const [followersFetched, setFollowersFetched] = useState(false);
+    const [followingFetched, setFollowingFetched] = useState(false);
+
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -178,45 +181,47 @@ const UserPage = () => {
 
     const toggleFollowers = async () => {
         try {
-            if (!showFollowers) {
-                if (!userData || !userData.UID) {
-                    console.error('User data or UID not initialized.');
-                    return;
-                }
-    
-                console.log('User UID:', userData.UID);
-    
-                // Access the 'followers' array within the user document data
-                const followersData = userData.followers || [];
-                console.log('Followers Data:', followersData);
-                setFollowers(followersData);
+          if (!showFollowers && !followersFetched) {
+            if (!userData || !userData.UID) {
+              console.error('User data or UID not initialized.');
+              return;
             }
-            setShowFollowers(prevState => !prevState);
+      
+            console.log('User UID:', userData.UID);
+      
+            // Access the 'followers' array within the user document data
+            const followersData = userData.followers || [];
+            console.log('Followers Data:', followersData);
+            setFollowers(followersData);
+            setFollowersFetched(true);
+          }
+          setShowFollowers(prevState => !prevState);
         } catch (error) {
-            console.error('Error fetching followers:', error);
+          console.error('Error fetching followers:', error);
         }
-    };
+      };
     
     const toggleFollowing = async () => {
         try {
-            if (!showFollowing) {
-                if (!userData || !userData.UID) {
-                    console.error('User data or UID not initialized.');
-                    return;
-                }
-    
-                console.log('User UID:', userData.UID);
-    
-                // Access the 'following' array within the user document data
-                const followingData = userData.following || [];
-                console.log('Following Data:', followingData);
-                setFollowing(followingData);
+          if (!showFollowing && !followingFetched) {
+            if (!userData || !userData.UID) {
+              console.error('User data or UID not initialized.');
+              return;
             }
-            setShowFollowing(prevState => !prevState);
+      
+            console.log('User UID:', userData.UID);
+      
+            // Access the 'following' array within the user document data
+            const followingData = userData.following || [];
+            console.log('Following Data:', followingData);
+            setFollowing(followingData);
+            setFollowingFetched(true);
+          }
+          setShowFollowing(prevState => !prevState);
         } catch (error) {
-            console.error('Error fetching following:', error);
+          console.error('Error fetching following:', error);
         }
-    };
+      };
     
     
 
