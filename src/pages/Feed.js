@@ -245,14 +245,18 @@ class Feed extends Component {
   
     // Check if the user is scrolling near the bottom of the post container
     const isScrollingNearBottom = postContainer &&
-      window.innerHeight + window.scrollY >= postContainer.offsetHeight;
+      window.innerHeight + window.scrollY >= postContainer.offsetHeight - 100; // Adjust the offset for earlier triggering
   
+    // Debounce the scroll event to avoid excessive calls
+    if (this.scrollTimeout) clearTimeout(this.scrollTimeout);
+    this.scrollTimeout = setTimeout(() => {
       // Fetch more posts if the user is scrolling near the bottom
-    if (!isLoading && !allPostsFetched && isScrollingNearBottom) {
-      this.fetchPosts();
-    }
+      if (!isLoading && !allPostsFetched && isScrollingNearBottom) {
+        this.setState({ isLoading: true }); // Set loading state
+        this.fetchPosts();
+      }
+    }, 100); // Adjust the debounce time as needed
   };
-  
 
   render() {
     const { filteredPosts, isLoading, allPostsFetched, comments, newComments } = this.state;
