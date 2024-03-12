@@ -1,5 +1,29 @@
 import NovelologyCircleBorderLogo from '../../NovelologyCircleBorderLogo.png';
 
+
+class InputFactory {
+  static createInput({ type, id, placeholder }) {
+    // Common input style
+    const inputStyle = {
+      padding: '10px',
+      borderRadius: '20px',
+      marginTop: '5px',
+      width: '100%',
+      boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.8)', // Added shadow
+    };
+
+    switch (type) {
+      case 'text':
+      case 'email':
+        return <input id={id} type={type} placeholder={placeholder} style={inputStyle} />;
+      case 'password':
+        return <input id={id} type="password" placeholder={placeholder} style={inputStyle} />;
+      default:
+        throw new Error(`Unsupported input type: ${type}`);
+    }
+  }
+}
+
 const SignUpPage = (props) => {
   // Styles
   const styles = {
