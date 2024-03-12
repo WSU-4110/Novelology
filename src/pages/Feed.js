@@ -36,6 +36,7 @@ class Feed extends Component {
     allPostsFetched: false,
     comments: {},
     newComments: {},
+    observers: {},
   };
 
   postContainerRef = React.createRef();
@@ -49,6 +50,34 @@ class Feed extends Component {
   componentWillUnmount() {
     window.removeEventListener('scroll', this.handleScroll);
   }
+
+    // Method to subscribe an observer to a post
+    subscribe = (postId, observer) => {
+      this.setState(prevState => ({
+        observers: {
+          ...prevState.observers,
+          [postId]: prevState.observers[postId] ? [...prevState.observers[postId], observer] : [observer],
+        },
+      }));
+    };
+
+      // Method to notify all observers of a post
+  notifyObservers = (postId, interaction) => {
+    const observers = this.state.observers[postId];
+    if (observers) {
+      observers.forEach(observer => observer(interaction));
+    }
+  };
+  
+    // Method to handle interactions with a post, such as adding a comment
+    handleInteraction = (postId, interactionType) => {
+      // Perform the action of adding a comment, like, etc.
+      // ...
+  
+      // Notify observers about the interaction
+      this.notifyObservers(postId, interactionType);
+    };
+  
 
   fetchPosts = async () => {
     try {
@@ -285,12 +314,13 @@ class Feed extends Component {
               <div key={post.id} className={`mb-8 ${index !== filteredPosts.length - 1 ? 'pb-8 border-b' : ''}`}>
                 <PostComponent
                   post={post}
-                  comments={comments} // Pass comments as a prop
-                  newCommentText={newComments[post.id] || ''} // Pass newCommentText for this post
+                  comments={comments}
+                  newCommentText={newComments[post.id] || ''}
                   currentUser={currentUser}
-                  onAddComment={this.handleAddComment} // Pass handleAddComment function
-                  onCommentChange={this.handleCommentChange} // Pass handleCommentChange function
-                  onDeleteComment={this.handleDeleteComment} // Pass handleDeleteComment function
+                  onAddComment={this.handleAddComment}
+                  onCommentChange={this.handleCommentChange}
+                  onDeleteComment={this.handleDeleteComment}
+                  feedInstance={this} // Pass the instance of Feed component
                 />
               </div>
             )
@@ -303,6 +333,7 @@ class Feed extends Component {
       </div>
     );
   }
+  
 }
   
 export default Feed;

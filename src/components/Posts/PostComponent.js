@@ -14,6 +14,7 @@ import formatTimeDifference from '../../functions/formatTimeDifference';
 import fetchPFP from '../../functions/fetchPFP';
 import { runTransaction } from 'firebase/firestore';
 import LazyImage from '../shared/LazyImage';
+import NotificationManager from '../notifications/NotificationManager';
 
 class PostComponent extends Component {
   constructor(props) {
@@ -51,40 +52,34 @@ class PostComponent extends Component {
   
   
   toggleLike = async () => {
-    const { post, currentUser } = this.props;
+    const { post, currentUser, feedInstance } = this.props; // Destructure feedInstance from props
     const currentUserId = currentUser.uid;
     const postRef = doc(db, 'posts', post.id);
-  
+
     try {
-      // Ensures atomic read-modify-write operations in Firestore
-      // Locks documents to prevent concurrent modifications
-      // Retries automatically if conflicts occur
-      // Allows handling errors gracefully
       await runTransaction(db, async (transaction) => {
         const postDoc = await transaction.get(postRef);
         const postData = postDoc.data();
-  
+
         let likedBy = postData.likedBy || [];
         let currentLikes = postData.likes || 0;
         let liked = likedBy.includes(currentUserId);
-  
+
         if (liked) {
-          // Unlike the post
           currentLikes--;
           likedBy = likedBy.filter(uid => uid !== currentUserId);
         } else {
-          // Like the post
           currentLikes++;
           likedBy.push(currentUserId);
         }
-  
-        // Update the Firestore document
+
         transaction.update(postRef, { likedBy, likes: currentLikes });
-  
-        // Update the state with the new number of likes and liked state
         this.setState({ likedBy, likes: currentLikes, liked: !liked });
+
+        // Notify observers about the like interaction
+        feedInstance.handleInteraction(post.id, liked ? 'unlike' : 'like');
       });
-  
+
       console.log("Firebase document updated successfully");
     } catch (error) {
       console.error("Error updating Firebase document:", error);
@@ -162,7 +157,7 @@ class PostComponent extends Component {
   };
 
   render() {
-    const { post, comments, newCommentText, currentUser, onAddComment, onCommentChange } = this.props;
+    const { post, comments, newCommentText, currentUser, onAddComment, onCommentChange, feedInstance} = this.props;
     const { creatorProfilePicture, isLoadingProfilePicture, profilePictureError, username, isLoadingUsername, usernameError } = this.state;
     const { showPostOptionsPopup } = this.state;
     const { liked, likes} = this.state;
@@ -221,6 +216,10 @@ class PostComponent extends Component {
         {/* Render post content */}
         <p>{post.data.text}</p>
 
+                {/* Render NotificationManager */}
+                <NotificationManager feedInstance={feedInstance} postId={post.id} />
+
+
         {/* Render comments */}
         <div className="border-t border-gray-300 pt-4">
           <h4>Comments:</h4>
@@ -269,6 +268,8 @@ PostComponent.propTypes = {
   newCommentText: PropTypes.string.isRequired,
   onAddComment: PropTypes.func.isRequired,
   onCommentChange: PropTypes.func.isRequired,
+  feedInstance: PropTypes.object.isRequired, 
 };
+
 
 export default PostComponent;
