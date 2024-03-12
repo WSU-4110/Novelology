@@ -9,12 +9,13 @@
 * Victor Martinez
 * Mutahhara Jannat
 * Jad Aoun
-# Software Installation Instructions: 
+
+  
 # Meeting logs:
 [Meeting logs](https://github.com/WSU-4110/Novelology/wiki)
 
 
-# Project Installation Instructions
+# Project Installation Instructions:
 
 This guide will walk you through setting up the project environment on Visual Studio Code (VSCode) using ReactJS and Node.js.
 
