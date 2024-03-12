@@ -52,19 +52,16 @@ const BookStackRetrieval = () => {
                     const num = res.data.totalItems;
                     console.log(num);
                     if (num > 0) {
-                        setBooksData((prevData) => [...prevData, ...res.data.items]);
+                        console.log("data: ",res.data.items);
+                        setBooksData(res.data.items);
+                        // console.log(booksData);
                         console.log("isbn ran");
                     } else {
                         console.log('No results found.');
                     }
                 } catch (err) {
                     console.error(err);
-                
-                // if (err.response && err.response.status === 429) {
-                //     console.log('Rate limit exceeded. Retrying after a delay...');
-                //     await new Promise(resolve => setTimeout(resolve, 5000)); // Wait for 5 seconds
-                //     continue; // Retry the current book
-                // }
+               
             }
     
             }
@@ -74,7 +71,7 @@ const BookStackRetrieval = () => {
             fetchDataForBooks();
         }
     }, [books]);
-
+    
     if (loading || isLoading) {
         return <div>Loading...</div>;
     }
@@ -95,6 +92,7 @@ const BookStackRetrieval = () => {
             </div>
         );
     }
+    console.log("books Data: ",booksData)
     class UserWishListRetrieval{
         constructor(){
             this.books = [];
@@ -103,8 +101,9 @@ const BookStackRetrieval = () => {
         }
         
         getBooks(){
-            this.books = books;
-            return books;
+            this.books = booksData;
+            // console.log("books data inside class :",this.books)
+            return this.books;
         }
         getGenres(){
             this.genres = userData.genres;
@@ -112,7 +111,7 @@ const BookStackRetrieval = () => {
         }
     
     };
-
+    //Facade for getting userWishList
     class UserWishList{
         constructor(){
             this.WishListBooks = new UserWishListRetrieval();
@@ -121,13 +120,9 @@ const BookStackRetrieval = () => {
             console.log(this.WishListBooks.getBooks());
         }
     };
-
+    //example implementation
     const userObject = new UserWishList();
-    // const wishListContent = userData.wishList ? userData.wishList.join(', ') : 'No WishList';
-    // console.log("length ", wishListContent.length);
-    // for (let i = 0; i < wishListContent.length; i++) {
-    //     console.log(wishListContent[i]);
-    // }
+    userObject.printWishList();
     return (
         <>
             <p>WishList: {books.join(', ')}</p>
@@ -135,5 +130,8 @@ const BookStackRetrieval = () => {
         </>
     );
 };
+
+//Facade
+
 
 export default BookStackRetrieval;
