@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, signInWithEmailAndPassword, deleteUser } from 'firebase/auth';
 import { auth, db, provider} from '../firebase';
-import { useNavigate } from "react-router";
 import { doc, setDoc, getDoc, deleteDoc} from 'firebase/firestore';
 import { getStorage, ref, deleteObject } from "firebase/storage";
 

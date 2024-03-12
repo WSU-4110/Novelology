@@ -40,10 +40,12 @@ class CommentComponent extends Component {
   fetchUserData = async () => {
     const { uid } = this.props.comment;
 
+    // Fetch user data from Firestore
     try {
       const userDoc = doc(db, 'users', uid);
       const userDocSnap = await getDoc(userDoc);
 
+      // If the user document exists, update the state with the user data
       if (userDocSnap.exists()) {
         const userData = userDocSnap.data();
         this.setState({
@@ -53,6 +55,7 @@ class CommentComponent extends Component {
         console.error('User document does not exist');
       }
 
+      // Fetch user profile picture
       const userProfilePicture = await fetchUserProfilePicture(uid);
       this.setState({ userProfilePicture });
 
@@ -124,6 +127,12 @@ class CommentComponent extends Component {
     try {
       const commentDocRef = doc(db, 'comments', comment.id);
   
+      // Run a transaction to update the comment document with the new likes count and likedBy array
+      // This ensures that the update is atomic and consistent
+      // If the comment is already liked by the user, unlike it, and vice versa
+      // This is done to prevent the user from liking the same comment multiple times
+      // The transaction will fail if the comment document does not exist
+      // In that case, an error will be thrown and caught in the catch block
       await runTransaction(db, async (transaction) => {
         const commentDoc = await transaction.get(commentDocRef);
   
@@ -175,6 +184,7 @@ class CommentComponent extends Component {
             throw new Error('Reply document does not exist');
           }
   
+          // Update the reply document with the new likes count and likedBy array
           const replyData = replyDoc.data();
           const currentLikes = replyData.likesCount || 0;
           const likedBy = replyData.likedBy || [];
@@ -221,24 +231,30 @@ class CommentComponent extends Component {
     const { comment, currentUser } = this.props;
     const { replyText } = this.state;
 
+    // Try to submit the reply to the comment
     try {
+      // Fetch the comment document from Firestore
       const commentDocRef = doc(db, 'comments', comment.id);
       const commentDocSnap = await getDoc(commentDocRef);
 
+      // If the comment document exists, update it with the new reply
       if (commentDocSnap.exists()) {
         const commentData = commentDocSnap.data();
         const updatedReplies = commentData.replies || [];
 
+        // Add the new reply to the replies array
         updatedReplies.push({
           uid: currentUser.uid,
           text: replyText,
           createdAt: new Date(),
         });
 
+        // Update the comment document with the new replies array
         await updateDoc(commentDocRef, {
           replies: updatedReplies,
         });
 
+        // Fetch replies again to reflect changes in the UI
         this.fetchReplies();
         this.setState({
           isReplying: false,
@@ -255,6 +271,7 @@ class CommentComponent extends Component {
   handleDeleteComment = async () => {
     const { comment, onDelete } = this.props;
 
+    // Try to delete the comment from Firestore
     try {
       await deleteDoc(doc(db, 'comments', comment.id));
       console.log('Comment deleted successfully.');
@@ -266,14 +283,17 @@ class CommentComponent extends Component {
 
   handleDeleteReply = async (replyId) => {
     try {
+      // Find the comment document and remove the reply from the replies array
       const { comment } = this.props;
       const commentDocRef = doc(db, 'comments', comment.id);
       const commentDocSnap = await getDoc(commentDocRef);
   
+
+      // If the comment document exists, update it with the new replies array
       if (commentDocSnap.exists()) {
         const commentData = commentDocSnap.data();
         const updatedReplies = commentData.replies.filter(reply => reply.id !== replyId);
-  
+        // Update the comment document with the new replies array
         await updateDoc(commentDocRef, {
           replies: updatedReplies,
         });
