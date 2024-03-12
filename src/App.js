@@ -8,7 +8,8 @@ import Error from './components/shared/Error';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import PrivateRoute from './components/routing/PrivateRoute';
-
+import BookStackRetrieval from './components/BookStacks/BookStackRetrieval.js'
+// import wishList from './components/Book Stacks/BookStackRetrieve.js'
 // Lazy-loaded components
 const SetUpAccount = React.lazy(() => import('./pages/SetUpAccount'));
 const Submit = React.lazy(() => import('./pages/Submit'));
@@ -46,7 +47,7 @@ const App = () => {
             <Route path="/search/*" element={<SearchResults />}>
               <Route path=":query" element={<SearchResults />} />
             </Route>
-
+            <Route path="/wishList" element={<BookStackRetrieval />}/>
 
             <Route path="*" element={<Error />} />
           </Routes>
