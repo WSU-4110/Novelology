@@ -45,8 +45,8 @@ const App = () => {
             <Route path="/author-verification" element={<AuthorVerification />} />
             <Route path="/search/*" element={<SearchResults />}>
               <Route path=":query" element={<SearchResults />} />
+            <Route path="/ReaderProfilePage" element={<ReaderProfilePage />} />
             </Route>
-
 
             <Route path="*" element={<Error />} />
           </Routes>
