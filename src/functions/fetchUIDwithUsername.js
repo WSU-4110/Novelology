@@ -13,7 +13,8 @@ const fetchUIDwithUsername = async (username) => {
         // Check if the document exists
         if (userDocSnapshot.exists()) {
             // Document found, return the UID field
-            return userDocSnapshot.data().UID;
+            console.log(`Username '${username}' found. UID:`, userDocSnapshot.data().uid);
+            return userDocSnapshot.data().uid;
         } else {
             // Username not found, return null or throw an error
             console.log(`Username '${username}' not found.`);
