@@ -1,13 +1,28 @@
 import { useAuthState } from 'react-firebase-hooks/auth';
-import {db,auth,storage} from '../firebase';
+import {auth} from '../firebase';
 import PostForm from '../components/submit/PostForm';
 import { useNavigate } from "react-router-dom";
-
+import {useState} from 'react';
 
 function Submit() {
   const [user] = useAuthState(auth)
-  const navigate = useNavigate()
+  const navigate = useNavigate('/')
+  const genres = ['Fantasy', 'Science Fiction', 'Mystery', 'Romance', 'Thriller', 'Horror'];
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedGenre, setSelectedGenre] = useState('');
 
+  const toggleDropdown = () => {
+    setShowDropdown(!showDropdown);
+};
+
+const handleGenreSelect = (event, genre) => {
+  setSelectedGenre(genre);
+  setShowDropdown(!showDropdown)
+};
+
+const removeGenre = () => {
+    setSelectedGenre('');
+};
   return (
     <>
         {!user ? navigate('/'):
@@ -26,7 +41,25 @@ function Submit() {
             
             
         
-          
+           <div class="flex ">
+            <button class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded-full mt-2 mb-2"onClick={toggleDropdown}>Genre</button>
+            {selectedGenre && (
+                
+                    <button class="bg-gray-300 hover:bg-gray-400 text-black  py-2 px-4 rounded-full mt-2 mb-2 ml-2"onClick={removeGenre}>X {selectedGenre} </button>
+                   
+                
+            )}
+          </div>
+        {showDropdown && (
+              <div class=" border border-gray-200 rounded-lg mb-2 w-25 p-3" >
+                <button onClick={toggleDropdown}>X</button>
+                {genres.map((genre, index) => (
+                    <div class="" key={index} onClick={(event) => handleGenreSelect(event, genre)}>
+                        {genre}
+                    </div>
+                ))}
+            </div>
+            )}
        
               {/* {!uploading && file && 
               <div className=''>
@@ -35,7 +68,7 @@ function Submit() {
                   
               </div>
 							} */}
-                <PostForm user={user}
+                <PostForm user={user} selectedGenre={selectedGenre} setSelectedGenre={setSelectedGenre}
                
                 />
             </div>
