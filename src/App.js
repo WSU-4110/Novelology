@@ -8,6 +8,8 @@ import Error from './components/shared/Error';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import PrivateRoute from './components/routing/PrivateRoute';
+import ReaderProfilePage from './components/ReaderProfilePage';
+import AuthorProfilePage from './components/AuthorProfilePage';
 
 // Lazy-loaded components
 const SetUpAccount = React.lazy(() => import('./pages/SetUpAccount'));
@@ -43,6 +45,8 @@ const App = () => {
             <Route path="/post" element={<Post />} />
             <Route path="/author-verification" element={<AuthorVerification />} />
             <Route path="*" element={<Error />} />
+            <Route path="/AuthorProfilePage" element={<AuthorProfilePage />} />
+            <Route path="/ReaderProfilePage" element={<ReaderProfilePage />} />
           </Routes>
         </Suspense>
       </Fragment>
