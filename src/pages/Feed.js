@@ -2,13 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { collection, getDocs, addDoc, query, where, getDoc, doc} from 'firebase/firestore';
 import { db } from '../firebase';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faComment, faThumbsUp, faShare, faReply } from '@fortawesome/free-solid-svg-icons';
-import fetchUserProfilePicture from '../functions/fetchUserProfilePicture';
-import fetchUsernameWithUID from '../functions/fetchUsernameWithUID';
-import { updateDoc } from 'firebase/firestore';
-import CommentComponent from '../components/CommentComponent';
-import PostComponent from '../components/PostComponent';
+import PostComponent from '../components/Posts/PostComponent';
+import { FaSpinner } from 'react-icons/fa';
+
 
 class Post {
   constructor(id, data) {
@@ -203,7 +199,7 @@ class Feed extends Component {
     if (filterType === 'all') {
       this.setState({ filteredPosts: posts });
     } else {
-      const filtered = posts.filter((post) => post.data.type === filterType);
+      const filtered = posts.filter((post) => post.data.postType === filterType);
       this.setState({ filteredPosts: filtered });
     }
   };
@@ -254,7 +250,9 @@ class Feed extends Component {
               </div>
             )
           ))}
-          {isLoading && <p>Loading...</p>}
+          {isLoading && 
+            <FaSpinner className="animate-spin w-24 h-24 align-middle text-gray-400"/>
+          }
           {allPostsFetched && <p>No more posts to show</p>}
         </div>
       </div>

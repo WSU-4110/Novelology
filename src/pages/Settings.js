@@ -2,15 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, db } from '../firebase.js'; // Consolidated Firebase imports
 import { useNavigate } from "react-router-dom";
-import UploadPFP from '../components/UploadPFP.js';
-import DeleteAccountModal from '../components/DeleteAccountModal.js';
-import { doc, getDoc, updateDoc} from 'firebase/firestore';
+import UploadPFP from '../components/shared/UploadPFP.js';
+import DeleteAccountModal from '../components/user/DeleteAccountModal.js';
+import { deleteDoc, doc, getDoc, updateDoc} from 'firebase/firestore';
 import { handleDeleteAccount } from '../functions/Auth.js';
-import SelectGenres from '../components/SelectGenres.js'
+import SelectGenres from '../components/user/SelectGenres.js'
+import TextEditor from '../components/shared/TextEditor.js';
 
 import "../styles/settings.css";
-import RolesSelection from '../components/RolesSelection.js';
-import PronounsDropdown from '../components/PronounsDropdown.js';
+import RolesSelection from '../components/user/RolesSelection.js';
+import PronounsDropdown from '../components/user/PronounsDropdown.js';
 
 export default function Settings() {
     const [user] = useAuthState(auth);
@@ -24,31 +25,25 @@ export default function Settings() {
     const navigate = useNavigate();
 
 
-
+    const [customPronouns, setCustomPronouns] = useState("");
     const [pronouns, setPronouns] = useState('');
     const [selectedRoles, setSelectedRoles] = useState([]);
 
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-
-                
-
                 const userDoc = doc(db, 'users', user.uid);
                 const docSnapshot = await getDoc(userDoc);
                 if (docSnapshot.exists()) {
                     const userDataFromSnapshot = docSnapshot.data();
                     setUserData(userDataFromSnapshot);
-                    setPronouns(userDataFromSnapshot.pronouns || '');
+                    setPronouns(userDataFromSnapshot.pronouns || ''); // Set pronouns from Firestore
+                    setCustomPronouns(userDataFromSnapshot.customPronouns || ''); // Set custom pronouns from Firestore
                     localStorage.setItem('userData', JSON.stringify(userDataFromSnapshot));
-
+        
                     if (!newBio) {
-                        setNewBio(userDataFromSnapshot.bio || '');
+                        setNewBio(userDataFromSnapshot.bio || ''); // Set pre-existing bio
                     }
-
-                    // Set pronouns and selected role
-                    setPronouns(userDataFromSnapshot.pronouns || '');
-                    setSelectedRoles(userDataFromSnapshot.role || '');
                 } else {
                     console.error('User document does not exist.');
                 }
@@ -56,11 +51,12 @@ export default function Settings() {
                 console.error('Error fetching user data:', error);
             }
         };
-
+        
         if (user) {
             fetchUserData();
         }
     }, [user, newBio]);
+    
 
 
     // Extracted function to update user bio
@@ -74,6 +70,7 @@ export default function Settings() {
             console.error('Error updating user bio:', error);
         }
     };
+
 
 
       const handleRoleChange = (role) => {
@@ -91,10 +88,11 @@ export default function Settings() {
             const userDoc = doc(db, 'users', user.uid);
             await updateDoc(userDoc, {
                 bio: newBio,
-                pronouns: pronouns,
+                pronouns: pronouns === "Other" ? customPronouns : pronouns,
+                customPronouns: pronouns === "Other" ? customPronouns : "", // Save custom pronouns if "Other" is selected
                 role: selectedRoles // Save selected roles to the database
             });
-            setUserData({ ...userData, bio: newBio, pronouns: pronouns, role: selectedRoles });
+            setUserData({ ...userData, bio: newBio, pronouns: pronouns, customPronouns: pronouns === "Other" ? customPronouns : "", role: selectedRoles });
             setShowSavedMessage(true);
             setTimeout(() => {
                 setShowSavedMessage(false);
@@ -103,6 +101,7 @@ export default function Settings() {
             console.error('Error updating user data:', error);
         }
     }
+    
 
     const checkUsernameAvailability = async () => {
         try {
@@ -110,16 +109,32 @@ export default function Settings() {
             const docSnapshot = await getDoc(usernameDoc);
             setUsernameAvailability(!docSnapshot.exists()); // Update username availability state based on snapshot
         } catch (error) {
-            console.error('Error checking username availability:', error);
+            console.error('Username not availible', error);
         }
     };
 
     const handleUsernameChangeRequest = async () => {
+
+        checkUsernameAvailability();
+
+        if (usernameAvailability == true) {
+
         try {
             // Update user's data in Firestore to include the desired username
             await updateDoc(doc(db, 'users', user.uid), {
                 username: desiredUsername // Update the username field directly
             });
+
+            
+            // Remove the old username from the usernames collection
+            await deleteDoc(doc(db, 'usernames', userData.username.toLowerCase()));
+
+            // Add the username to the usernames collection
+            await updateDoc(doc(db, 'usernames', desiredUsername.toLowerCase()), {
+                uid: user.uid
+            });
+
+
             setShowSavedMessage(true);
             setTimeout(() => {
                 setShowSavedMessage(false);
@@ -127,29 +142,33 @@ export default function Settings() {
         } catch (error) {
             console.error('Error requesting username change:', error);
         }
+    } else {
+        console.error('Username not availible');
+    }
     };
     
 
 
     return (
-        <div className="min-h-screen w-full bg-gray-100 flex justify-center">
+        <div className="min-h-screen w-full bg-gray-100 flex justify-center pl-16 pr-16">
             <div className="w-full p-6 shadow-xl">
                 {!user ? navigate('/') : (
                     <>
-                        <h1 className="text-2xl font-bold mb-4">Profile</h1>
+                        <h1 className="text-3xl font-bold mb-4">Account Settings</h1>
                         <UploadPFP />
                         <p>Email: {user.email}</p>
                         {userData && (
                             <>
-                                <h1 className='text-3xl font-bold m-4'>Your Bio:</h1>
-                                <input
-                                    className="w-full p-2 mt-2 border rounded"
-                                    type="text"
-                                    value={newBio}
-                                    onChange={(e) => setNewBio(e.target.value)}
+                                <h1 className='text-2xl font-bold m-4'>Your Bio:</h1>
+                                <TextEditor defaultValue={newBio} onChange={setNewBio} maxChars={500} />
+
+                                
+                                <PronounsDropdown
+                                    pronouns={pronouns}
+                                    setPronouns={setPronouns}
+                                    customPronouns={customPronouns}
+                                    setCustomPronouns={setCustomPronouns}
                                 />
-                                <PronounsDropdown pronouns={pronouns} setPronouns={setPronouns} />
-    
                                 <RolesSelection selectedRoles={selectedRoles} setSelectedRoles={setSelectedRoles} />
 
     
