@@ -72,11 +72,7 @@ const removeGenre = () => {
                
                 />
             </div>
-        
-            
-              
-       
-              
+      
              
              
 
