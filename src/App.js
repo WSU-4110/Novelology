@@ -8,6 +8,7 @@ import Error from './components/shared/Error';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import PrivateRoute from './components/routing/PrivateRoute';
+import DeleteAccountPage from './components/user/DeleteAccountPage';
 
 // Lazy-loaded components
 const SetUpAccount = React.lazy(() => import('./pages/SetUpAccount'));
@@ -18,6 +19,7 @@ const Profile = React.lazy(() => import('./pages/Profile'));
 const Login = React.lazy(() => import('./pages/Login'));
 const Post = React.lazy(() => import('./pages/Post'));
 const AuthorVerification = React.lazy(() => import('./pages/AuthorVerification'));
+const SearchResults = React.lazy(() => import('./pages/SearchResults'));
 
 const App = () => {
   return (
@@ -42,6 +44,12 @@ const App = () => {
             <Route path="/post/:pid" element={<Post />} />
             <Route path="/post" element={<Post />} />
             <Route path="/author-verification" element={<AuthorVerification />} />
+            <Route path="/search/*" element={<SearchResults />}>
+              <Route path=":query" element={<SearchResults />} />
+            </Route>
+            <Route path="/delete-account" element={<DeleteAccountPage />} />
+
+
             <Route path="*" element={<Error />} />
           </Routes>
         </Suspense>
