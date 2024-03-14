@@ -1,142 +1,132 @@
 import React from 'react';
+import lockIcon from '../../assets/lock-icon.png'; // Path to lock icon asset
+import logoWithCircleBorder from '../../assets/logo_with_circle_border-removebg.png'; // Path to logo asset
 
-const containerStyle = {
+// Styles
+const pageStyles = () => ({
   width: '100%',
   minHeight: '100vh',
   overflow: 'auto',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  justifyContent: 'center', // Added to center vertically
-};
+  justifyContent: 'center',
+});
 
-const backgroundStyle = {
+const backgroundStyles = () => ({
   backgroundColor: 'rgba(91, 46, 72, 1)',
   width: '100%',
-  height: '1024px',
+  minHeight: '1024px',
   display: 'flex',
-  alignItems: 'center', // Updated to center horizontally
-  justifyContent: 'center', // Updated to center vertically
-  flexShrink: '0',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
   position: 'relative',
   overflow: 'hidden',
-};
+});
 
-const logoStyle = {
-  width: '184px',
-  height: '172px',
-  position: 'absolute',
-  top: '30px',
-  left: '50%', // Updated to center horizontally
-  transform: 'translateX(-50%)', // Added to center horizontally
-};
+const logoStyles = () => ({
+  marginBottom: '20px',
+  height: '150px', // Example size, adjust as needed
+  width: 'auto',
+});
 
-const titleStyle = {
-  width: '1184px',
-  height: 'auto',
+const headerStyles = () => ({
   textAlign: 'center',
-  position: 'absolute',
-  top: '260px',
-  left: '50%', // Updated to center horizontally
-  transform: 'translateX(-50%)', // Added to center horizontally
-  fontStretch: 'normal',
-  fontStyle: 'Regular',
-  fontWeight: '400',
-  textDecoration: 'none',
   fontFamily: '"Montserrat"',
   fontSize: '65px',
   lineHeight: 'normal',
   color: 'rgb(255, 255, 255)',
-};
-
-const inputContainerStyle = {
-  width: '417px',
-  height: '45px',
+  margin: '20px 0',
   display: 'flex',
+  flexDirection: 'column',
   alignItems: 'center',
-  gap: '233px',
-  flexShrink: '0',
-  position: 'absolute',
-  top: '50%', // Updated to center vertically
-  left: '50%', // Updated to center horizontally
-  transform: 'translate(-50%, -50%)', // Added to center vertically and horizontally
-};
+});
 
-const inputStyle = {
-  backgroundColor: '#ffffff',
-  width: '302px',
+const lockIconStyles = () => ({
+  width: '110px', // Adjust size as needed
+  height: 'auto',
+  marginBottom: '20px', // Space between icon and heading
+  filter: 'invert(100%)', 
+  marginTop: '50px' // Invert colors to make the icon appear white
+});
+
+
+const labelStyles = () => ({
+  color: 'rgba(255, 255, 255, 1)',
+  fontFamily: 'Montserrat',
+  fontSize: 24,
+  margin: '10px 0',
+  alignSelf: 'flex-start',
+  marginLeft: '41%',
+});
+
+const inputContainerStyles = () => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  gap: '10px',
+  width: '100%',
+  margin: '10px 0',
+});
+
+const inputStyles = () => ({
+  backgroundColor: '#ffffff',
+  width: '20%',
   padding: '10px 45px',
-  flexShrink: '0',
   borderRadius: '20px',
-  overflow: 'hidden',
-  height: '30px',
-};
+  border: 'none',
+  height: '40px',
+});
 
-const labelStyle = {
-  color: 'rgba(255, 255, 255, 1)',
-  width: '269px',
-  height: 'auto',
-  textAlign: 'left',
-  lineHeight: 'normal',
-  position: 'absolute',
+const buttonStyles = () => ({
+  backgroundColor: 'rgba(91, 46, 72, 1)',
+  width: '490px',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  padding: '10px 45px',
+  borderRadius: '20px',
+  marginBottom: '20px',
+  marginTop: '60px',
+  boxShadow: '0px 4px 8px rgba(0, 0, 0, 1)',
+  border: 'none',
+  color: 'white',
+  fontSize: '24px',
+  cursor: 'pointer',
+});
+
+const buttonTextStyles = () => ({
   fontFamily: 'Montserrat',
   fontSize: '24px',
-  fontStretch: 'normal',
-  fontStyle: 'Regular',
-  fontWeight: '400',
+  color: 'white',
   textDecoration: 'none',
-};
+});
 
-const buttonStyle = {
-  width: '245px',
-  height: '65px',
-  borderRadius: '20px',
-  position: 'absolute',
-  top: '50%', // Updated to center vertically
-  left: '50%', // Updated to center horizontally
-  transform: 'translate(-50%, 50%)', // Added to center vertically and horizontally
-};
-
-const buttonTextStyle = {
-  color: 'rgba(255, 255, 255, 1)',
-  width: '206px',
-  height: 'auto',
-  textAlign: 'center',
-  lineHeight: '20px',
-  position: 'absolute',
-  fontFamily: 'Montserrat',
-  fontSize: '24px',
-  fontStretch: 'normal',
-  fontStyle: 'Regular',
-  fontWeight: '400',
-  textDecoration: 'none',
-};
-
+// Component
 const ResetPasswordPage = (props) => {
   return (
-    <div style={containerStyle}>
-      <div style={backgroundStyle}>
-        <div style={inputContainerStyle}>
-          <div style={inputStyle}></div>
+    <div style={pageStyles()}>
+      <div style={backgroundStyles()}>
+        <img src={logoWithCircleBorder} alt="Logo" style={logoStyles()} />
+        <div style={headerStyles()}>
+          <span>Change Password</span>
+          <img src={lockIcon} alt="Lock Icon" style={lockIconStyles()} />
         </div>
-        <span style={labelStyle}>Username</span>
-        <div style={{ ...inputContainerStyle, top: '65%' }}>
-          <div style={inputStyle}></div>
+        <label style={labelStyles()}>Username</label>
+        <div style={inputContainerStyles()}>
+          <input type="text" style={inputStyles()} />
         </div>
-        <span style={{ ...labelStyle, top: '60%' }}>New Password</span>
-        <div style={{ ...inputContainerStyle, top: '75%' }}>
-          <div style={inputStyle}></div>
+        <label style={labelStyles()}>New Password</label>
+        <div style={inputContainerStyles()}>
+          <input type="password" style={inputStyles()} />
         </div>
-        <span style={{ ...labelStyle, top: '70%' }}>Confirm Password</span>
-        <img src="/logowithcircleborderremovebgpreview14183-mdtji-200h.png" alt="logowithcircleborderremovebgpreview14183" style={logoStyle} />
-        <span style={titleStyle}>Change Password</span>
-        <img src="/vectori418-298.svg" alt="VectorI418" style={{ width: '90px', height: '100px', position: 'absolute', top: '386px', left: '676px' }} />
-        <img src="/rectangle774184-wrqb-200h.png" alt="Rectangle774184" style={buttonStyle} />
-        <span style={buttonTextStyle}>Save Changes</span>
+        <label style={labelStyles()}>Confirm Password</label>
+        <div style={inputContainerStyles()}>
+          <input type="password" style={inputStyles()} />
+        </div>
+        <button style={buttonStyles()}>
+          <span style={buttonTextStyles()}>Save Changes</span>
+        </button>
       </div>
     </div>
   );
