@@ -41,14 +41,15 @@ const textGroupStyle = () => ({
 
 // Logo Image Style
 const logoImageStyle = () => ({
-    margin: '20px 0',
+    marginTop: '10px',
     width: '180px',
     height: 'auto',
+    marginBottom: '50px',
 });
 
 // Trash Icon Style
 const trashIconStyle = () => ({
-    margin: '10px 0',
+    marginTop: '30px',
     filter: 'invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)',
 });
 
@@ -58,7 +59,7 @@ const headerTextStyle = () => ({
     textAlign: 'center',
     fontFamily: 'Montserrat',
     fontSize: '65px',
-    margin: '20px 0',
+    marginTop: '10px',
 });
 
 // Informative Text Style
@@ -67,14 +68,14 @@ const infoTextStyle = () => ({
     textAlign: 'center',
     fontFamily: 'Inknut Antiqua',
     fontSize: '40px',
-    margin: '20px 0',
+    marginTop: '40px',
 });
 
 // Confirmation Input Style
 const confirmationInputStyle = () => ({
     padding: '10px',
     borderRadius: '20px',
-    marginTop: '5px',
+    marginTop: '30px',
     width: '500px',
     boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.8)',
 });
@@ -86,7 +87,7 @@ const confirmationTextStyle = () => ({
     fontFamily: 'Inknut Antiqua',
     fontSize: '24px',
     fontWeight: 700,
-    margin: '20px 0',
+    marginTop: '80px',
 });
 
 // Button Container Style
@@ -94,7 +95,7 @@ const buttonContainerStyle = () => ({
     display: 'flex',
     justifyContent: 'space-between',
     width: '600px',
-    marginTop: 'auto',
+    marginTop: '30px',
     padding: '0 20px',
 });
 
@@ -107,8 +108,8 @@ const actionButtonStyle = () => ({
     alignItems: 'center',
     padding: '10px 45px',
     borderRadius: '20px',
-    marginBottom: '20px',
-    marginTop: '30px',
+    marginBottom: '10px',
+    marginTop: '40px',
     boxShadow: '0px 4px 8px rgba(0, 0, 0, 1)',
 });
 
