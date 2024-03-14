@@ -16,7 +16,7 @@ const pageStyles = () => ({
 const backgroundStyles = () => ({
   backgroundColor: 'rgba(91, 46, 72, 1)',
   width: '100%',
-  minHeight: '1024px',
+  minHeight: '64rem', // Converted from 1024px
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
@@ -26,39 +26,38 @@ const backgroundStyles = () => ({
 });
 
 const logoStyles = () => ({
-  marginBottom: '20px',
-  height: '150px', // Example size, adjust as needed
+  marginBottom: '1.25rem', // Converted from 20px
+  height: '9.375rem', // Converted from 150px, assuming the logo should scale relatively
   width: 'auto',
 });
 
 const headerStyles = () => ({
   textAlign: 'center',
   fontFamily: '"Montserrat"',
-  fontSize: '65px',
+  fontSize: '4.0625rem', // Converted from 65px
   lineHeight: 'normal',
-  color: 'rgb(255, 255, 255)',
-  margin: '20px 0',
+  color: 'white',
+  margin: '1.25rem 0', // Converted from 20px
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
 });
 
 const lockIconStyles = () => ({
-  width: '110px', // Adjust size as needed
+  width: '6.875rem', // Converted from 110px
   height: 'auto',
-  marginBottom: '20px', // Space between icon and heading
-  filter: 'invert(100%)', 
-  marginTop: '50px' // Invert colors to make the icon appear white
+  marginBottom: '1.25rem', // Converted from 20px
+  filter: 'invert(100%)',
+  marginTop: '3.125rem', // Converted from 50px
 });
-
 
 const labelStyles = () => ({
   color: 'white',
   fontFamily: 'Montserrat',
-  fontSize: 24,
-  margin: '10px 0',
+  fontSize: '1.5rem', // Converted from 24px
+  margin: '0.625rem 0', // Converted from 10px
   alignSelf: 'flex-start',
-  marginLeft: '41%',
+  marginLeft: '52.5625rem', // Converted from 41%, this might need adjusting based on layout width
 });
 
 const inputContainerStyles = () => ({
@@ -66,38 +65,38 @@ const inputContainerStyles = () => ({
   justifyContent: 'center',
   alignItems: 'center',
   width: '100%',
-  margin: '10px 0',
+  margin: '0.625rem 0', // Converted from 10px
 });
 
 const inputStyles = () => ({
   backgroundColor: '#ffffff',
-  width: '20%',
-  padding: '10px 45px',
-  borderRadius: '20px',
+  width: '20%', // Consider using max-width with rem for better responsiveness
+  padding: '0.625rem 2.8125rem', // Converted from 10px padding and 45px for horizontal padding
+  borderRadius: '1.25rem', // Converted from 20px
   border: 'none',
-  height: '40px',
+  height: '2.5rem', // Converted from 40px
 });
 
 const buttonStyles = () => ({
   backgroundColor: 'rgba(91, 46, 72, 1)',
-  width: '490px',
+  width: '30.625rem', // Converted from 490px, consider max-width for responsiveness
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  padding: '10px 45px',
-  borderRadius: '20px',
-  marginBottom: '20px',
-  marginTop: '60px',
-  boxShadow: '0px 4px 8px rgba(0, 0, 0, 1)',
+  padding: '0.625rem 2.8125rem', // Converted from 10px padding and 45px for horizontal padding
+  borderRadius: '1.25rem', // Converted from 20px
+  marginBottom: '1.25rem', // Converted from 20px
+  marginTop: '3.75rem', // Converted from 60px
+  boxShadow: '0px 0.25rem 0.5rem rgba(0, 0, 0, 1)', // Converted shadow dimensions
   border: 'none',
   color: 'white',
-  fontSize: '24px',
+  fontSize: '1.5rem', // Converted from 24px
   cursor: 'pointer',
 });
 
 const buttonTextStyles = () => ({
   fontFamily: 'Montserrat',
-  fontSize: '24px',
+  fontSize: '1.5rem', // Converted from 24px
   color: 'white',
   textDecoration: 'none',
 });
