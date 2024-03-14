@@ -8,6 +8,9 @@ import Error from './components/shared/Error';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import PrivateRoute from './components/routing/PrivateRoute';
+import ReaderProfilePage from './components/ReaderProfilePage';
+import AuthorProfilePage from './components/AuthorProfilePage';
+
 import SampleHome from './pages/sampleHome.js'
 import SignIn from './pages/Signin.js';
 import NavigationBar from "./components/NavigationBar.js";
@@ -52,9 +55,10 @@ const App = () => {
             <Route path="/search/*" element={<SearchResults />}>
               <Route path=":query" element={<SearchResults />} />
             </Route>
-
-
             <Route path="*" element={<Error />} />          
+            <Route path="/AuthorProfilePage" element={<AuthorProfilePage />} />
+            <Route path="/ReaderProfilePage" element={<ReaderProfilePage />} />
+            
             <Route path="/samplehome" element={<SampleHome/>}/>
           <Route path="/sign_in" element={<SignIn/>}/>
           <Route path="/onboarding" element={<UserOnboarding/>}/>
