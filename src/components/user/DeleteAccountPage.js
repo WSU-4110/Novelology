@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import trashIcon from '../../assets/trash-icon.png'; // Path to trash icon asset in src/assets
 import logoWithCircleBorder from '../../assets/logo_with_circle_border-removebg.png'; // Path to logo asset in src/assets
 
-
 // Page Container Style
 const pageContainerStyle = () => ({
+    backgroundColor: 'rgba(91, 46, 72, 1)', // Set background color here
     width: '100%',
-    minHeight: '100vh',
+    minHeight: '100vh', // Set minimum height to cover the entire viewport
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
