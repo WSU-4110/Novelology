@@ -3,7 +3,6 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, db } from '../firebase.js'; // Consolidated Firebase imports
 import { useNavigate } from "react-router-dom";
 import UploadPFP from '../components/shared/UploadPFP.js';
-import DeleteAccountModal from '../components/user/DeleteAccountModal.js';
 import { deleteDoc, doc, getDoc, updateDoc} from 'firebase/firestore';
 import { handleDeleteAccount } from '../functions/Auth.js';
 import SelectGenres from '../components/user/SelectGenres.js'
@@ -147,8 +146,6 @@ export default function Settings() {
     }
     };
     
-
-
     return (
         <div className="min-h-screen w-full bg-gray-100 flex justify-center pl-16 pr-16">
             <div className="w-full p-6 shadow-xl">
@@ -206,15 +203,10 @@ export default function Settings() {
     
                                 <button
                                     className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded mt-4"
-                                    onClick={() => setShowDeleteModal(true)}
-                                >
+                                    onClick={() => navigate('/delete-account')} >
+                                        
                                     Delete Account
                                 </button>
-                                <DeleteAccountModal
-                                    show={showDeleteModal}
-                                    onClose={() => setShowDeleteModal(false)}
-                                    onDelete={() => handleDeleteAccount(navigate)} // Pass a function reference
-                                />
                             </>
                         )}
                     </>
