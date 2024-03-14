@@ -1,7 +1,15 @@
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from '../firebase';
+import { handleLogout } from '../functions/Auth';
 
-const LoggedOutNavBar=()=> {
-  const handleClick=()=> {
+export default function NavigationBar() {
+  const navigate = useNavigate();
+  const [user] = useAuthState(auth);
+
+
+  const handleSignIn=()=> {
     window.location.href = '/sign_in';
   }
   document.addEventListener("DOMContentLoaded", function () {
@@ -15,6 +23,67 @@ const LoggedOutNavBar=()=> {
   
     return (
       <>
+      {user ? (
+        //When user is logged in
+        <div className="flex justify-center items-center px-16 py-1.0 w-full text-base whitespace-nowrap bg-maroon max-md:px-5 max-md:max-w-full">
+        <div className="flex gap-5 justify-between items-center w-full max-w-[1080px] max-md:flex-wrap max-md:max-w-full">
+          <img
+            loading="lazy"
+            srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&"
+            className="shrink-0 self-stretch aspect-[1.08] w-[85px]"
+          />
+          <div className="flex my-auto text-base gap-3">
+                 
+
+                 <check>
+                   <form class="flex flex-col gap-3 md:flex-row">
+                     <select
+                       id="searchType"
+                       name="searchType"
+                       class="w-1/5 h-10 border-2 border-maroon bg-lightcolor focus:outline-none focus:border-maroon text-black rounded-full px-2 md:px-3 py-0 md:py-1 tracking-wider"
+                     >
+                       <option value="All" selected="">
+                         All
+                       </option>
+                       <option value="User">User search</option>
+                       <option value="BookName">Book Name</option>
+                       <option value="ByGenre">Book by Genre</option>
+                       <option value="ByAuthor">Book by Author</option>
+                     </select>
+
+                     <div class="flex w-4/5 gap-2">
+                       <input
+                         type="text"
+                         id="search_input"
+                         className="bg-lightcolor border border-gray-300 text-gray-900 text-sm rounded-full 
+           focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
+           dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                         placeholder="Enter your search title"
+                       />
+
+                       <button
+                         type="submit"
+                         className="flex text-gray-900 bg-lightcolor border border-gray-300 focus:outline-none 
+           hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 
+           dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 
+           dark:focus:ring-gray-700"
+                       >
+                         Search
+                       </button>
+                     </div>
+                   </form>
+                   </check>
+          </div>
+          <button className="text-gray-900 bg-lightcolor border border-gray-300 focus:outline-none 
+            hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 
+            dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 
+            dark:focus:ring-gray-700" onClick={handleLogout}>
+            Sign Out
+          </button>
+        </div>
+      </div>
+      ):(
+        //When user is logged out
         <div className="flex flex-col bg-lightcolor">
           <div className="flex z-10 flex-col pb-0 w-full max-md:max-w-full">
             <div className="flex justify-center items-center px-16 py-1.0 w-full whitespace-nowrap bg-maroon max-md:px-5 max-md:max-w-full ">
@@ -27,19 +96,11 @@ const LoggedOutNavBar=()=> {
                     className="self-stretch aspect-[1.08] w-[85px]"
                   />
                   <div className="flex my-auto text-base gap-3">
-                    {/* <input
-                  type="text"
-                  id="search_input"
-                  className="bg-lightcolor border border-gray-300 text-gray-900 text-sm rounded-full 
-              focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
-              dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Enter your search title"
-                /> */}
+                   
 
                     <check>
-                      
                       <form class="flex flex-col gap-3 md:flex-row">
-                      <select
+                        <select
                           id="searchType"
                           name="searchType"
                           class="w-1/5 h-10 border-2 border-maroon bg-lightcolor focus:outline-none focus:border-maroon text-black rounded-full px-2 md:px-3 py-0 md:py-1 tracking-wider"
@@ -51,7 +112,6 @@ const LoggedOutNavBar=()=> {
                           <option value="BookName">Book Name</option>
                           <option value="ByGenre">Book by Genre</option>
                           <option value="ByAuthor">Book by Author</option>
-
                         </select>
 
                         <div class="flex w-4/5 gap-2">
@@ -63,9 +123,8 @@ const LoggedOutNavBar=()=> {
               dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="Enter your search title"
                           />
-                      
+
                           <button
-                            
                             type="submit"
                             className="flex text-gray-900 bg-lightcolor border border-gray-300 focus:outline-none 
               hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 
@@ -74,44 +133,9 @@ const LoggedOutNavBar=()=> {
                           >
                             Search
                           </button>
-
                         </div>
-                        
                       </form>
-                      {/* <form class="max-w-lg mx-auto">
-    <div class="flex">
-        <label for="search-dropdown" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Your Email</label>
-        <button id="dropdown-button" data-dropdown-toggle="dropdown" class="flex-shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600" type="button">All <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-  </svg></button> */}
 
-                      {/* <div id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-            <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
-            <li>
-                <button type="button" class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Mockups</button>
-            </li>
-            <li>
-                <button type="button" class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Templates</button>
-            </li>
-            <li>
-                <button type="button" class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Design</button>
-            </li>
-            <li>
-                <button type="button" class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Logos</button>
-            </li>
-            </ul>
-        </div>
-        <div class="relative w-full">
-            <input type="search" id="search-dropdown" class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-s-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500" placeholder="Search" required />
-            <button type="submit" class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                </svg>
-                <span class="sr-only">Search</span>
-            </button>
-        </div>
-    </div>
-</form> */}
                     </check>
                   </div>
                   <div className="flex gap-10 justify-between self-stretch my-auto text-xl text-white">
@@ -128,7 +152,7 @@ const LoggedOutNavBar=()=> {
               hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 
               dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 
               dark:focus:ring-gray-700"
-                      onClick={handleClick}
+                      onClick={handleSignIn}
                     >
                       {/* <Link to="/">Go to homepage</Link> */}
                       Sign in
@@ -150,8 +174,14 @@ const LoggedOutNavBar=()=> {
             </div>
           </div>
         </div>
+      )}
+        
+
+
+
+
+        
       </>
     );
 };
 
-export default LoggedOutNavBar;

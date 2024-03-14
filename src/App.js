@@ -10,7 +10,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import PrivateRoute from './components/routing/PrivateRoute';
 import SampleHome from './pages/sampleHome.js'
 import SignIn from './pages/Signin.js';
-import LoggedOutNavBar from "./components/LoggedOutNavBar.js";
+import NavigationBar from "./components/NavigationBar.js";
 import UserOnboarding from "./pages/userOnboarding.js";
 
 // Lazy-loaded components
@@ -33,7 +33,7 @@ const App = () => {
             {/* <LoggedOutNavBar /> */}
 
         <Suspense fallback={<FontAwesomeIcon icon={faSpinner} spin />}>
-          <Navbar />
+          <NavigationBar />
           <Routes className="flex">
             <Route path="/" element={<Home />} />
             <Route element={<PrivateRoute />}>

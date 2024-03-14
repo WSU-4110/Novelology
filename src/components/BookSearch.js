@@ -23,7 +23,7 @@ const BookSearch = () => {
             .then(res=>{
                 const num2 = res.data.totalItems;
                 if (num2 > 0) 
-              -      setBooksData(res.data.items)
+                    setBooksData(res.data.items)
                 else console.log('No results found.');
             }).catch(err=>console.log(err));
     }

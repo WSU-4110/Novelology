@@ -4,6 +4,11 @@ const Footer=()=>{
 
     return (
         <>
+        
+ 
+
+
+
         <div className="flex flex-col bg-lightcolor">
         <div className="flex flex-col items-end px-16 pt-10 pb-2.5 w-full bg-maroon max-md:px-5 max-md:max-w-full">
         <div className="mr-32 max-w-full w-[795px] max-md:mr-2.5">

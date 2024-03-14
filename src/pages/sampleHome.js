@@ -1,5 +1,5 @@
 import * as React from "react";
-import LoggedOutNavBar from "../components/LoggedOutNavBar.js";
+import LoggedOutNavBar from "../components/NavigationBar.js";
 import Footer from "../components/Footer.js";
 import { useNavigate } from 'react-router-dom';
 
