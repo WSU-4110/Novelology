@@ -53,7 +53,7 @@ const lockIconStyles = () => ({
 
 
 const labelStyles = () => ({
-  color: 'rgba(255, 255, 255, 1)',
+  color: 'white',
   fontFamily: 'Montserrat',
   fontSize: 24,
   margin: '10px 0',
