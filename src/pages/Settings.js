@@ -8,6 +8,8 @@ import { deleteDoc, doc, getDoc, updateDoc} from 'firebase/firestore';
 import { handleDeleteAccount } from '../functions/Auth.js';
 import SelectGenres from '../components/user/SelectGenres.js'
 import TextEditor from '../components/shared/TextEditor.js';
+import { updatePassword, reauthenticateWithCredential, reauthenticateWithRedirect, GoogleAuthProvider, EmailAuthProvider } from 'firebase/auth';
+import { getRedirectResult } from 'firebase/auth';
 
 import "../styles/settings.css";
 import RolesSelection from '../components/user/RolesSelection.js';
@@ -29,16 +31,21 @@ export default function Settings() {
     const [pronouns, setPronouns] = useState('');
     const [selectedRoles, setSelectedRoles] = useState([]);
 
+    //useEffect is called when the component is mounted
     useEffect(() => {
         const fetchUserData = async () => {
             try {
+                // Fetch user data from Firestore
                 const userDoc = doc(db, 'users', user.uid);
                 const docSnapshot = await getDoc(userDoc);
+
+                //if the document exists, set the user data to the document data
                 if (docSnapshot.exists()) {
                     const userDataFromSnapshot = docSnapshot.data();
                     setUserData(userDataFromSnapshot);
                     setPronouns(userDataFromSnapshot.pronouns || ''); // Set pronouns from Firestore
                     setCustomPronouns(userDataFromSnapshot.customPronouns || ''); // Set custom pronouns from Firestore
+                    setSelectedRoles(userDataFromSnapshot.role || []); // Set roles from Firestore
                     localStorage.setItem('userData', JSON.stringify(userDataFromSnapshot));
         
                     if (!newBio) {
@@ -71,8 +78,8 @@ export default function Settings() {
         }
     };
 
-
-
+    // This function is called when a role is selected or deselected
+    // It updates the selectedRoles state and the user's data in Firestore
       const handleRoleChange = (role) => {
         setSelectedRoles(prevRoles => {
             if (prevRoles.includes(role)) {
@@ -148,6 +155,63 @@ export default function Settings() {
     };
     
 
+    const handleChangePassword = async (currentPassword, newPassword, confirmPassword) => {
+        try {
+            // Check if new password and confirm password match
+            if (newPassword !== confirmPassword) {
+                throw new Error("New password and confirm password do not match.");
+            }
+    
+            // Get the current user
+            const currentUser = auth.currentUser;
+    
+            if (!currentUser) {
+                throw new Error("User is not authenticated.");
+            }
+    
+            // Prompt the user to reauthenticate before changing the password
+            let reauthCredential;
+            const providerId = currentUser.providerData[0].providerId;
+    
+            if (providerId === GoogleAuthProvider.PROVIDER_ID) {
+                // Reauthenticate with Google using redirect
+                const googleAuthProvider = new GoogleAuthProvider();
+                await reauthenticateWithRedirect(currentUser, googleAuthProvider);
+                await getRedirectResult(auth);
+            } else if (providerId === EmailAuthProvider.PROVIDER_ID) {
+                // Reauthenticate with email and password
+                const email = currentUser.email;
+                reauthCredential = EmailAuthProvider.credential(email, currentPassword);
+            } else {
+                // Unsupported provider
+                throw new Error("Unsupported provider for reauthentication.");
+            }
+    
+            // Reauthenticate user if needed
+            if (reauthCredential) {
+                await reauthenticateWithCredential(currentUser, reauthCredential);
+            }
+    
+            // Update the user's password using Firebase Auth
+            await updatePassword(currentUser, newPassword);
+    
+            // Display success message
+            console.log("Password changed successfully!");
+        } catch (error) {
+            console.error("Error changing password:", error.message);
+            if (error.code === "auth/wrong-password") {
+                console.error("Invalid current password.");
+            } else if (error.code === "auth/requires-recent-login") {
+                console.error("Reauthentication is required. Please sign in again.");
+            } else {
+                console.error("Unexpected error occurred while changing password.");
+                console.error("Error details:", error);
+            }
+        }
+    };
+    
+    
+
 
     return (
         <div className="min-h-screen w-full bg-gray-100 flex justify-center pl-16 pr-16">
@@ -160,9 +224,12 @@ export default function Settings() {
                         {userData && (
                             <>
                                 <h1 className='text-2xl font-bold m-4'>Your Bio:</h1>
-                                <TextEditor defaultValue={newBio} onChange={setNewBio} maxChars={500} />
+                                <TextEditor
+                                defaultValue={userData.bio}
+                                onChange={(content) => console.log('Content changed:', content)}
+                                maxChars={1000}
+                                />
 
-                                
                                 <PronounsDropdown
                                     pronouns={pronouns}
                                     setPronouns={setPronouns}
@@ -215,6 +282,22 @@ export default function Settings() {
                                     onClose={() => setShowDeleteModal(false)}
                                     onDelete={() => handleDeleteAccount(navigate)} // Pass a function reference
                                 />
+
+                                {/* Change Password*/}
+                                {user.providerData[0].providerId === EmailAuthProvider.PROVIDER_ID && (
+                                <div className="change-password-section">
+                                    <h1 className='text-2xl font-bold m-4'>Change Password:</h1>
+                                    <input type="password" id="currentPassword" className="border rounded p-2 mt-1" placeholder="Current Password" />
+                                    <input type="password" id="newPassword" className="border rounded p-2 mt-1" placeholder="New Password" />
+                                    <input type="password" id="confirmPassword" className="border rounded p-2 mt-1" placeholder="Confirm New Password" />
+                                    <button
+                                        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-4"
+                                        onClick={() => handleChangePassword(document.getElementById("currentPassword"), document.getElementById("newPassword").value, document.getElementById("confirmPassword").value)} 
+                                    > 
+                                    Change Password!
+                                    </button>
+                                </div>
+                            )}
                             </>
                         )}
                     </>
@@ -222,4 +305,4 @@ export default function Settings() {
             </div>
         </div>
     );
-                                    }    
+}

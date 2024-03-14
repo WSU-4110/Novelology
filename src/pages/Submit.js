@@ -1,10 +1,9 @@
 import { useAuthState } from 'react-firebase-hooks/auth';
 import {collection, addDoc, serverTimestamp} from 'firebase/firestore';
-import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import {ref, getDownloadURL,uploadBytesResumable } from "firebase/storage";
 import { useUploadFile } from 'react-firebase-hooks/storage';
 import {db,auth,storage} from '../firebase';
-import {useEffect, useRef, useState} from 'react';
+import { useRef, useState} from 'react';
 import FileRenderer, {getFileType} from '../components/shared/FileRenderer';
 import PostForm from '../components/Posts/PostForm';
 import { useNavigate } from "react-router-dom";
