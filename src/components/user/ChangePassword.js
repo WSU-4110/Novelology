@@ -14,7 +14,7 @@ const pageStyles = () => ({
 });
 
 const backgroundStyles = () => ({
-  backgroundColor: 'rgba(91, 46, 72, 1)',
+  backgroundColor: '#5B2E48',
   width: '100%',
   minHeight: '64rem', // Converted from 1024px
   display: 'flex',
@@ -69,7 +69,7 @@ const inputContainerStyles = () => ({
 });
 
 const inputStyles = () => ({
-  backgroundColor: '#ffffff',
+  backgroundColor: 'white',
   width: '20%', // Consider using max-width with rem for better responsiveness
   padding: '0.625rem 2.8125rem', // Converted from 10px padding and 45px for horizontal padding
   borderRadius: '1.25rem', // Converted from 20px
@@ -78,7 +78,7 @@ const inputStyles = () => ({
 });
 
 const buttonStyles = () => ({
-  backgroundColor: 'rgba(91, 46, 72, 1)',
+  backgroundColor: '#5B2E48',
   width: '30.625rem', // Converted from 490px, consider max-width for responsiveness
   display: 'flex',
   justifyContent: 'center',
