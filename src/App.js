@@ -11,6 +11,7 @@ import PrivateRoute from './components/routing/PrivateRoute';
 import ReaderProfilePage from './components/ReaderProfilePage';
 import AuthorProfilePage from './components/AuthorProfilePage';
 
+
 // Lazy-loaded components
 const SetUpAccount = React.lazy(() => import('./pages/SetUpAccount'));
 const Submit = React.lazy(() => import('./pages/Submit'));
@@ -48,11 +49,10 @@ const App = () => {
             <Route path="/search/*" element={<SearchResults />}>
               <Route path=":query" element={<SearchResults />} />
             </Route>
-
-
             <Route path="*" element={<Error />} />
             <Route path="/AuthorProfilePage" element={<AuthorProfilePage />} />
             <Route path="/ReaderProfilePage" element={<ReaderProfilePage />} />
+            
           </Routes>
         </Suspense>
       </Fragment>

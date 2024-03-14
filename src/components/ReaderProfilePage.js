@@ -145,7 +145,7 @@ function ReaderProfilePage(props) {
                           Chapter 35 of ATLA Was NOT It
                         </div>
                         <div className="mt-6 text-stone-500">
-                          t the end of second book, I thought it was obvious
+                          At the end of second book, I thought it was obvious
                           Thalia is the prophesied villain and the story might
                           take make a turn from there. But Rick Riordan
                           surprised me with this one, where a lot of new and
@@ -194,7 +194,7 @@ function ReaderProfilePage(props) {
                           Chapter 35 of ATLA Was NOT It
                         </div>
                         <div className="mt-6 text-stone-500">
-                          t the end of second book, I thought it was obvious
+                          At the end of second book, I thought it was obvious
                           Thalia is the prophesied villain and the story might
                           take make a turn from there. But Rick Riordan
                           surprised me with this one, where a lot of new and
@@ -234,7 +234,7 @@ function ReaderProfilePage(props) {
                       Chapter 35 of ATLA Was NOT It
                     </div>
                     <div className="mt-6 text-stone-500">
-                      t the end of second book, I thought it was obvious Thalia
+                      At the end of second book, I thought it was obvious Thalia
                       is the prophesied villain and the story might take make a
                       turn from there. But Rick Riordan surprised me with this
                       one, where a lot of new and awesome characters came in to
