@@ -4,25 +4,24 @@ import {collection} from 'firebase/firestore';
 import {db} from '../../firebase';
 import {useState} from 'react';
 import { useNavigate } from "react-router-dom";
-import Form,{FormGUI} from './Form';
+import {FormGUI} from './Form';
+import FormContext from './FormContext';
+import PostStrat from './PostStrat';
 
 function PostForm({user, selectedGenre, setSelectedGenre}) {
   const navigate = useNavigate()
   let messageRef = collection(db, 'posts')
  
   const [formValue, setFormValue] = useState('')
-  
-  const form = new Form(formValue, user,messageRef)
+
+  const postStrat = new PostStrat(formValue, user,messageRef, selectedGenre)
+  const formContext = new FormContext(postStrat)
   
   const sendMessage = async(e) =>{
     e.preventDefault()
     if (!user || (!formValue )) return
-		const payload = {
-    text: formValue || "", 
-    genres: selectedGenre,
-    }
-    form.setPayLoad(payload)
-    const result = form.sendMessage()
+
+    const result = formContext.sendMessage()
     setFormValue('')
     setSelectedGenre('')
     if (result){

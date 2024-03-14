@@ -7,7 +7,6 @@ class Form {
     constructor(formValue, user, messageRef,file){
 
     this.messageRef = messageRef
-    this.result = null
     this.payload = {
             text: formValue || "", 
             createdAt: serverTimestamp(),
@@ -18,13 +17,9 @@ class Form {
             fileName: ''
             }
         }
-   
-    sendMessage = async function(){
-        return this.result = await addDoc(this.messageRef,this.payload)
-       
-    }
-    setPayLoad = function(payload){
-        this.payload = Object.assign({}, this.payload, payload)
+    
+    async sendMessage(payload){
+       return await addDoc(this.messageRef,payload)
     }
 }
 
