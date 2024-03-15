@@ -157,8 +157,8 @@ export default function Settings() {
             const docSnapshot = await getDoc(usernameDoc);
             return !docSnapshot.exists(); // Return the availability of the username
         } catch (error) {
-            console.error('Error checking username availability:', error);
-            // You might want to handle the error differently here, e.g., return false or rethrow the error
+            // Log and return false if an error occurs
+            console.error('Error checking username availability:', error); 
             return false;
         }
     };
