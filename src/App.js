@@ -10,12 +10,13 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import PrivateRoute from './components/routing/PrivateRoute';
 import ReaderProfilePage from './components/ReaderProfilePage';
 import AuthorProfilePage from './components/AuthorProfilePage';
+import BookRating from './components/BookRating.js';
 
 import SampleHome from './pages/sampleHome.js'
 import SignIn from './pages/Signin.js';
 import NavigationBar from "./components/NavigationBar.js";
 import UserOnboarding from "./pages/UserOnboarding.js";
-
+import BookInfo from "./pages/BookInfo.js"
 // Lazy-loaded components
 const SetUpAccount = React.lazy(() => import('./pages/SetUpAccount'));
 const Submit = React.lazy(() => import('./pages/Submit'));
@@ -62,7 +63,8 @@ const App = () => {
             <Route path="/samplehome" element={<SampleHome showNavBar={true}/>}/>
           <Route path="/sign_in" element={<SignIn showNavBar={false}/>}/>
           <Route path="/onboarding" element={<UserOnboarding showNavBar={false}/>}/>
-
+          <Route path="/bookinfo" element={<BookInfo showNavBar={true}/>}/>
+          <Route path="/rating" element={<BookRating showNavBar={true}/>}/>
           
           </Routes>
         </Suspense>
