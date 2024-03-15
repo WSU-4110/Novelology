@@ -17,7 +17,7 @@ const ReportOptions = ({ onClose, postId }) => {
 
             if (!postDocSnap.exists()) {
                 console.error('Post not found');
-                toast.error('Error: Post not found.');
+                toast.error("We're sorry, but we couldn't find the post. Please try again later.");
                 return;
             }
 
@@ -30,7 +30,7 @@ const ReportOptions = ({ onClose, postId }) => {
             onClose();
         } catch (error) {
             console.error('Error reporting post:', error.message);
-            toast.error('Error reporting post: ' + error.message);
+            toast.error("We're sorry, but we couldn't report the post. Please try again later.");
         }
     };
 
