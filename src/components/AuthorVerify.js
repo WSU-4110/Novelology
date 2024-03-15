@@ -39,8 +39,8 @@ const AuthorVerify =() => {
           <img
             loading="lazy"
             srcSet={require("../assets/author-verify.png")}
-            style={{ height: "40em", width: "55em" }}
-            className="object-cover absolute inset-0 size-full"
+            // style={{ height: "40em", width: "55em" }}
+            className="object-cover absolute inset-0 size-full w-full"
           />
             {/* <img
               loading="lazy"
