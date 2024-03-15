@@ -120,36 +120,110 @@ const UploadPFP = () => {
       console.log('Profile picture deleted successfully.');
     } catch (error) {
       console.error('Error deleting profile picture:', error);
-      setError('Failed to delete profile picture. Please try again later.');
+      setError('Failed to delete profile picture.\nPlease try again later.');
     }
   };
 
   return (
-    <div className='flex flex-col'>
-      <label htmlFor="profilePicture" className="text-lg font-semibold mb-2">
-        Profile Picture
-      </label>
-      <input type="file" accept="image/*" id="profilePicture" onChange={handleChange} />
-      <button onClick={handleDeleteProfilePicture} className='bg-red-600 w-40 h-6 rounded-sm text-white mt-2'>Delete Profile Picture</button>
-     
-      <button onClick={handleUpload} className='bg-green-600 w-fit p-1 h-6 rounded-sm text-white'>Upload</button>
-      <h2>Current Profile Picture: </h2>
-      {existingProfilePicture ? (
-        <img
-          src={existingProfilePicture}
-          alt="Existing Profile"
-          className="w-36 h-36 max-w-36 max-h-36 rounded-full object-cover border border-gray-400 m-4"
-        />
-      ) : (
-        <img
-          src={defaultProfilePicture}
-          alt="Default Profile"
-          className="w-36 h-36 max-w-36 max-h-36 rounded-full object-cover border border-gray-400 m-4"
-        />
-      )}
-      
-      {error && <div>{error}</div>}
-    </div>
+    <>
+      <div className="flex flex-col items-center px-10 w-full bg-[linear-gradient(0deg,#F4F3EE_0%,#F4F3EE_100%,#89023E)] max-md:max-w-full">
+        <div className="flex flex-col rounded-lg shadow-2xl px-20 py-4 max-w-full text-center text-black shadow-sm bg-maroon bg-opacity-50 w-[569px] max-md:px-5">
+          <div className="self-center text-xl">Upload your profile picture</div>
+
+          <div className="flex gap-5 justify-between items-start mt-3 w-full text-xl whitespace-nowrap">
+            <div>
+              {existingProfilePicture ? (
+                <img
+                  src={existingProfilePicture}
+                  alt="Existing Profile"
+                  className="w-36 h-36 max-w-36 max-h-36 rounded-full object-cover border border-gray-400 m-4"
+                />
+              ) : (
+                <img
+                  src={defaultProfilePicture}
+                  alt="Default Profile"
+                  className="w-36 h-36 max-w-36 max-h-36 rounded-full object-cover border border-gray-400 m-4"
+                />
+              )}
+              <div>
+              <input
+              type="file"
+              accept="image/*"
+              id="profilePicture"
+              onChange={handleChange}
+              className="text-xs w-[150px]"
+            />
+            </div>
+            </div>
+            
+            <div className="flex flex-col flex-1 items-center mt-3">
+              <button className="justify-center text-lg self-stretch px-2.5 py-1 rounded-xl bg-maroon bg-opacity-70 hover:bg-opacity-50">
+                View Current Picture
+              </button>
+              
+              <button className="justify-center text-lg px-3 py-1 mt-3 rounded-xl bg-maroon bg-opacity-70 hover:bg-opacity-50"
+                onClick={handleUpload}
+              >
+                Upload picture
+              </button>
+              <button className="justify-center text-lg px-3 py-1 mt-2 rounded-xl bg-maroon bg-opacity-70 hover:bg-opacity-50"
+                onClick={handleDeleteProfilePicture}
+              >
+                Remove picture
+              </button>
+              {error && <div className="text-xs">{error}</div>}
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* <div className="flex">
+        <label htmlFor="profilePicture" className="text-lg font-semibold mb-2">
+          Profile Picture
+        </label>
+        <div className="flex flex-row">
+          <div>
+            <h2>Current Profile Picture: </h2>
+            {existingProfilePicture ? (
+              <img
+                src={existingProfilePicture}
+                alt="Existing Profile"
+                className="w-36 h-36 max-w-36 max-h-36 rounded-full object-cover border border-gray-400 m-4"
+              />
+            ) : (
+              <img
+                src={defaultProfilePicture}
+                alt="Default Profile"
+                className="w-36 h-36 max-w-36 max-h-36 rounded-full object-cover border border-gray-400 m-4"
+              />
+            )}
+          </div>
+          <div className="flex flex-col pt-12">
+            <input
+              type="file"
+              accept="image/*"
+              id="profilePicture"
+              onChange={handleChange}
+            />
+            <button
+              onClick={handleDeleteProfilePicture}
+              className="bg-red-600 w-40 h-6 rounded-sm text-white mt-2"
+            >
+              Delete Profile Picture
+            </button>
+
+            <button
+              onClick={handleUpload}
+              className="bg-green-600 w-fit p-1 h-6 rounded-sm text-white"
+            >
+              Upload
+            </button>
+          </div>
+        </div>
+        {error && <div>{error}</div>}
+      </div> */}
+    </>
   );
 };
 

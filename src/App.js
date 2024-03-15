@@ -14,7 +14,7 @@ import AuthorProfilePage from './components/AuthorProfilePage';
 import SampleHome from './pages/sampleHome.js'
 import SignIn from './pages/Signin.js';
 import NavigationBar from "./components/NavigationBar.js";
-import UserOnboarding from "./pages/userOnboarding.js";
+import UserOnboarding from "./pages/UserOnboarding.js";
 
 // Lazy-loaded components
 const SetUpAccount = React.lazy(() => import('./pages/SetUpAccount'));

@@ -4,26 +4,6 @@ function AuthorProfilePage(props) {
   return (
     <div className="flex flex-col bg-white">
       <div className="flex flex-col pb-6 w-full max-md:max-w-full">
-        <div className="flex justify-center items-center px-16 py-2.5 w-full text-base whitespace-nowrap bg-stone-700 max-md:px-5 max-md:max-w-full">
-          <div className="flex gap-5 justify-between items-center w-full max-w-[1080px] max-md:flex-wrap max-md:max-w-full">
-            <img
-              loading="lazy"
-              srcSet="..."
-              className="shrink-0 self-stretch aspect-[1.08] w-[85px]"
-            />
-            <div className="flex gap-5 justify-between self-stretch pr-6 my-auto max-md:flex-wrap max-md:max-w-full">
-              <div className="grow justify-center items-center px-16 py-2.5 my-auto rounded-3xl text-black text-opacity-60 w-fit max-md:px-5 max-md:max-w-full">
-                Enter your search title
-              </div>
-              <div className="justify-center px-4 py-4 font-light text-black rounded-3xl bg-[linear-gradient(0deg,#F4F3EE_0%,#F4F3EE_100%,#89023E)]">
-                Search
-              </div>
-            </div>
-            <div className="justify-center self-stretch px-2.5 py-4 my-auto font-light text-black rounded-3xl bg-[linear-gradient(0deg,#F4F3EE_0%,#F4F3EE_100%,#89023E)]">
-              Sign Out
-            </div>
-          </div>
-        </div>
         <div className="self-center w-full max-w-[1245px] max-md:max-w-full">
           <div className="flex gap-5 max-md:flex-col max-md:gap-0">
             <div className="flex flex-col w-[84%] max-md:ml-0 max-md:w-full">
@@ -41,7 +21,7 @@ function AuthorProfilePage(props) {
                   />
                 </div>
                 <div className="flex flex-col items-start self-end mt-8 max-w-full text-white w-[698px]">
-                  <div className="justify-center self-end py-2 text-sm rounded-xl border border-solid shadow-sm bg-stone-700 border-stone-400">
+                  <div className="justify-center self-end py-2 text-sm rounded-xl border border-solid shadow-sm bg-maroon border-stone-400">
                     Edit Profile
                   </div>
                   <div className="flex gap-3 mt-5 text-5xl font-medium text-black whitespace-nowrap max-md:text-4xl">
@@ -75,17 +55,7 @@ function AuthorProfilePage(props) {
         </div>
       </div>
       <div className="flex z-10 gap-0 mt-0 max-md:flex-wrap max-md:mt-0">
-        <div className="flex flex-col items-center px-5 pt-1-.5 pb-20 text-base font-medium text-center text-white whitespace-nowrap basis-0 bg-stone-700 max-md:hidden">
-          <div className="text-white">Home</div>
-          <div className="self-stretch mt-12 max-md:mt-10">
-            Create Feed Post
-          </div>
-          <div className="mt-12 max-md:mt-10">Profile</div>
-          <div className="mt-12 max-md:mt-10">Reader Q & A</div>
-          <div className="mt-12 max-md:mt-10">Bookmarks</div>
-          <div className="mt-12 max-md:mt-10">Book Lists</div>
-          <div className="mt-12 max-md:mt-10">Settings</div>
-        </div>
+        
         <div className="flex flex-col grow shrink-0 self-start basis-0 mt-[710px] w-fit max-md:mt-10 max-md:max-w-full">
           <div className="flex flex-col items-center px-16 pt-10 w-full max-md:px-5 max-md:max-w-full">
             <div className="flex flex-col items-center max-w-full w-[950px]">
@@ -138,7 +108,6 @@ function AuthorProfilePage(props) {
                   <div className="flex flex-col ml-5 w-6/12 max-md:ml-0 max-md:w-full">
                     <div className="flex flex-col grow max-md:mt-10 max-md:max-w-full">
                       <div className=" mt-14 text-black max-md:mt-10 max-md:max-w-full">
-                      {/* <div className="text-2xl font-medium text-black max-md:max-w-full"> */}
                         You Commented
                       </div>
                       <div className="flex flex-col pt-1 pr-8 pb-3.5 pl-3.5 mt-3.5 text-xl border border-black border-solid max-md:pr-5 max-md:max-w-full">
@@ -248,7 +217,7 @@ function AuthorProfilePage(props) {
           </div>
         </div>
       </div>
-      <div className="flex flex-col justify-center items-end px-16 py-11 w-full bg-stone-700 max-md:px-5 max-md:max-w-full">
+      <div className="flex flex-col justify-center items-end px-16 py-11 w-full bg-maroon max-md:px-5 max-md:max-w-full">
         <div className="mr-12 max-w-full w-[884px] max-md:mr-2.5">
           <div className="flex gap-5 max-md:flex-col max-md:gap-0">
             <div className="flex flex-col w-[77%] max-md:ml-0 max-md:w-full">
