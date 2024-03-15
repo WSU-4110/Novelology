@@ -5,8 +5,9 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../firebase';
 import { FaGoogle } from 'react-icons/fa';
 import { handleSignInWithPopup } from "../functions/Auth.js";
-
-function SignIn(props) {
+import NavigationBar from "../components/NavigationBar.js";
+function SignIn({showNavBar}) {
+  
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const emailRef = useRef();
@@ -24,11 +25,14 @@ function SignIn(props) {
   }
 
   return (
+    <>
+    {showNavBar && <NavigationBar />}
+
     <div className="flex justify-center items-center px-16 py-12 text-xl text-white bg-maroon max-md:px-5">
       <div className="flex flex-col mt-6 max-w-full w-[408px]">
         <img
           loading="lazy"
-          srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/d25d790574e3df554b28a714104332c4e0e3f822498eeb0c5217919ad744466d?apiKey=00dd8100ff0f48749da2736e824a4b02&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/d25d790574e3df554b28a714104332c4e0e3f822498eeb0c5217919ad744466d?apiKey=00dd8100ff0f48749da2736e824a4b02&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/d25d790574e3df554b28a714104332c4e0e3f822498eeb0c5217919ad744466d?apiKey=00dd8100ff0f48749da2736e824a4b02&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/d25d790574e3df554b28a714104332c4e0e3f822498eeb0c5217919ad744466d?apiKey=00dd8100ff0f48749da2736e824a4b02&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/d25d790574e3df554b28a714104332c4e0e3f822498eeb0c5217919ad744466d?apiKey=00dd8100ff0f48749da2736e824a4b02&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/d25d790574e3df554b28a714104332c4e0e3f822498eeb0c5217919ad744466d?apiKey=00dd8100ff0f48749da2736e824a4b02&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/d25d790574e3df554b28a714104332c4e0e3f822498eeb0c5217919ad744466d?apiKey=00dd8100ff0f48749da2736e824a4b02&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/d25d790574e3df554b28a714104332c4e0e3f822498eeb0c5217919ad744466d?apiKey=00dd8100ff0f48749da2736e824a4b02&"
+          srcSet= {require("../assets/novelology_newlogo.png")}
           className="self-center max-w-full aspect-[1.08] w-[184px]"
         />
         <div className="self-center mt-14 text-6xl whitespace-nowrap max-md:mt-10 max-md:text-4xl">
@@ -91,6 +95,7 @@ function SignIn(props) {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

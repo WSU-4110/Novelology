@@ -27,11 +27,12 @@ export default function NavigationBar() {
         //When user is logged in
         <div className="flex justify-center items-center px-16 py-1.0 w-full text-base whitespace-nowrap bg-maroon max-md:px-5 max-md:max-w-full">
         <div className="flex gap-5 justify-between items-center w-full max-w-[1080px] max-md:flex-wrap max-md:max-w-full">
-          <img
-            loading="lazy"
-            srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&"
-            className="shrink-0 self-stretch aspect-[1.08] w-[85px]"
-          />
+        <img
+                    loading="lazy"
+                    srcSet={require("../assets/novelology_newlogo.png")}
+                    style={{ height: "5em", width: "5em" }}
+                    className="self-stretch aspect-[1.08] w-[85px]"
+                  />
           <div className="flex my-auto text-base gap-3">
                  
 

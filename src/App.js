@@ -35,9 +35,9 @@ const App = () => {
           <img src={require('./assets/novelology_newlogo.png')} alt="Novelology Logo" style={{ height: '12em', width: '12em' }} />
         </div>
             {/* <LoggedOutNavBar /> */}
-
+          <Navbar />
         <Suspense fallback={<FontAwesomeIcon icon={faSpinner} spin />}>
-          <NavigationBar />
+          {/* <NavigationBar /> */}
           <Routes className="flex">
             <Route path="/" element={<Home />} />
             <Route element={<PrivateRoute />}>
@@ -51,7 +51,7 @@ const App = () => {
             <Route path="/login/" element={<Login />} />
             <Route path="/post/:pid" element={<Post />} />
             <Route path="/post" element={<Post />} />
-            <Route path="/author-verification" element={<AuthorVerification />} />
+            <Route path="/author-verification" element={<AuthorVerification showNavBar={false}/>} />
             <Route path="/search/*" element={<SearchResults />}>
               <Route path=":query" element={<SearchResults />} />
             </Route>
@@ -59,9 +59,9 @@ const App = () => {
             <Route path="/AuthorProfilePage" element={<AuthorProfilePage />} />
             <Route path="/ReaderProfilePage" element={<ReaderProfilePage />} />
             
-            <Route path="/samplehome" element={<SampleHome/>}/>
-          <Route path="/sign_in" element={<SignIn/>}/>
-          <Route path="/onboarding" element={<UserOnboarding/>}/>
+            <Route path="/samplehome" element={<SampleHome showNavBar={true}/>}/>
+          <Route path="/sign_in" element={<SignIn showNavBar={false}/>}/>
+          <Route path="/onboarding" element={<UserOnboarding showNavBar={false}/>}/>
 
           
           </Routes>

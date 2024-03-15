@@ -26,26 +26,28 @@ const AuthorVerify =() => {
         <div className="flex flex-col text-3xl bg-white">
           <div className="flex flex-col justify-center items-start px-16 py-px w-full text-white bg-maroon max-md:px-5 max-md:max-w-full">
             <div className="flex gap-5 justify-between ml-44 max-w-full w-[602px] max-md:flex-wrap">
-              <img
-                loading="lazy"
-                srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/eabf7fa138000be521e048f5607f8099eb7e4e3d0cc46262198a9593940f6779?apiKey=00dd8100ff0f48749da2736e824a4b02&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/eabf7fa138000be521e048f5607f8099eb7e4e3d0cc46262198a9593940f6779?apiKey=00dd8100ff0f48749da2736e824a4b02&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/eabf7fa138000be521e048f5607f8099eb7e4e3d0cc46262198a9593940f6779?apiKey=00dd8100ff0f48749da2736e824a4b02&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/eabf7fa138000be521e048f5607f8099eb7e4e3d0cc46262198a9593940f6779?apiKey=00dd8100ff0f48749da2736e824a4b02&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/eabf7fa138000be521e048f5607f8099eb7e4e3d0cc46262198a9593940f6779?apiKey=00dd8100ff0f48749da2736e824a4b02&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/eabf7fa138000be521e048f5607f8099eb7e4e3d0cc46262198a9593940f6779?apiKey=00dd8100ff0f48749da2736e824a4b02&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/eabf7fa138000be521e048f5607f8099eb7e4e3d0cc46262198a9593940f6779?apiKey=00dd8100ff0f48749da2736e824a4b02&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/eabf7fa138000be521e048f5607f8099eb7e4e3d0cc46262198a9593940f6779?apiKey=00dd8100ff0f48749da2736e824a4b02&"
-                className="shrink-0 aspect-[1.03] w-[97px]"
-              />
+            <img
+                    loading="lazy"
+                    srcSet={require("../assets/novelology_newlogo.png")}
+                    style={{ height: "3em", width: "3em" }}
+                    className="self-stretch aspect-[1.08] w-[85px]"
+                  />
               <div className="flex-auto my-auto pl-25">Author Verification</div>
             </div>
           </div>
           <div className="flex overflow-hidden relative flex-col justify-center w-full min-h-[928px] max-md:max-w-full">
-            <img
+          <img
+            loading="lazy"
+            srcSet={require("../assets/author-verify.png")}
+            style={{ height: "40em", width: "55em" }}
+            className="object-cover absolute inset-0 size-full"
+          />
+            {/* <img
               loading="lazy"
               srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/6dfbf193ca937b2b9f9ee5636a9e48ab1c63dd5b5f021f258027b29a81f49199?apiKey=00dd8100ff0f48749da2736e824a4b02&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/6dfbf193ca937b2b9f9ee5636a9e48ab1c63dd5b5f021f258027b29a81f49199?apiKey=00dd8100ff0f48749da2736e824a4b02&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/6dfbf193ca937b2b9f9ee5636a9e48ab1c63dd5b5f021f258027b29a81f49199?apiKey=00dd8100ff0f48749da2736e824a4b02&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/6dfbf193ca937b2b9f9ee5636a9e48ab1c63dd5b5f021f258027b29a81f49199?apiKey=00dd8100ff0f48749da2736e824a4b02&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/6dfbf193ca937b2b9f9ee5636a9e48ab1c63dd5b5f021f258027b29a81f49199?apiKey=00dd8100ff0f48749da2736e824a4b02&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/6dfbf193ca937b2b9f9ee5636a9e48ab1c63dd5b5f021f258027b29a81f49199?apiKey=00dd8100ff0f48749da2736e824a4b02&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/6dfbf193ca937b2b9f9ee5636a9e48ab1c63dd5b5f021f258027b29a81f49199?apiKey=00dd8100ff0f48749da2736e824a4b02&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/6dfbf193ca937b2b9f9ee5636a9e48ab1c63dd5b5f021f258027b29a81f49199?apiKey=00dd8100ff0f48749da2736e824a4b02&"
               className="object-cover absolute inset-0 size-full"
-            />
+            /> */}
             <div className="flex overflow-hidden relative flex-col items-center px-16 pt-14 pb-20 w-full min-h-[928px] max-md:px-5 max-md:max-w-full">
-              <img
-                loading="lazy"
-                srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/4c4541b8eb49e52e08cce45c1c891a739ece956b30a762eec0e82ed4a96928fc?apiKey=00dd8100ff0f48749da2736e824a4b02&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/4c4541b8eb49e52e08cce45c1c891a739ece956b30a762eec0e82ed4a96928fc?apiKey=00dd8100ff0f48749da2736e824a4b02&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/4c4541b8eb49e52e08cce45c1c891a739ece956b30a762eec0e82ed4a96928fc?apiKey=00dd8100ff0f48749da2736e824a4b02&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/4c4541b8eb49e52e08cce45c1c891a739ece956b30a762eec0e82ed4a96928fc?apiKey=00dd8100ff0f48749da2736e824a4b02&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/4c4541b8eb49e52e08cce45c1c891a739ece956b30a762eec0e82ed4a96928fc?apiKey=00dd8100ff0f48749da2736e824a4b02&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/4c4541b8eb49e52e08cce45c1c891a739ece956b30a762eec0e82ed4a96928fc?apiKey=00dd8100ff0f48749da2736e824a4b02&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/4c4541b8eb49e52e08cce45c1c891a739ece956b30a762eec0e82ed4a96928fc?apiKey=00dd8100ff0f48749da2736e824a4b02&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/4c4541b8eb49e52e08cce45c1c891a739ece956b30a762eec0e82ed4a96928fc?apiKey=00dd8100ff0f48749da2736e824a4b02&"
-                className="object-cover absolute inset-0 size-full"
-              />
               <div className="flex relative flex-col mb-20 max-w-full w-[929px] max-md:mb-10">
                 <div className="self-center text-black text-[1em] max-md:max-w-full">
                   Please verify your Author status

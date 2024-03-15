@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import NavigationBar from "../components/NavigationBar.js";
 // import { useNavigate } from "react-router-dom";
 // import { db, auth, storage } from "../../firebase.js"; 
 // import { getDoc, doc, setDoc } from "firebase/firestore"; // Import necessary Firestore functions
@@ -10,7 +11,9 @@ import BioTextArea from "../components/BioTextArea.js";
 
 import Footer from "../components/Footer.js";
 import SelectGenres from "../components/user/SelectGenres.js"
-function UserOnboarding() {
+function UserOnboarding({showNavBar}) {
+  {showNavBar && <NavigationBar />}
+
   const [bio, setBio] = useState("");
   const [fetchedProfilePicture, setFetchedProfilePicture] = useState(null);
   const [profilePicture, setProfilePicture] = useState(null); 
@@ -32,11 +35,7 @@ function UserOnboarding() {
       <div className="flex flex-col bg-white">
         <div className="flex flex-col justify-center items-start px-16 py-2.5 w-full text-3xl text-white bg-maroon max-md:px-5 max-md:max-w-full">
           <div className="flex gap-5 justify-between ml-32 max-w-full w-[648px] max-md:flex-wrap">
-            <img
-              loading="lazy"
-              srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/90804d6ee9d466025c14df08fa70f00a89bb57ba3311e6facbb8d5175ed0b010?apiKey=00dd8100ff0f48749da2736e824a4b02&"
-              className="shrink-0 aspect-[1.08] w-[85px]"
-            />
+            
             <div className="flex justify-center items-center">
               User Onboarding
             </div>
