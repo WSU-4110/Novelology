@@ -18,9 +18,8 @@ const handleCustomPronounsChange = (e) => {
 
 
   return (
-    <div>
+    <div className="flex flex-row gap-2">
       <label htmlFor="pronouns" className="block">
-        Select your pronouns
       </label>
       <select
         id="pronouns"
@@ -39,7 +38,7 @@ const handleCustomPronounsChange = (e) => {
       {pronouns === "Other" && (
         <input
           type="text"
-          className="w-full p-2 mt-2 border rounded"
+          className="w-full text-xs p-2 mt-2 border rounded"
           placeholder="Enter your pronouns"
           value={customPronouns}
           onChange={handleCustomPronounsChange}
