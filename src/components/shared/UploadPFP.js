@@ -112,7 +112,7 @@ const UploadPFP = () => {
 
     const userId = auth.currentUser.uid;
     const storage = getStorage();
-    const profilePictureRef = ref(storage, `users/${userId}/profilePicture`);
+    const profilePictureRef = ref(storage, `users/${userId}/profilePicture.jpg`);
 
     try {
       await deleteObject(profilePictureRef);
