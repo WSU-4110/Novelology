@@ -87,6 +87,14 @@ const OptionsModal = ({ isMuted, toggleMute, reportUser, onClose }) => {
 
 
 const handleToggleFollow = ({ isFollowing, toggleFollow, visibility, requestFollow, targetUserId, hasRequested }) => {
+  
+  console.log('Has Requested:', hasRequested); // Add this line to check the value
+
+  if (hasRequested === false) {
+      console.log('Requesting to follow');
+      requestFollow(targetUserId);
+  }
+
   return () => {
       if (visibility === 'public') {
           toggleFollow();
@@ -104,25 +112,18 @@ const FollowButton = ({ isFollowing, toggleFollow, visibility, requestFollow, ta
   const [hasRequested, setHasRequested] = useState(false);
 
   useEffect(() => {
-    const checkRequested = async () => {
-        const currentUserDocRef = doc(db, 'users', auth.currentUser.uid);
-        const currentUserDoc = await getDoc(currentUserDocRef);
-        if (currentUserDoc.exists()) {
-            const currentUserData = currentUserDoc.data();
-            console.log("requested", currentUserData.requested);
-            const requested = currentUserData.requested && currentUserData.requested.includes("ptoiITfuqiOSGu4YSy2aqjXQJP03");
-          console.log('Hardcoded check, Has Requested:', requested);
-          setHasRequested(requested);
+      const checkRequested = async () => {
+          const currentUserDocRef = doc(db, 'users', auth.currentUser.uid);
+          const currentUserDoc = await getDoc(currentUserDocRef);
+          if (currentUserDoc.exists()) {
+              const currentUserData = currentUserDoc.data();
+              const requested = currentUserData.requested && currentUserData.requested.includes(targetUserId);
+              setHasRequested(requested);
+          }
+      };
 
-
-
-            console.log('Has Requested:', requested); // Add this line to check the value
-        }
-    };
-
-    checkRequested();
-}, [targetUserId]);
-
+      checkRequested();
+  }, [targetUserId, requestFollow]); // Add requestFollow as a dependency
 
   let buttonText = 'Follow';
   if (isFollowing) {
@@ -136,7 +137,7 @@ const FollowButton = ({ isFollowing, toggleFollow, visibility, requestFollow, ta
   return (
       <button
           className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}
-          onClick={() => handleToggleFollow({ isFollowing, toggleFollow, visibility, requestFollow, targetUserId })}
+          onClick={() => handleToggleFollow({ isFollowing, toggleFollow, visibility, requestFollow, targetUserId, hasRequested })}
       >
           {buttonText}
       </button>
