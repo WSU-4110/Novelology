@@ -61,7 +61,7 @@ const Profile = () => {
 
     const defaultProfilePicture = require('../assets/default-profile-picture.jpg');
 
-    console.log('userData:', userData); // Log userData to inspect its structure
+    // console.log('userData:', userData); // Log userData to inspect its structure
 
     return (
         <div className="profile-container bg-purple-100 p-8 rounded-lg shadow-md">

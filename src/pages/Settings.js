@@ -4,12 +4,13 @@ import { auth, db } from '../firebase.js'; // Consolidated Firebase imports
 import { useNavigate } from "react-router-dom";
 import UploadPFP from '../components/shared/UploadPFP.js';
 import DeleteAccountModal from '../components/user/DeleteAccountModal.js';
-import { deleteDoc, doc, getDoc, updateDoc} from 'firebase/firestore';
+import { deleteDoc, doc, getDoc, updateDoc, setDoc} from 'firebase/firestore';
 import { handleDeleteAccount } from '../functions/Auth.js';
 import SelectGenres from '../components/user/SelectGenres.js'
 import TextEditor from '../components/shared/TextEditor.js';
 import { updatePassword, reauthenticateWithCredential, reauthenticateWithRedirect, GoogleAuthProvider, EmailAuthProvider } from 'firebase/auth';
 import { getRedirectResult } from 'firebase/auth';
+import { toast } from 'react-toastify';
 
 import "../styles/settings.css";
 import RolesSelection from '../components/user/RolesSelection.js';
@@ -110,48 +111,56 @@ export default function Settings() {
     }
     
 
+    const handleUsernameChangeRequest = async () => {
+        try {
+            const isAvailable = await checkUsernameAvailability();
+    
+            if (isAvailable) {
+                // Check if the user has an existing username and delete it from the usernames collection
+                if (userData && userData.username) {
+                    await deleteDoc(doc(db, 'usernames', userData.username.toLowerCase()));
+                }
+
+                // Update user's data in Firestore to include the desired username
+                await updateDoc(doc(db, 'users', user.uid), {
+                    username: desiredUsername
+                });
+    
+ 
+    
+                // Add the new username to the usernames collection
+                await setDoc(doc(db, 'usernames', desiredUsername.toLowerCase()), {
+                    uid: user.uid
+                });
+    
+                // Update local state with the new username
+                setUserData({ ...userData, username: desiredUsername });
+    
+                setShowSavedMessage(true);
+                setTimeout(() => {
+                    setShowSavedMessage(false);
+                }, 2000);
+            } else {
+                console.error('Username not available');
+                toast.error('Username not available');
+            }
+        } catch (error) {
+            console.error('Error requesting username change:', error);
+            toast.error('Error requesting username change');
+        }
+    };
+    
+    
     const checkUsernameAvailability = async () => {
         try {
             const usernameDoc = doc(db, 'usernames', desiredUsername.toLowerCase());
             const docSnapshot = await getDoc(usernameDoc);
-            setUsernameAvailability(!docSnapshot.exists()); // Update username availability state based on snapshot
+            return !docSnapshot.exists(); // Return the availability of the username
         } catch (error) {
-            console.error('Username not availible', error);
+            // Log and return false if an error occurs
+            console.error('Error checking username availability:', error); 
+            return false;
         }
-    };
-
-    const handleUsernameChangeRequest = async () => {
-
-        checkUsernameAvailability();
-
-        if (usernameAvailability == true) {
-
-        try {
-            // Update user's data in Firestore to include the desired username
-            await updateDoc(doc(db, 'users', user.uid), {
-                username: desiredUsername // Update the username field directly
-            });
-
-            
-            // Remove the old username from the usernames collection
-            await deleteDoc(doc(db, 'usernames', userData.username.toLowerCase()));
-
-            // Add the username to the usernames collection
-            await updateDoc(doc(db, 'usernames', desiredUsername.toLowerCase()), {
-                uid: user.uid
-            });
-
-
-            setShowSavedMessage(true);
-            setTimeout(() => {
-                setShowSavedMessage(false);
-            }, 2000);
-        } catch (error) {
-            console.error('Error requesting username change:', error);
-        }
-    } else {
-        console.error('Username not availible');
-    }
     };
     
 
