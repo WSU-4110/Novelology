@@ -113,6 +113,12 @@ export default function Settings() {
 
     const handleUsernameChangeRequest = async () => {
         try {
+
+            // Ensure desiered username is text only, no special characters, no spaces, etc
+            if (!desiredUsername.match(/^[a-zA-Z0-9_]*$/)) {
+                throw new Error('Username can only contain letters, numbers, and underscores.');
+            }
+
             const isAvailable = await checkUsernameAvailability();
     
             if (isAvailable) {
@@ -146,7 +152,7 @@ export default function Settings() {
             }
         } catch (error) {
             console.error('Error requesting username change:', error);
-            toast.error('Error requesting username change');
+            toast.error('Username is taken, or is invalid.');
         }
     };
     
