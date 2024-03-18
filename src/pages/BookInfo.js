@@ -1,14 +1,26 @@
-import React from 'react';
+import React, {useState,useEffect} from 'react';
 import NavigationBar from '../components/NavigationBar';
 import BookRating from '../components/BookRating';
 import {useParams} from 'react-router-dom';
 import { SearchISBN } from '../components/shared/SearchISBN';
+
 export default function BookInfo({showNavBar}){
   const { isbn } = useParams(); 
-  console.log("isbn from BookInfo: ",isbn);
+  const [rating, setRating] = useState(null);
   const bookData = SearchISBN(isbn);
-  console.log("booksData from BookInfo: ",bookData);
-  console.log("bookLength:",bookData.length);
+  if (bookData.length == 0){
+    console.log("Error: Book Not Available (BookLength=0)")
+  }
+
+  const handleChangeInRating = (currentRating) => {
+    setRating(currentRating);
+  }
+  useEffect(() => {
+    console.log("rating from bookinfo: " + rating);
+
+  },[rating])
+
+
   // let thumbnail = bookData.volumeInfo.imageLinks && bookData.volumeInfo.imageLinks.smallThumbnail;
 
     return (
@@ -106,7 +118,7 @@ export default function BookInfo({showNavBar}){
             </div>
             <div id="user-rating" className="pt-8">
               <p className="font-semibold text-center">Your Rating</p>
-              <BookRating />
+              <BookRating RatingChange={handleChangeInRating}/>
             </div>
             <div>
               <div className="flex flex-row justify-center border-y-2 border-black mt-10 py-2 w-[58em]">

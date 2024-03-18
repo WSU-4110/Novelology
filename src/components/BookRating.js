@@ -1,9 +1,21 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {FaStar} from 'react-icons/fa';
-export default function BookRating(){
+
+export default function BookRating({RatingChange}){
     const [rating,setRating] = useState(null);
     const [hover,setHover] = useState(null);
     const [totalStars,setTotalStars] = useState(5);
+    
+    const handleRatingChange=(currentRating) =>{
+        setRating(currentRating);
+        RatingChange(currentRating);
+
+    }
+    useEffect(()=>{
+        console.log("rating from bookrating: " + rating);
+
+    },[rating]
+    )
 
     return(
         <>
@@ -17,7 +29,7 @@ export default function BookRating(){
                             name="rating"
                             className='hidden'
                             value={currentRating}
-                            onClick={() => setRating(currentRating)}
+                            onClick={() => handleRatingChange(currentRating)}
                         />
                         <FaStar 
                         className='cursor-pointer'
