@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { doc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
+import { doc, updateDoc, arrayUnion, arrayRemove, getDoc, collection } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 import { FaInfoCircle, FaUser, FaEllipsisV } from 'react-icons/fa';
 import fetchPFP from '../functions/fetchPFP';
@@ -9,6 +9,7 @@ import MiniUserCard from '../components/user/MiniUserCard';
 import DOMPurify from 'dompurify';
 import { toast } from 'react-toastify';
 import ReactDOM from 'react-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 
 const OptionsModal = ({ isMuted, toggleMute, reportUser, onClose }) => {
@@ -30,17 +31,48 @@ const OptionsModal = ({ isMuted, toggleMute, reportUser, onClose }) => {
     );
   };
   
+  const requestFollow = async (targetUserId) => {
+      try {
+          console.log("targetUserId", targetUserId);
+          const userRef = doc(db, "users", targetUserId)
+          await userRef.update({
+              notifications: db.arrayUnion({
+                  type: 'follow_request',
+                  fromUserId: auth.currentUser.uid,
+                  fromUsername: auth.currentUser.username,
+                  timestamp: new Date()
+              })
+          });
+          console.log('Follow request sent successfully');
+          toast.success('Follow request sent successfully.');
+      } catch (error) {
+          console.error('Error sending follow request:', error);
+      }
+    };
 
-const FollowButton = ({ isFollowing, toggleFollow }) => {
+
+  const handleToggleFollow = ({isFollowing, toggleFollow, visibility, requestFollow}) => {
+    return () => {
+        if (visibility === 'public') {
+            toggleFollow();
+        } else { // User is private
+            // Show a modal to request to follow
+            requestFollow();
+        }
+    };
+};
+
+const FollowButton = ({ isFollowing, toggleFollow, visibility, requestFollow }) => {
     return (
         <button
             className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}
-            onClick={toggleFollow}
+            onClick={handleToggleFollow({isFollowing, toggleFollow, visibility, requestFollow})}
         >
             {isFollowing ? 'Unfollow' : 'Follow'}
         </button>
     );
 };
+
 
 const UserPage = () => {
     const { username } = useParams();
@@ -282,113 +314,145 @@ const UserPage = () => {
         toast.info('Reported user.');
       };
 
-    return (
+      return (
         <div className="max-w-md mx-auto p-4 bg-white rounded-lg shadow-md relative">
             {userData ? (
-                <div>
-                    <h2 className="text-3xl font-semibold mb-4"><span className="text-blue-400">@</span> {userData.username}</h2>
-                    <div className="mr-8">
-                                    <img 
-                                    src={profilePictureURL || defaultProfilePicture} 
-                                    alt="Profile" 
-                                    className="w-24 h-24 rounded-full" 
-                                  />
+                userData.visibility === "public" || isFollowing ? (
+                    <div>
+                        <h2 className="text-3xl font-semibold mb-4"><span className="text-blue-400">@</span> {userData.username}</h2>
+                        <div className="mr-8">
+                            <img 
+                                src={profilePictureURL || defaultProfilePicture} 
+                                alt="Profile" 
+                                className="w-24 h-24 rounded-full" 
+                            />
+                        </div>
+    
+                        <div id='portal'>
+                            <button className="relative top-4 right-4" onClick={() => setShowOptionsModal(!showOptionsModal)}>
+                                <FaEllipsisV />
+                            </button> 
+                            {showOptionsModal && (
+                                <OptionsModal
+                                    isMuted={isMuted}
+                                    toggleMute={toggleMute}
+                                    reportUser={reportUser}
+                                    onClose={() => setShowOptionsModal(false)}
+                                />
+                            )}
+                            {userData.bio ? (
+                                <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(userData.bio) }} />
+                            ) : (
+                                <p className="mb-2">
+                                    <FaInfoCircle className="inline-block mr-2" />
+                                    <span className="font-semibold">Bio:</span> 
+                                    <span className="text-orange-500">No bio provided</span>
+                                </p>
+                            )}
+                            {userData.pronouns && <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">Pronouns:</span> {userData.pronouns}</p>}
+                            
+                            <div className="flex justify-between mb-4">
+                                <div>
+                                    <button
+                                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                        onClick={toggleFollowers}
+                                    >
+                                        <p className="font-semibold"><FaUser className="inline-block mr-2" /> Followers: {followersCount}</p>
+                                    </button>
+    
+                                    {showFollowers && (
+                                        <div className="mt-2 max-h-48 overflow-y-auto">
+                                            <ul className="list-none">
+                                                {followers.map((followerId, index) => (
+                                                    <li key={index} className="mb-2">
+                                                        <MiniUserCard userId={followerId} />
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+                                </div>
+    
+                                <div>
+                                    <button
+                                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                        onClick={toggleFollowing}
+                                    >
+                                        <p className="font-semibold"><FaUser className="inline-block mr-2" /> Following: {followingCount}</p>
+                                    </button>
+    
+                                    {showFollowing && (
+                                        <div className="mt-2 max-h-48 overflow-y-auto">
+                                            <ul className="list-none">
+                                                {following.map((followingId, index) => (
+                                                    <li key={index} className="mb-2">
+                                                        <MiniUserCard userId={followingId} />
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+    
+                            {userData.role && userData.role.length > 0 && (
+                                <div className="mb-2">
+                                    <p><strong>Roles:</strong></p>
+                                    <ul className="list-disc ml-4">
+                                        {userData.role.map((role, index) => (
+                                            <li key={index} className="inline-block mr-2 mb-2">
+                                                <span className="bg-purple-200 text-purple-700 py-1 px-3 rounded-full text-sm">
+                                                    {role}
+                                                </span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+                        </div>
+                        {auth.currentUser && auth.currentUser.uid !== userData.uid && (
+                            <FollowButton 
+                                isFollowing={isFollowing} 
+                                toggleFollow={toggleFollow} 
+                                visibility={userData.visibility} 
+                                requestFollow={() => requestFollow(userData.uid)} 
+                            />
+                        )}
 
                     </div>
-
-                    <div id='portal'>
-
-                    <button className="relative top-4 right-4" onClick={() => setShowOptionsModal(!showOptionsModal)}>
-                        <FaEllipsisV />
-                    </button> 
-                    {showOptionsModal && (
-                        <OptionsModal
-                        isMuted={isMuted}
-                        toggleMute={toggleMute}
-                        reportUser={reportUser}
-                        onClose={() => setShowOptionsModal(false)}
-                        />
-                    )}
-                    {userData.bio ? (
-                            <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(userData.bio) }} />
-                        ) : (
-                            <p className="mb-2">
-                                <FaInfoCircle className="inline-block mr-2" />
-                                <span className="font-semibold">Bio:</span> 
-                                <span className="text-orange-500">No bio provided</span>
-                            </p>
-                        )}
-                        {userData.pronouns && <p className="mb-2"><FaInfoCircle className="inline-block mr-2" /><span className="font-semibold">Pronouns:</span> {userData.pronouns}</p>}
+                ) : (
+                    // User is private
+                    <div>
+                        <p className="text-red-500">This user's profile is private.</p>
+                        <h2 className="text-3xl font-semibold mb-4"><span className="text-blue-400">@</span> {userData.username}</h2>
+                        <div className="mr-8">
+                            <img 
+                                src={profilePictureURL || defaultProfilePicture} 
+                                alt="Profile" 
+                                className="w-24 h-24 rounded-full" 
+                            />
+                        </div>
+                        <FontAwesomeIcon icon="lock" className="text-red-500" />
                         
-                        <div className="flex justify-between mb-4">
-                            <div>
-                                <button
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                                onClick={toggleFollowers}
-                                >
-                                <p className="font-semibold"><FaUser className="inline-block mr-2" /> Followers: {followersCount}</p>
-                                </button>
+                        {/* Follow button to request to follow */}
+                        {auth.currentUser && auth.currentUser.uid !== userData.uid && (
+                          <FollowButton 
+                              isFollowing={isFollowing} 
+                              toggleFollow={toggleFollow} 
+                              visibility={userData.visibility} 
+                              requestFollow={() => requestFollow(userData.uid)} 
+                          />
+                      )}
 
-                                {showFollowers && (
-                                <div className="mt-2 max-h-48 overflow-y-auto">
-                                    <ul className="list-none">
-                                    {followers.map((followerId, index) => (
-                                        <li key={index} className="mb-2">
-                                        <MiniUserCard userId={followerId} />
-                                        </li>
-                                    ))}
-                                    </ul>
-                                </div>
-                                )}
-                            </div>
-
-                            <div>
-                                <button
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                                onClick={toggleFollowing}
-                                >
-                                <p className="font-semibold"><FaUser className="inline-block mr-2" /> Following: {followingCount}</p>
-                                </button>
-
-                                {showFollowing && (
-                                <div className="mt-2 max-h-48 overflow-y-auto">
-                                    <ul className="list-none">
-                                    {following.map((followingId, index) => (
-                                        <li key={index} className="mb-2">
-                                        <MiniUserCard userId={followingId} />
-                                        </li>
-                                    ))}
-                                    </ul>
-                                </div>
-                                )}
-                            </div>
-                            </div>
-
-                                            
-                        {userData.role && userData.role.length > 0 && (
-                            <div className="mb-2">
-                                <p><strong>Roles:</strong></p>
-                                <ul className="list-disc ml-4">
-                                    {userData.role.map((role, index) => (
-                                        <li key={index} className="inline-block mr-2 mb-2">
-                                            <span className="bg-purple-200 text-purple-700 py-1 px-3 rounded-full text-sm">
-                                                {role}
-                                            </span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
                     </div>
-                    {auth.currentUser && auth.currentUser.uid !== userData.uid && (
-                        <FollowButton isFollowing={isFollowing} toggleFollow={toggleFollow} />
-                    )}
-                </div>
+                )
             ) : (
+                // If userData not found
                 <p className="text-red-500">User data not found.</p>
             )}
         </div>
     );
-};
+            }
+              
 
 export default UserPage;
