@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { doc, updateDoc, arrayUnion, arrayRemove, getDoc, collection } from 'firebase/firestore';
+import { doc, updateDoc, arrayUnion, arrayRemove, getDoc, collection, addDoc} from 'firebase/firestore';
 import { db, auth } from '../firebase';
 import { FaInfoCircle, FaUser, FaEllipsisV } from 'react-icons/fa';
 import fetchPFP from '../functions/fetchPFP';
@@ -32,32 +32,38 @@ const OptionsModal = ({ isMuted, toggleMute, reportUser, onClose }) => {
   };
   
   const requestFollow = async (targetUserId) => {
-      try {
-          console.log("targetUserId", targetUserId);
-          const userRef = doc(db, "users", targetUserId)
-          await userRef.update({
-              notifications: db.arrayUnion({
-                  type: 'follow_request',
-                  fromUserId: auth.currentUser.uid,
-                  fromUsername: auth.currentUser.username,
-                  timestamp: new Date()
-              })
-          });
-          console.log('Follow request sent successfully');
-          toast.success('Follow request sent successfully.');
-      } catch (error) {
-          console.error('Error sending follow request:', error);
-      }
-    };
+    try {
+        const currentUserDocRef = doc(db, "users", auth.currentUser.uid);
+        const currentUserDoc = await getDoc(currentUserDocRef);
+
+        if (currentUserDoc.exists()) {
+            const currentUserData = currentUserDoc.data();
+            const notificationsRef = collection(db, "users", targetUserId, "notifications");
+            await addDoc(notificationsRef, {
+                type: 'follow_request',
+                fromUserId: auth.currentUser.uid,
+                fromUsername: currentUserData.username, // Use the username from the document data
+                timestamp: new Date()
+            });
+            console.log('Follow request sent successfully');
+            toast.success('Follow request sent successfully.');
+        } else {
+            console.error("Current user's document does not exist");
+        }
+    } catch (error) {
+        console.error('Error sending follow request:', error);
+    }
+};
 
 
-  const handleToggleFollow = ({isFollowing, toggleFollow, visibility, requestFollow}) => {
+
+  const handleToggleFollow = ({isFollowing, toggleFollow, visibility, requestFollow, targetUserId}) => {
     return () => {
         if (visibility === 'public') {
             toggleFollow();
         } else { // User is private
             // Show a modal to request to follow
-            requestFollow();
+            requestFollow(targetUserId);
         }
     };
 };
@@ -90,48 +96,52 @@ const UserPage = () => {
     const [showOptionsModal, setShowOptionsModal] = useState(false);
     const [followersFetched, setFollowersFetched] = useState(false);
     const [followingFetched, setFollowingFetched] = useState(false);
+    const [uid, setUID] = useState(null);
 
 
     useEffect(() => {
-        const fetchUserData = async () => {
+      const fetchUserData = async () => {
           try {
-            setIsLoading(true);
-      
-            // Fetch UID using username
-            const uid = await fetchUIDwithUsername(username);
-            if (!uid) throw new Error(`No UID found for username: ${username}`);
-      
-            // Fetch user data using UID
-            const userRef = doc(db, 'users', uid);
-            const userSnapshot = await getDoc(userRef);
-      
-            if (userSnapshot.exists()) {
-              const userData = userSnapshot.data();
-              setUserData(userData);
-      
-              // Fetch profile picture using fetchPFP function with the obtained UID
-              const fetchedProfilePicture = await fetchPFP(uid);
-              setProfilePictureURL(fetchedProfilePicture || require('../assets/default-profile-picture.jpg'));
-      
-              setFollowersCount(userData.followers?.length || 0);
-              setFollowingCount(userData.following?.length || 0);
-      
-              const currentUser = auth.currentUser;
-              setIsFollowing(currentUser && userData.followers?.includes(currentUser.uid));
-            } else {
-              console.error('User document not found for username:', username);
-              setUserData(undefined); // Handle not found case
-            }
+              setIsLoading(true);
+  
+              // Fetch UID using username
+              const fetcheduid = await fetchUIDwithUsername(username);
+              if (!fetcheduid) throw new Error(`No UID found for username: ${username}`);
+  
+              setUID(fetcheduid);
+  
+              // Fetch user data using UID
+              const userRef = doc(db, 'users', fetcheduid);
+              const userSnapshot = await getDoc(userRef);
+  
+              if (userSnapshot.exists()) {
+                  const userData = userSnapshot.data();
+                  setUserData(userData);
+  
+                  // Fetch profile picture using fetchPFP function with the obtained UID
+                  const fetchedProfilePicture = await fetchPFP(fetcheduid);
+                  setProfilePictureURL(fetchedProfilePicture || require('../assets/default-profile-picture.jpg'));
+  
+                  setFollowersCount(userData.followers?.length || 0);
+                  setFollowingCount(userData.following?.length || 0);
+  
+                  const currentUser = auth.currentUser;
+                  setIsFollowing(currentUser && userData.followers?.includes(currentUser.uid));
+              } else {
+                  console.error('User document not found for username:', username);
+                  setUserData(undefined); // Handle not found case
+              }
           } catch (error) {
-            console.error('Error fetching user data:', error);
-            setUserData(undefined); // Set userData to undefined on error
+              console.error('Error fetching user data:', error);
+              setUserData(undefined); // Set userData to undefined on error
           } finally {
-            setIsLoading(false);
+              setIsLoading(false);
           }
-        };
-      
-        fetchUserData();
-      }, [username]);
+      };
+  
+      fetchUserData();
+  }, [username]);
+  
       
     
       useEffect(() => {
@@ -410,48 +420,47 @@ const UserPage = () => {
                                 </div>
                             )}
                         </div>
-                        {auth.currentUser && auth.currentUser.uid !== userData.uid && (
-                            <FollowButton 
-                                isFollowing={isFollowing} 
-                                toggleFollow={toggleFollow} 
-                                visibility={userData.visibility} 
-                                requestFollow={() => requestFollow(userData.uid)} 
-                            />
-                        )}
+                        {auth.currentUser && auth.currentUser.uid !== userData?.uid && userData?.uid && (
+    <FollowButton
+        isFollowing={isFollowing}
+        toggleFollow={toggleFollow}
+        visibility={userData.visibility}
+        requestFollow={() => requestFollow(uid)}
+    />
+)}
+
 
                     </div>
                 ) : (
-                    // User is private
-                    <div>
-                        <p className="text-red-500">This user's profile is private.</p>
-                        <h2 className="text-3xl font-semibold mb-4"><span className="text-blue-400">@</span> {userData.username}</h2>
-                        <div className="mr-8">
-                            <img 
-                                src={profilePictureURL || defaultProfilePicture} 
-                                alt="Profile" 
-                                className="w-24 h-24 rounded-full" 
-                            />
-                        </div>
-                        <FontAwesomeIcon icon="lock" className="text-red-500" />
-                        
-                        {/* Follow button to request to follow */}
-                        {auth.currentUser && auth.currentUser.uid !== userData.uid && (
-                          <FollowButton 
-                              isFollowing={isFollowing} 
-                              toggleFollow={toggleFollow} 
-                              visibility={userData.visibility} 
-                              requestFollow={() => requestFollow(userData.uid)} 
+                  // User is private
+                  <div>
+                      <p className="text-red-500">This user's profile is private.</p>
+                      <h2 className="text-3xl font-semibold mb-4"><span className="text-blue-400">@</span> {userData.username}</h2>
+                      <div className="mr-8">
+                          <img 
+                              src={profilePictureURL || defaultProfilePicture} 
+                              alt="Profile" 
+                              className="w-24 h-24 rounded-full" 
+                          />
+                      </div>
+                      <FontAwesomeIcon icon="lock" className="text-red-500" />
+                      {/* Follow button to request to follow */}
+                      {auth.currentUser && auth.currentUser.uid !== userData.uid && uid && (
+                          <FollowButton
+                              isFollowing={isFollowing}
+                              toggleFollow={toggleFollow}
+                              visibility={userData.visibility}
+                              requestFollow={() => requestFollow(uid)}
                           />
                       )}
-
-                    </div>
-                )
-            ) : (
-                // If userData not found
-                <p className="text-red-500">User data not found.</p>
-            )}
-        </div>
-    );
+                  </div>
+              )
+          ) : (
+              // If userData not found
+              <p className="text-red-500">User data not found.</p>
+          )}
+      </div>
+  );
             }
               
 
