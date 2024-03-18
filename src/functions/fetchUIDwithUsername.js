@@ -8,12 +8,19 @@ const fetchUIDwithUsername = async (username) => {
 
         // Reference the document directly using its ID (which is the lowercase username)
         const userDocRef = doc(db, 'usernames', lowerCaseUsername);
+        console.log("userDocRef", userDocRef);
         const userDocSnapshot = await getDoc(userDocRef);
 
         // Check if the document exists
         if (userDocSnapshot.exists()) {
             // Document found, return the UID field
+            console.log("userDocSnapshot.data()", userDocSnapshot.data());
             console.log(`Username '${username}' found. UID:`, userDocSnapshot.data().UID);
+
+            if (userDocSnapshot.data().UID === undefined) {
+                return userDocSnapshot.data().uid;
+            }
+
             return userDocSnapshot.data().UID;
         } else {
             // Username not found, return null or throw an error
