@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { doc, updateDoc, arrayUnion, arrayRemove, getDoc, collection, addDoc} from 'firebase/firestore';
 import { db, auth } from '../firebase';
-import { FaInfoCircle, FaUser, FaEllipsisV } from 'react-icons/fa';
+import { FaInfoCircle, FaUser, FaEllipsisV, FaLock } from 'react-icons/fa';
 import fetchPFP from '../functions/fetchPFP';
 import fetchUIDwithUsername from '../functions/fetchUIDwithUsername';
 import MiniUserCard from '../components/user/MiniUserCard';
@@ -10,6 +10,8 @@ import DOMPurify from 'dompurify';
 import { toast } from 'react-toastify';
 import ReactDOM from 'react-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
+import { getDocs, query, where, deleteDoc } from 'firebase/firestore';
 
 
 const OptionsModal = ({ isMuted, toggleMute, reportUser, onClose }) => {
@@ -30,21 +32,47 @@ const OptionsModal = ({ isMuted, toggleMute, reportUser, onClose }) => {
       document.getElementById('portal')
     );
   };
-  
   const requestFollow = async (targetUserId) => {
     try {
         const currentUserDocRef = doc(db, "users", auth.currentUser.uid);
+        const targetUserDocRef = doc(db, "users", targetUserId);
         const currentUserDoc = await getDoc(currentUserDocRef);
 
         if (currentUserDoc.exists()) {
             const currentUserData = currentUserDoc.data();
-            const notificationsRef = collection(db, "users", targetUserId, "notifications");
-            await addDoc(notificationsRef, {
+
+            // Check if the follow request has already been sent
+            if (currentUserData.requested && currentUserData.requested.includes(targetUserId)) {
+                // Remove the follow request
+                await updateDoc(currentUserDocRef, {
+                    requested: arrayRemove(targetUserId)
+                });
+
+                // Delete the corresponding notification
+                const notificationsQuery = query(collection(db, "users", targetUserId, "notifications"), where("type", "==", "follow_request"), where("fromUserId", "==", auth.currentUser.uid));
+                const notificationsSnapshot = await getDocs(notificationsQuery);
+                notificationsSnapshot.forEach(async (doc) => {
+                    await deleteDoc(doc.ref);
+                });
+
+                console.log('Follow request removed successfully');
+                toast.success('Follow request removed successfully.');
+                return;
+            }
+
+            // Add a new follow request and notification
+            const newNotificationRef = await addDoc(collection(db, "users", targetUserId, "notifications"), {
                 type: 'follow_request',
                 fromUserId: auth.currentUser.uid,
                 fromUsername: currentUserData.username, // Use the username from the document data
                 timestamp: new Date()
             });
+
+            // Add the target user's UID to the 'requested' array in the current user's document
+            await updateDoc(currentUserDocRef, {
+                requested: arrayUnion(targetUserId)
+            });
+
             console.log('Follow request sent successfully');
             toast.success('Follow request sent successfully.');
         } else {
@@ -57,26 +85,62 @@ const OptionsModal = ({ isMuted, toggleMute, reportUser, onClose }) => {
 
 
 
-  const handleToggleFollow = ({isFollowing, toggleFollow, visibility, requestFollow, targetUserId}) => {
-    return () => {
-        if (visibility === 'public') {
-            toggleFollow();
-        } else { // User is private
-            // Show a modal to request to follow
-            requestFollow(targetUserId);
-        }
-    };
+
+const handleToggleFollow = ({ isFollowing, toggleFollow, visibility, requestFollow, targetUserId, hasRequested }) => {
+  return () => {
+      if (visibility === 'public') {
+          toggleFollow();
+      } else if (hasRequested) { // User has already requested to follow
+          // Cancel the follow request
+          requestFollow(targetUserId);
+      } else { // User is private and has not requested to follow
+          // Send a follow request
+          requestFollow(targetUserId);
+      }
+  };
 };
 
-const FollowButton = ({ isFollowing, toggleFollow, visibility, requestFollow }) => {
-    return (
-        <button
-            className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}
-            onClick={handleToggleFollow({isFollowing, toggleFollow, visibility, requestFollow})}
-        >
-            {isFollowing ? 'Unfollow' : 'Follow'}
-        </button>
-    );
+const FollowButton = ({ isFollowing, toggleFollow, visibility, requestFollow, targetUserId }) => {
+  const [hasRequested, setHasRequested] = useState(false);
+
+  useEffect(() => {
+    const checkRequested = async () => {
+        const currentUserDocRef = doc(db, 'users', auth.currentUser.uid);
+        const currentUserDoc = await getDoc(currentUserDocRef);
+        if (currentUserDoc.exists()) {
+            const currentUserData = currentUserDoc.data();
+            console.log("requested", currentUserData.requested);
+            const requested = currentUserData.requested && currentUserData.requested.includes("ptoiITfuqiOSGu4YSy2aqjXQJP03");
+          console.log('Hardcoded check, Has Requested:', requested);
+          setHasRequested(requested);
+
+
+
+            console.log('Has Requested:', requested); // Add this line to check the value
+        }
+    };
+
+    checkRequested();
+}, [targetUserId]);
+
+
+  let buttonText = 'Follow';
+  if (isFollowing) {
+      buttonText = 'Unfollow';
+  } else if (hasRequested) {
+      buttonText = 'Requested';
+  } else if (visibility === 'private') {
+      buttonText = 'Follow';
+  }
+
+  return (
+      <button
+          className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}
+          onClick={() => handleToggleFollow({ isFollowing, toggleFollow, visibility, requestFollow, targetUserId })}
+      >
+          {buttonText}
+      </button>
+  );
 };
 
 
@@ -172,54 +236,59 @@ const UserPage = () => {
     
 
     const toggleFollow = async () => {
-        try {
-            if (!userData || !userData.UID) {
-                console.error('User data or UID not initialized.');
-                return;
-            }
-    
-            const currentUser = auth.currentUser;
-            if (!currentUser) {
-                console.error('Current user not authenticated.');
-                return;
-            }
-    
-            const currentUserId = currentUser.uid;
-    
-            // Define document references
-            const currentUserDocRef = doc(db, 'users', currentUserId);
-            const userDocRef = doc(db, 'users', userData.UID);
-    
-            // Update Firestore documents based on follow status
-            if (isFollowing) {
-                // Unfollow the user
-                await updateDoc(currentUserDocRef, {
-                    following: arrayRemove(userData.UID)
-                });
-                await updateDoc(userDocRef, {
-                    followers: arrayRemove(currentUserId)
-                });
-                console.log('User unfollowed successfully.');
-            } else {
-                // Follow the user
-                await updateDoc(currentUserDocRef, {
-                    following: arrayUnion(userData.UID)
-                });
-                await updateDoc(userDocRef, {
-                    followers: arrayUnion(currentUserId)
-                });
-                console.log('User followed successfully.');
-            }
-    
-            // Toggle follow status
-            setIsFollowing(!isFollowing);
-    
-            // Update followers count
-            setFollowersCount(prevCount => isFollowing ? prevCount - 1 : prevCount + 1);
-        } catch (error) {
-            console.error('Error toggling follow:', error);
-        }
-    };
+      try {
+          if (!userData || !userData.UID) {
+              console.error('User data or UID not initialized.');
+              return;
+          }
+  
+          const currentUser = auth.currentUser;
+          if (!currentUser) {
+              console.error('Current user not authenticated.');
+              return;
+          }
+  
+          const currentUserId = currentUser.uid;
+  
+          // Define document references
+          const currentUserDocRef = doc(db, 'users', currentUserId);
+          const userDocRef = doc(db, 'users', userData.UID);
+  
+          // Update Firestore documents based on follow status
+          if (isFollowing) {
+              // Confirm unfollow for private users
+              if (userData.visibility === 'private' && !window.confirm('Are you sure you want to unfollow this user?')) {
+                  return; // Do nothing if user cancels the confirmation
+              }
+              // Unfollow the user
+              await updateDoc(currentUserDocRef, {
+                  following: arrayRemove(userData.UID)
+              });
+              await updateDoc(userDocRef, {
+                  followers: arrayRemove(currentUserId)
+              });
+              console.log('User unfollowed successfully.');
+          } else {
+              // Follow the user
+              await updateDoc(currentUserDocRef, {
+                  following: arrayUnion(userData.UID)
+              });
+              await updateDoc(userDocRef, {
+                  followers: arrayUnion(currentUserId)
+              });
+              console.log('User followed successfully.');
+          }
+  
+          // Toggle follow status
+          setIsFollowing(!isFollowing);
+  
+          // Update followers count
+          setFollowersCount(prevCount => isFollowing ? prevCount - 1 : prevCount + 1);
+      } catch (error) {
+          console.error('Error toggling follow:', error);
+      }
+  };
+  
 
     const toggleFollowers = async () => {
         try {
@@ -443,7 +512,7 @@ const UserPage = () => {
                               className="w-24 h-24 rounded-full" 
                           />
                       </div>
-                      <FontAwesomeIcon icon="lock" className="text-red-500" />
+                      <FaLock className="text-4xl text-red-400" />
                       {/* Follow button to request to follow */}
                       {auth.currentUser && auth.currentUser.uid !== userData.uid && uid && (
                           <FollowButton
