@@ -97,7 +97,7 @@ class Notifications extends Component {
         </div>
         <button onClick={this.markAllAsRead}>Mark all as read</button>
         <button onClick={this.clearAllNotifications}>Clear all</button>
-        <div>
+        <div className="flex-col mb-4">
           {notifications.map((notification) => (
             <NotificationItem key={notification.id} {...notification} />
           ))}
