@@ -17,7 +17,7 @@ import BookRating from './components/BookRating.js';
 
 import SampleHome from './pages/sampleHome.js'
 import SignIn from './pages/Signin.js';
-import NavigationBar from "./components/NavigationBar.js";
+import Notifications from './pages/Notifications.js';
 import UserOnboarding from "./pages/UserOnboarding.js";
 import BookInfo from "./pages/BookInfo.js"
 // Lazy-loaded components
@@ -60,15 +60,16 @@ const App = () => {
             <Route path="/search/*" element={<SearchResults />}>
               <Route path=":query" element={<SearchResults />} />
             </Route>
-            <Route path="*" element={<Error />} />          
+            <Route path="*" element={<Error />} />
+            <Route path="/notifications" element={<Notifications />} />
+
             <Route path="/AuthorProfilePage" element={<AuthorProfilePage />} />
             <Route path="/ReaderProfilePage" element={<ReaderProfilePage />} />
-            
             <Route path="/samplehome" element={<SampleHome showNavBar={true}/>}/>
-          <Route path="/sign_in" element={<SignIn showNavBar={false}/>}/>
-          <Route path="/onboarding" element={<UserOnboarding showNavBar={false}/>}/>
-          <Route path="/bookinfo" element={<BookInfo showNavBar={true}/>}/>
-          <Route path="/rating" element={<BookRating showNavBar={true}/>}/>
+            <Route path="/sign_in" element={<SignIn showNavBar={false}/>}/>
+            <Route path="/onboarding" element={<UserOnboarding showNavBar={false}/>}/>
+            <Route path="/bookinfo" element={<BookInfo showNavBar={true}/>}/>
+            <Route path="/rating" element={<BookRating showNavBar={true}/>}/>
           
           </Routes>
         </Suspense>
