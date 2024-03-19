@@ -4,9 +4,9 @@ import {collection} from 'firebase/firestore';
 import {db} from '../../firebase';
 import {useState} from 'react';
 import { useNavigate } from "react-router-dom";
-import {FormGUI} from './Form';
-import FormContext from './FormContext';
-import PostStrat from './PostStrats';
+import {FormGUI} from './functions/Form';
+import FormContext from './functions/FormContext';
+import PostStrat from './functions/PostStrats';
 
 function PostForm({user, selectedGenre, setSelectedGenre}) {
   const navigate = useNavigate()
