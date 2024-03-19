@@ -15,6 +15,11 @@ export default function Navbar() {
     const [newNotifications, setNewNotifications] = React.useState(false);
 
         // Fetch notifications from the database
+        // subscribe to the notifications collection of the current user
+        // If there are new notifications, setNewNotifications to true
+        // if there are no new notifications, setNewNotifications to false
+
+        if (auth.currentUser) {
         const subscribe = onSnapshot(collection(db, 'users', auth.currentUser.uid, 'notifications'), (snapshot) => {
             // if there are notifications where "read" is false, setNewNotifications to true
             snapshot.forEach((doc) => {
@@ -28,13 +33,8 @@ export default function Navbar() {
             }
 
         });
-        // subscribe to the notifications collection of the current user
+    }
         
-
-        // If there are new notifications, setNewNotifications to true
-
-        // if there are no new notifications, setNewNotifications to false
-
     
     return (
         <nav className="flex flex-row gap-4 p-4 bg-[#e3bd96] mt-4 w-full h-20 z-0">
@@ -47,7 +47,7 @@ export default function Navbar() {
             <Link to="/create-post" data-tip="Create a Post" data-for="create-post-tooltip">
                 <FontAwesomeIcon icon={faPlus} className="rounded-full w-8 h-8 bg-[#F4D7B7] text-[#e3bd96] p-2 cursor-pointer" />
             </Link>
-            { !auth ? (
+            { !auth.currentUser ? (
                 <Modal>
                     <FontAwesomeIcon icon={faSignInAlt} />
                 </Modal>

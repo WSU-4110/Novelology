@@ -3,6 +3,7 @@ import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, si
 import { auth, db, provider} from '../firebase';
 import { doc, setDoc, getDoc, deleteDoc} from 'firebase/firestore';
 import { getStorage, ref, deleteObject } from "firebase/storage";
+import { toast } from 'react-toastify';
 
 const storage = getStorage();
 
@@ -75,6 +76,16 @@ export async function handleSignInWithPopup(navigate, setLoading) {
 
 async function addUserToDatabase(uid, email, displayName, navigate) {
     try {
+
+        // check if username already exists
+        const usernameRef = doc(db, "usernames", displayName.toLowerCase());
+        const usernameSnapshot = await getDoc(usernameRef);
+        if (usernameSnapshot.exists()) {
+            toast.error('Username is invalid, or already in use. Please try another username.');
+            console.error('Username already exists');
+            return;
+        }
+
         // Remove any spaces from the display name
         const username = displayName.replace(/\s/g, '');
 
@@ -90,6 +101,8 @@ async function addUserToDatabase(uid, email, displayName, navigate) {
             followers: [],
             following: [],
             UID: uid
+        }).then(() => {
+            navigate('/setup-account');
         });
 
         await setDoc(doc(db, "usernames", username.toLowerCase()),{
@@ -97,8 +110,6 @@ async function addUserToDatabase(uid, email, displayName, navigate) {
         }); // Add username to usernames collection
         console.log("User added to database successfully");
 
-        // Redirect to setup-account page after user is successfully added to the database
-        navigate('/setup-account');
     } catch (error) {
         console.error("Error adding user to database:", error);
     }
