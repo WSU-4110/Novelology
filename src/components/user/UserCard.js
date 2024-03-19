@@ -80,6 +80,8 @@ const UserCard = ({ userId }) => {
       await updateDoc(currentUserDocRef, {
           requested: arrayUnion(userId)
       });
+      console.log("successfully added to requested array");
+      
       await addDoc(collection(db, 'users', userId, 'notifications'), {
           type: 'follow_request',
           fromUserId: currentUserId,
