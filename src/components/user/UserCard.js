@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import { toast } from 'react-toastify';
 import { serverTimestamp } from 'firebase/firestore';
+import createNotification from '../../functions/createNotification';
 
 const FollowButton = ({ isFollowing, toggleFollow, hasRequested }) => {
     let buttonText = isFollowing ? 'Unfollow' : 'Follow';
@@ -76,20 +77,42 @@ const UserCard = ({ userId }) => {
         fetchUserData();
     }, [userId, fetchedProfilePicture]);
 
+    async function checkIfUserIsMuted(userDocRef, currentUserId) {
+        // Fetch the target user's document to check if they have muted the current user
+        const userSnapshot = await getDoc(userDocRef);
+        if (userSnapshot.exists()) {
+          const userData = userSnapshot.data();
+          // Assuming 'mutedUsers' is an array of userIds that the user has muted
+          return userData.muted && userData.muted.includes(currentUserId);
+        }
+        return false; // Default to false if there's no data or 'mutedUsers' field
+      }
+
     const sendFollowRequest = async (currentUserDocRef, userDocRef, currentUserId, userId) => {
-      await updateDoc(currentUserDocRef, {
-          requested: arrayUnion(userId)
-      });
-      console.log("successfully added to requested array");
+        try {
+          // First, check if the target user has the current user muted
+          const isMuted = await checkIfUserIsMuted(userDocRef, currentUserId); // Implement this function based on your data structure
       
-      await addDoc(collection(db, 'users', userId, 'notifications'), {
-          type: 'follow_request',
-          fromUserId: currentUserId,
-          timestamp: serverTimestamp()
-      });
-      toast.success('Follow request sent!');
-      console.log('Follow request sent successfully.');
-  };
+          // Only attempt to create a notification if the user hasn't muted the current user
+          if (!isMuted) {
+            await createNotification(currentUserId, userId, serverTimestamp(), 'follow_request');
+          } else {
+            // Optionally handle the case where the user is muted differently
+            console.log('User has muted notifications from this user, not sending follow request notification.');
+          }
+      
+          // Regardless of mute status, proceed to add the userId to the current user's 'requested' array
+          await updateDoc(currentUserDocRef, {
+            requested: arrayUnion(userId)
+          });
+      
+          toast.success('Follow request sent!');
+          console.log('Follow request sent successfully.');
+      
+        } catch (error) {
+          console.error('Error handling follow request:', error);
+        }
+      };
   
   const cancelFollowRequest = async (currentUserDocRef, userDocRef, currentUserId, userId) => {
       await updateDoc(currentUserDocRef, {
