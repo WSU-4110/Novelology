@@ -19,6 +19,8 @@ const OptionsModal = ({ isMuted, toggleMute, reportUser, onClose }) => {
       <ul>
         <li className="cursor-pointer mb-2" onClick={toggleMute}>
           {isMuted ? 'Unmute' : 'Mute'}
+          {/* tooltip to desc what muting a user does muted users cannot send you notifications */}
+          <span className="ml-2 text-gray-500 text-sm">Muted users cannot send you notifications</span>
         </li>
         <li className="cursor-pointer" onClick={reportUser}>
           Report
@@ -481,7 +483,7 @@ const UserPage = () => {
           </div>
         ) : (
           // User is private
-          <div>
+          <div id="portal">
             <p className="text-red-500">This user's profile is private.</p>
             <h2 className="text-3xl font-semibold mb-4"><span className="text-blue-400">@</span> {userData.username}</h2>
             <div className="mr-8">
@@ -491,6 +493,17 @@ const UserPage = () => {
                 className="w-24 h-24 rounded-full" 
               />
             </div>
+            <button className="relative top-4 right-4" onClick={() => setShowOptionsModal(!showOptionsModal)}>
+                <FaEllipsisV />
+              </button> 
+              {showOptionsModal && (
+                <OptionsModal
+                  isMuted={isMuted}
+                  toggleMute={toggleMute}
+                  reportUser={reportUser}
+                  onClose={() => setShowOptionsModal(false)}
+                />
+              )}
             <FaLock className="text-4xl text-red-400" />
             {/* Follow button to request to follow */}
             {auth.currentUser && auth.currentUser.uid !== userData.uid && uid && (
