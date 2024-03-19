@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faUser, faPlus, faSignOutAlt, faSignInAlt, faGear } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faUser, faPlus, faSignOutAlt, faSignInAlt, faGear, faBell } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../firebase';
@@ -34,6 +34,9 @@ export default function Navbar() {
                     <button data-tip="Sign off" className="rounded-full w-12 h-12 bg-[#F4D7B7] p-1 cursor-pointer" onClick={handleLogout} data-for="sign-off-tooltip">
                         <FontAwesomeIcon className="w-6 h-6 mt-1 text-[#e3bd96]" icon={faSignOutAlt} />
                     </button>
+                    <Link to="/notifications" data-tip="Notifications" data-for="notifications-tooltip">
+                        <FontAwesomeIcon icon={faBell} className="rounded-full w-8 h-8 bg-[#F4D7B7] p-2 cursor-pointer" />
+                    </Link>
                 </>
             )}
             <Tooltip id="home-tooltip" />
