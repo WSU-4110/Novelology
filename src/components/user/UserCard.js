@@ -5,6 +5,7 @@ import { FaInfoCircle, FaUser } from 'react-icons/fa';
 import fetchPFP from '../../functions/fetchPFP';
 import { Link } from 'react-router-dom';
 import DOMPurify from 'dompurify';
+import { toast } from 'react-toastify';
 
 const FollowButton = ({ isFollowing, toggleFollow, hasRequested }) => {
     let buttonText = isFollowing ? 'Unfollow' : 'Follow';
@@ -74,24 +75,49 @@ const UserCard = ({ userId }) => {
         fetchUserData();
     }, [userId, fetchedProfilePicture]);
 
-    const toggleFollow = async () => {
+    const sendFollowRequest = async (currentUserDocRef, userDocRef, currentUserId, userId) => {
+      await updateDoc(currentUserDocRef, {
+          requested: arrayUnion(userId)
+      });
+      await addDoc(collection(db, 'users', userId, 'notifications'), {
+          type: 'follow_request',
+          fromUserId: currentUserId,
+          timestamp: new Date()
+      });
+      console.log('Follow request sent successfully.');
+  };
+  
+  const cancelFollowRequest = async (currentUserDocRef, userDocRef, currentUserId, userId) => {
+      await updateDoc(currentUserDocRef, {
+          requested: arrayRemove(userId)
+      });
+      const notificationsRef = collection(db, 'users', userId, 'notifications');
+      const q = query(notificationsRef, where('type', '==', 'follow_request'), where('fromUserId', '==', currentUserId));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach(async (doc) => {
+          await deleteDoc(doc.ref);
+      });
+      console.log('Follow request canceled successfully.');
+      toast.info('Follow request canceled.');
+  };
+  
+  const toggleFollow = async () => {
+      if (!userData || !auth.currentUser) {
+          console.error('User data or current user not available.');
+          return;
+      }
+  
+      const currentUserId = auth.currentUser.uid;
+      const currentUserDocRef = doc(db, 'users', currentUserId);
+      const userDocRef = doc(db, 'users', userId);
+  
       try {
-          if (!userData) {
-              console.error('User data not initialized.');
-              return;
-          }
-  
-          const currentUser = auth.currentUser;
-          if (!currentUser) {
-              console.error('Current user not authenticated.');
-              return;
-          }
-          const currentUserId = currentUser.uid;
-  
-          const currentUserDocRef = doc(db, 'users', currentUserId);
-          const userDocRef = doc(db, 'users', userId);
-  
           if (isFollowing) {
+              // Optimistically update UI
+              setIsFollowing(false);
+              setFollowersCount(prevCount => prevCount - 1);
+  
+              // Perform Firestore updates
               await updateDoc(currentUserDocRef, {
                   following: arrayRemove(userId)
               });
@@ -99,35 +125,21 @@ const UserCard = ({ userId }) => {
                   followers: arrayRemove(currentUserId)
               });
               console.log('User unfollowed successfully.');
-              setIsFollowing(false);
-              setFollowersCount(prevCount => prevCount - 1);
-          } else if (userData.visibility === 'private' && !hasRequested) {
-              // Send follow request
-              await updateDoc(currentUserDocRef, {
-                  requested: arrayUnion(userId)
-              });
-              await addDoc(collection(db, 'users', userId, 'notifications'), {
-                  type: 'follow_request',
-                  fromUserId: currentUserId,
-                  timestamp: new Date()
-              });
-              console.log('Follow request sent successfully.');
-              setHasRequested(true);
-          } else if (userData.visibility === 'private' && hasRequested) {
-              // Cancel follow request
-              await updateDoc(currentUserDocRef, {
-                  requested: arrayRemove(userId)
-              });
-              const notificationsRef = collection(db, 'users', userId, 'notifications');
-              const q = query(notificationsRef, where('type', '==', 'follow_request'), where('fromUserId', '==', currentUserId));
-              const querySnapshot = await getDocs(q);
-              querySnapshot.forEach(async (doc) => {
-                  await deleteDoc(doc.ref);
-              });
-              console.log('Follow request canceled successfully.');
-              setHasRequested(false);
+              toast.error('Unfollowed user.');
+          } else if (userData.visibility === 'private') {
+              if (!hasRequested) {
+                  await sendFollowRequest(currentUserDocRef, userDocRef, currentUserId, userId);
+                  setHasRequested(true); // Optimistically update UI
+              } else {
+                  await cancelFollowRequest(currentUserDocRef, userDocRef, currentUserId, userId);
+                  setHasRequested(false); // Optimistically update UI
+              }
           } else {
-              // Follow the user
+              // Optimistically update UI
+              setIsFollowing(true);
+              setFollowersCount(prevCount => prevCount + 1);
+  
+              // Perform Firestore updates
               await updateDoc(currentUserDocRef, {
                   following: arrayUnion(userId)
               });
@@ -135,11 +147,14 @@ const UserCard = ({ userId }) => {
                   followers: arrayUnion(currentUserId)
               });
               console.log('User followed successfully.');
-              setIsFollowing(true);
-              setFollowersCount(prevCount => prevCount + 1);
+              toast.success('Followed user.');
           }
       } catch (error) {
           console.error('Error toggling follow:', error);
+          // Revert optimistic UI updates in case of error
+          setIsFollowing((prev) => !prev);
+          setFollowersCount((prevCount) => (isFollowing ? prevCount + 1 : prevCount - 1));
+          setHasRequested((prev) => !prev);
       }
   };
   
