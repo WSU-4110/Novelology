@@ -3,8 +3,12 @@ import NavigationBar from '../components/NavigationBar';
 import BookRating from '../components/BookRating';
 import {useParams} from 'react-router-dom';
 import { SearchISBN } from '../components/shared/SearchISBN';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from '../firebase';
+import { AddBookRating } from '../functions/AddRatingToBook';
 
 export default function BookInfo({showNavBar}){
+  const [user] = useAuthState(auth);
   const { isbn } = useParams(); 
   const [rating, setRating] = useState(null);
   const bookData = SearchISBN(isbn);
@@ -17,7 +21,7 @@ export default function BookInfo({showNavBar}){
   }
   useEffect(() => {
     console.log("rating from bookinfo: " + rating);
-
+    AddBookRating(rating,isbn);
   },[rating])
 
 
@@ -116,10 +120,13 @@ export default function BookInfo({showNavBar}){
                 )}
                 </div>
             </div>
-            <div id="user-rating" className="pt-8">
+            {user?(<div id="user-rating" className="pt-8">
               <p className="font-semibold text-center">Your Rating</p>
               <BookRating RatingChange={handleChangeInRating}/>
-            </div>
+            </div>):(
+              <div></div>
+            )}
+            
             <div>
               <div className="flex flex-row justify-center border-y-2 border-black mt-10 py-2 w-[58em]">
                 <button className="border-r-2 w-[17em] border-black">
