@@ -6,6 +6,7 @@ import Searchbar from '../components/shared/Searchbar.js';
 import { handleSearch } from '../functions/searchFunctions'; // Import handleSearch function
 import Feed from './Feed.js';
 import PopularUsers from '../components/shared/PopularUsers.js';
+import SampleHome from './sampleHome.js';
 
 export default function Home() {
     const [user, loading, error] = useAuthState(auth);

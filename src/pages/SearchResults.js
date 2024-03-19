@@ -3,6 +3,7 @@ import axios from 'axios';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 import Card from '../components/Card';
+import UserCard from '../components/user/UserCard';
 
 async function searchUsers(searchQuery) {
     
@@ -164,18 +165,14 @@ const SearchResults = () => {
 
                 
                 {searchResults && searchResults.users && searchResults.users.length > 0 ? (
-                    <div>
-                        <h2>Users</h2>
-                        <ul>
-                            {searchResults.users.map((user, index) => (
-                                <li key={index}>{user.id} - {user.UID}</li>
-                            ))}
-                        </ul>
-                    </div>
+                <div className="flex flex-wrap -m-4">
+                    {searchResults.users.map((user) => (
+                    <UserCard key={user.UID} user={user} />
+                    ))}
+                </div>
                 ) : (
-                    <p>No user search results found.</p>
+                <p>No user search results found.</p>
                 )}
-
             </div>
     
             {/* Sidebar with search filters */}
