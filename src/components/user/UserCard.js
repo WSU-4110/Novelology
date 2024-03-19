@@ -82,10 +82,9 @@ const UserCard = ({ userId }) => {
         const userSnapshot = await getDoc(userDocRef);
         if (userSnapshot.exists()) {
           const userData = userSnapshot.data();
-          // Assuming 'mutedUsers' is an array of userIds that the user has muted
-          return userData.muted && userData.muted.includes(currentUserId);
+           return userData.muted && userData.muted.includes(currentUserId);
         }
-        return false; // Default to false if there's no data or 'mutedUsers' field
+        return false; // Default to false if there's no data or 'muted' field
       }
 
     const sendFollowRequest = async (currentUserDocRef, userDocRef, currentUserId, userId) => {
