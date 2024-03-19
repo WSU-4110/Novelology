@@ -1,6 +1,7 @@
 import { addDoc, serverTimestamp } from 'firebase/firestore';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import DOMPurify, { sanitize } from 'dompurify';
 
 
 const modules = {
@@ -47,7 +48,7 @@ export function FormGUI({ formValue, setFormValue, sendMessage }) {
                 theme='snow'
                 modules={modules}
                 formats={formats}
-                value={formValue}
+                value={DOMPurify.sanitize(formValue)}
                 onChange={setFormValue}
 
             />
