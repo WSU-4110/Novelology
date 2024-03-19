@@ -14,6 +14,7 @@ import formatTimeDifference from '../../functions/formatTimeDifference';
 import fetchPFP from '../../functions/fetchPFP';
 import { runTransaction } from 'firebase/firestore';
 import LazyImage from '../shared/LazyImage';
+import DOMPurify from 'dompurify';
 
 class PostComponent extends Component {
   constructor(props) {
@@ -218,8 +219,8 @@ class PostComponent extends Component {
         )}
 
 
-        {/* Render post content */}
-        <p>{post.data.text}</p>
+        {/* Render post content and JSON purify it */}
+        <p dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.data.text) }} />
 
         {/* Render comments */}
         <div className="border-t border-gray-300 pt-4">
