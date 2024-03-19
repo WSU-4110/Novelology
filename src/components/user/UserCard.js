@@ -6,6 +6,7 @@ import fetchPFP from '../../functions/fetchPFP';
 import { Link } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import { toast } from 'react-toastify';
+import { serverTimestamp } from 'firebase/firestore';
 
 const FollowButton = ({ isFollowing, toggleFollow, hasRequested }) => {
     let buttonText = isFollowing ? 'Unfollow' : 'Follow';
@@ -82,8 +83,9 @@ const UserCard = ({ userId }) => {
       await addDoc(collection(db, 'users', userId, 'notifications'), {
           type: 'follow_request',
           fromUserId: currentUserId,
-          timestamp: new Date()
+          timestamp: serverTimestamp()
       });
+      toast.success('Follow request sent!');
       console.log('Follow request sent successfully.');
   };
   
