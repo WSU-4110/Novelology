@@ -25,7 +25,8 @@ const createNotification = async (fromUserId, toUserId, timestamp, notificationT
         await addDoc(notificationsRef, {
             type: notificationType,
             fromUserId,
-            timestamp
+            timestamp,
+            read: false,
         });
         } else {
         console.error('User document not found for user ID:', toUserId);

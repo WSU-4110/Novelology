@@ -351,6 +351,8 @@ const UserPage = () => {
         });
         setIsMuted(false);
         toast.success('User unmuted successfully.');
+        // if they sent a follow request, notify the user of the follow request
+        await createNotification(userData.UID, currentUserId, new Date(), "follow_request");
       } else {
         // Mute the user
         await updateDoc(userRef, {
@@ -358,6 +360,15 @@ const UserPage = () => {
         });
         setIsMuted(true);
         toast.success('User muted successfully.');
+
+        //delete all notifications from the user you've muted
+        const notificationsRef = collection(db, 'users', currentUserId, 'notifications');
+        const notificationsSnapshot = await getDocs(notificationsRef);
+        notificationsSnapshot.forEach(async (doc) => {
+          if (doc.data().fromUserId === userData.UID) {
+            await deleteDoc(doc.ref);
+          }
+        });
       }
     } catch (error) {
       console.error('Error muting/unmuting user:', error);
