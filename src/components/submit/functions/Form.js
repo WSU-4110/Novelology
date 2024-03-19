@@ -40,6 +40,7 @@ class Form {
 }
 
 export function FormGUI({ formValue, setFormValue, sendMessage }) {
+    
     return (
         <>
             <ReactQuill
