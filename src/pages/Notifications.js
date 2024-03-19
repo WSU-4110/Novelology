@@ -20,8 +20,14 @@
 // - repost
 // - tag
 import React, { Component } from 'react';
-import { db } from "../functions/Auth"
+import { db } from "../firebase";
 import NotificationItem from "../components/NotificationItem";
+import { collection } from "firebase/firestore";
+import { onSnapshot } from "firebase/firestore";
+import {auth } from "../firebase";
+import { doc } from "firebase/firestore";
+import { updateDoc } from "firebase/firestore";
+import { deleteDoc } from "firebase/firestore";
 
 class Notifications extends Component {
   state = {
@@ -31,17 +37,14 @@ class Notifications extends Component {
   };
 
   componentDidMount() {
-    const user = firebase.auth().currentUser;
+    const user = auth.currentUser;
     if (user) {
-      this.notificationsRef = firestore
-        .collection('users')
-        .doc(user.uid)
-        .collection('notifications');
-
-      this.notificationsRef.onSnapshot((snapshot) => {
+      this.notificationsRef = collection(db, 'users', user.uid, 'notifications');
+  
+      this.unsubscribe = onSnapshot(this.notificationsRef, (snapshot) => {
         const notifications = [];
         let unreadCount = 0;
-
+  
         snapshot.forEach((doc) => {
           const notification = { id: doc.id, ...doc.data() };
           notifications.push(notification);
@@ -49,7 +52,7 @@ class Notifications extends Component {
             unreadCount++;
           }
         });
-
+  
         this.setState({
           notifications,
           unreadCount,
@@ -58,24 +61,30 @@ class Notifications extends Component {
       });
     }
   }
+  
+  
 
   componentWillUnmount() {
-    this.notificationsRef && this.notificationsRef();
+    this.unsubscribe && this.unsubscribe();
   }
-
+  
   markAllAsRead = () => {
     this.state.notifications.forEach((notification) => {
       if (!notification.read) {
-        this.notificationsRef.doc(notification.id).update({ read: true });
+        const notificationRef = doc(db, 'users', auth.currentUser.uid, 'notifications', notification.id);
+        updateDoc(notificationRef, { read: true });
       }
     });
   };
-
+  
   clearAllNotifications = () => {
     this.state.notifications.forEach((notification) => {
-      this.notificationsRef.doc(notification.id).delete();
+      const notificationRef = doc(db, 'users', auth.currentUser.uid, 'notifications', notification.id);
+      deleteDoc(notificationRef);
     });
   };
+  
+  
 
   render() {
     const { notifications, unreadCount, totalCount } = this.state;
