@@ -87,7 +87,13 @@ class NotificationItem extends Component {
             Accept
           </button>
           <FontAwesomeIcon icon={faTimes} onClick={this.handleReject} />
+        </div>
+      case 'follow_accepted':
+        return <div>
+          {fromUserId} accepted your follow request.
+          @{formattedTime}
         </div>;
+
       case 'like':
         return <div>{fromUserId} liked your post.</div>;
       case 'comment':
