@@ -365,9 +365,14 @@ const UserPage = () => {
   return (
     <div className="max-w-md mx-auto p-4 bg-white rounded-lg shadow-md relative">
       {userData ? (
-        userData.visibility === "public" || isFollowing ? (
-          <div>
+           userData.visibility === "public" || isFollowing || (auth.currentUser && userData.UID === auth.currentUser.uid) ? (
+            <div>
+            {/* Display username */}
             <h2 className="text-3xl font-semibold mb-4"><span className="text-blue-400">@</span> {userData.username}</h2>
+            
+            {/* Display visibility status */}  
+            { userData.visibility === "private" ? <p className="text-gray-500">private</p> : null}
+            
             <div className="mr-8">
               <img 
                 src={profilePictureURL || defaultProfilePicture} 
