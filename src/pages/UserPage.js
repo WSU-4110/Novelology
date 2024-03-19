@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import ReactDOM from 'react-dom';
 import { getDocs, query, where } from 'firebase/firestore';
 import { deleteDoc } from 'firebase/firestore';
+import createNotification from '../functions/createNotification';
 
 const OptionsModal = ({ isMuted, toggleMute, reportUser, onClose }) => {
   return ReactDOM.createPortal(
@@ -34,10 +35,16 @@ const OptionsModal = ({ isMuted, toggleMute, reportUser, onClose }) => {
 const requestFollow = async (targetUserId) => {
   try {
     const currentUserDocRef = doc(db, "users", auth.currentUser.uid);
+    const targetUserDocRef = doc(db, "users", targetUserId);
     const currentUserDoc = await getDoc(currentUserDocRef);
+    const targetUserDoc = await getDoc(targetUserDocRef);
 
-    if (currentUserDoc.exists()) {
+    if (currentUserDoc.exists() && targetUserDoc.exists()) {
       const currentUserData = currentUserDoc.data();
+      const targetUserData = targetUserDoc.data();
+
+      // Check if the target user has muted the current user
+      const isMuted = targetUserData.muted && targetUserData.muted.includes(auth.currentUser.uid);
 
       if (currentUserData.requested && currentUserData.requested.includes(targetUserId)) {
         // Remove the follow request
@@ -57,23 +64,21 @@ const requestFollow = async (targetUserId) => {
         return false;
       }
 
-      // Add a new follow request and notification
-      await addDoc(collection(db, "users", targetUserId, "notifications"), {
-        type: 'follow_request',
-        fromUserId: auth.currentUser.uid,
-        fromUsername: currentUserData.username,
-        timestamp: new Date()
-      });
-
+      // Add a new follow request
       await updateDoc(currentUserDocRef, {
         requested: arrayUnion(targetUserId)
       });
+
+      // Send a notification only if the target user has not muted the current user
+      if (!isMuted) {
+        createNotification(auth.currentUser.uid, targetUserId, new Date(), "follow_request");
+      }
 
       console.log('Follow request sent successfully');
       toast.success('Follow request sent successfully.');
       return true;
     } else {
-      console.error("Current user's document does not exist");
+      console.error("User's document does not exist");
       return null;
     }
   } catch (error) {
@@ -81,6 +86,7 @@ const requestFollow = async (targetUserId) => {
     return null;
   }
 };
+
 
 const FollowButton = ({ isFollowing, toggleFollow, visibility, requestFollow, targetUserId }) => {
   const [hasRequested, setHasRequested] = useState(false);
