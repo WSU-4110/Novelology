@@ -63,28 +63,31 @@ export default function ReaderProfilePage() {
           <div className="text-lg flex flex-row gap-5"> 
             Bio Description
           </div>
+
+
+          <div className="w-full border-b border-gray-700 mt-4">
+          </div>
+
+            
+          <div className="flex justify-between items-center w-full">
+
+            <div className="flex flex-col justify-center items-center w-full">
+              <div>
+              <button className="text-2xl text-black">Book Lists</button>
+              </div>
+            </div>
+            <div className="flex flex-col justify-center items-center w-full">
+              <div className="space-x-32">
+              <button className="text-2xl text-black">Activity</button>
+              <button className="text-2xl text-black">Posts</button>
+              </div>
+            </div>
+          
+          </div>
+        
         </div> 
 
       </div>
-    
-      <div className="w-full border-b border-gray-700 mt-4">
-      </div>
-
-        {/* 5 */}
-        <div className="flex flex-row justify-center items-center w-full space-x-96 ">
-         {/* 5.1 */}
-            <button className="text-xl gap-x-40 text-black">
-              Book Lists
-            </button> 
-              <button className="text-xl gap-x-40 text-black">
-              Activity
-            </button>
-            <button className="text-xl gap-x-40 text-black">
-              Posts
-            </button>
-           
-        </div>
-
 
     </div>
   )
