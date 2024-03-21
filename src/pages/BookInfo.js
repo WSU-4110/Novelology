@@ -5,7 +5,7 @@ import {useParams} from 'react-router-dom';
 import { SearchISBN } from '../components/shared/SearchISBN';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../firebase';
-import { AddBookRating } from '../functions/AddRatingToBook';
+// import { AddBookRating } from '../functions/AddRatingToBook';
 
 export default function BookInfo({showNavBar}){
   const [user] = useAuthState(auth);
@@ -21,11 +21,11 @@ export default function BookInfo({showNavBar}){
   }
   useEffect(() => {
     console.log("rating from bookinfo: " + rating);
-    AddBookRating(rating,isbn);
+    // AddBookRating(rating,isbn);
   },[rating])
 
 
-  // let thumbnail = bookData.volumeInfo.imageLinks && bookData.volumeInfo.imageLinks.smallThumbnail;
+  // let thumbnail = bookData[0].volumeInfo.imageLinks && bookData[0].volumeInfo.imageLinks.smallThumbnail;
 
     return (
       <>
@@ -34,7 +34,7 @@ export default function BookInfo({showNavBar}){
           <div className="flex flex-col items-center px-5 pt-16 pb-10 w-full bg-[linear-gradient(0deg,#F4F3EE_0%,#F4F3EE_100%,#89023E)] max-md:max-w-full">
             <div className="self-center bg-maroon text-white">
               {/* Book Cover */}
-              {bookData && bookData.length > 0 ? (
+              {bookData.length > 0 ? (
                   <><img src={bookData[0].volumeInfo.imageLinks && bookData[0].volumeInfo.imageLinks.smallThumbnail} alt='' /></>
                 ) : (
                   <>No Information</>
@@ -43,7 +43,7 @@ export default function BookInfo({showNavBar}){
               </div>
             <div id="book-name" className="pt-8">
               <div className="font-semibold">
-                {bookData && bookData.length > 0 ? (
+                {bookData && bookData.length > 0 && bookData[0].volumeInfo.title ? (
                   <>{bookData[0].volumeInfo.title}</>
                 ) : (
                   <>No Information</>
@@ -52,7 +52,7 @@ export default function BookInfo({showNavBar}){
             </div>
             <div id="author-name" className="pt-8">
               <div className="font-semibold"> 
-              {bookData && bookData.length > 0 ? (
+              {bookData && bookData.length > 0 && bookData[0].volumeInfo.authors ? (
                   <>{bookData[0].volumeInfo.authors}</>
                 ) : (
                   <>No Information</>
@@ -68,7 +68,7 @@ export default function BookInfo({showNavBar}){
                 </div>
               <br />
               <div id="description-content" className="text-center w-[60em]">
-              {bookData && bookData.length > 0 ? (
+              {bookData && bookData.length > 0 && bookData[0].volumeInfo.description ? (
                   <>{bookData[0].volumeInfo.description}</>
                 ) : (
                   <>No Information</>
@@ -80,7 +80,7 @@ export default function BookInfo({showNavBar}){
               </p>
 
               <div className="font-normal">
-              {bookData && bookData.length > 0 ? (
+              {bookData && bookData.length > 0 && bookData[0].volumeInfo.categories ? (
                   <>{bookData[0].volumeInfo.categories}</>
                 ) : (
                   <>No Information</>
@@ -91,7 +91,7 @@ export default function BookInfo({showNavBar}){
               <p className="font-semibold">Publisher:&nbsp;&nbsp;
               </p>
               <div className="font-normal">
-              {bookData && bookData.length > 0 ? (
+              {bookData && bookData.length > 0 && bookData[0].volumeInfo.publisher ? (
                   <>{bookData[0].volumeInfo.publisher}</>
                 ) : (
                   <>No Information</>
@@ -102,7 +102,7 @@ export default function BookInfo({showNavBar}){
               <p className="font-semibold">Published Date:&nbsp;&nbsp;
               </p>
               <div className="font-normal">
-              {bookData && bookData.length > 0 ? (
+              {bookData && bookData.length > 0 && bookData[0].volumeInfo.publishedDate ? (
                   <>{bookData[0].volumeInfo.publishedDate}</>
                 ) : (
                   <>No Information</>

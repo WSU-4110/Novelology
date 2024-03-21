@@ -26,7 +26,7 @@ const Modal = ({ show, item, onClose }) => {
     ) {
       console.log("before error");
       //Add book to Firebase.
-      AddBookToFirestore(item.volumeInfo.industryIdentifiers[0].identifier);
+      AddBookToFirestore(item);
       console.log("after error");
 
       //navigating to BookInfo Page with ISBN.

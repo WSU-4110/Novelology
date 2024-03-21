@@ -67,9 +67,9 @@ function UserOnboarding({showNavBar}) {
           <div className="flex flex-col rounded-lg shadow-2xl px-16 pt-4 pb-10 mt-28 max-w-full text-center text-black whitespace-nowrap shadow-sm bg-maroon bg-opacity-50 w-[456px] max-md:px-5 max-md:mt-10">
             <div className="text-xl">Are you a reader or author?</div>
             <div className="flex gap-5 justify-between mt-6 text-lg">
-            {/* <RolesSelection selectedRoles={selectedRoles} setSelectedRoles={setSelectedRoles} /> */}
+            <RolesSelection selectedRoles={selectedRoles} setSelectedRoles={setSelectedRoles} />
 
-              <div className="flex w-1/2 gap-5">
+              {/* <div className="flex w-1/2 gap-5">
                 Reader
                 <input
                   type="radio"
@@ -86,7 +86,7 @@ function UserOnboarding({showNavBar}) {
                   name="roles"
                   class="w-8 h-8 text-maroon bg-maroon border-maroon focus:ring-maroon dark:focus:ring-maroon dark:ring-offset-maroon focus:ring-2 dark:bg-maroon dark:border-maroon"
                 />
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="flex flex-row justify-center rounded-lg shadow-2xl items-center px-12 py-7 mt-14 w-[200px] text-xl text-center text-black whitespace-nowrap bg-maroon bg-opacity-50 w-[474px] max-md:px-5 max-md:mt-10">
