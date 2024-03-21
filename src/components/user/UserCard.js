@@ -28,16 +28,19 @@ const UserCard = ({ userId }) => {
   const [followingCount, setFollowingCount] = useState(0);
 
   useEffect(() => {
+    // Fetch user data from Firestore
     const fetchUserData = async () => {
         try {
             setIsLoading(true);
             const userRef = doc(db, 'users', userId);
             const userSnapshot = await getDoc(userRef);
 
+            // If the user document exists, set the user data in state
             if (userSnapshot.exists()) {
                 const userData = userSnapshot.data();
                 setUserData(userData);
 
+                // Fetch profile picture
                 const profilePictureURL = await fetchPFP(userId);
                 if (profilePictureURL !== fetchedProfilePicture) {
                     setFetchedProfilePicture(profilePictureURL);

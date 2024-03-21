@@ -64,7 +64,7 @@ const Profile = () => {
 
     const defaultProfilePicture = require('../assets/default-profile-picture.jpg');
 
-    console.log('userData:', userData); // Log userData to inspect its structure
+    // console.log('userData:', userData); // Log userData to inspect its structure
 
     return (
         <>

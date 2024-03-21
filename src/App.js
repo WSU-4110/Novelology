@@ -8,10 +8,13 @@ import Error from './components/shared/Error';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import PrivateRoute from './components/routing/PrivateRoute';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 import ReaderProfilePage from './components/ReaderProfilePage';
 import AuthorProfilePage from './components/AuthorProfilePage';
 import BookRating from './components/BookRating.js';
 // import AddBook from './functions/AddBook.js';
+
 
 import SampleHome from './pages/sampleHome.js'
 import SignIn from './pages/Signin.js';
@@ -32,6 +35,7 @@ const SearchResults = React.lazy(() => import('./pages/SearchResults'));
 const App = () => {
   return (
     <Router>
+      <ToastContainer />
       <Fragment>
       <div className="flex justify-center align-middle">
           <img src={require('./assets/novelology_newlogo.png')} alt="Novelology Logo" style={{ height: '12em', width: '12em' }} />
