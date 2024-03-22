@@ -13,6 +13,7 @@ import { ToastContainer } from 'react-toastify';
 import ReaderProfilePage from './components/ReaderProfilePage';
 import AuthorProfilePage from './components/AuthorProfilePage';
 import BookRating from './components/BookRating.js';
+import SearchResultsBook from './components/SearchResultsBook.js';
 
 
 import SampleHome from './pages/sampleHome.js'
@@ -69,6 +70,8 @@ const App = () => {
           <Route path="/onboarding" element={<UserOnboarding showNavBar={false}/>}/>
           <Route path="/bookinfo" element={<BookInfo showNavBar={true}/>}/>
           <Route path="/rating" element={<BookRating showNavBar={true}/>}/>
+          <Route path="/SearchResultsBook" element={<SearchResultsBook />} />
+
           
           </Routes>
         </Suspense>
