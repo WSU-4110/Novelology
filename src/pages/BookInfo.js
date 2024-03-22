@@ -11,6 +11,7 @@ import { AddBookToFirestore,CheckDuplicateBook } from '../functions/AddBook.js'
 export default function BookInfo({showNavBar}){
   const [user] = useAuthState(auth);
   const { isbn } = useParams(); 
+
   const [rating, setRating] = useState(null);
   const bookData = SearchISBN(isbn);
   if (bookData.length == 0){
@@ -18,14 +19,20 @@ export default function BookInfo({showNavBar}){
   }
   console.log(bookData);
   useEffect(() => {
+    try{
     const fetchData = async()=>{
     const isADuplicateBook = await CheckDuplicateBook(isbn);
-    if (!isADuplicateBook){
+    if (!isADuplicateBook && bookData){
       AddBookToFirestore(bookData[0]);
     }
+      
     }
     fetchData();
     console.log("Book Data from BookInfo inside useEffect: ", bookData[0]);
+  }
+  catch(e){
+    console.log("Error found in BookInfo useEffect: ", e);
+  }
   },[bookData])
 
   const handleChangeInRating = (currentRating) => {
@@ -44,12 +51,16 @@ export default function BookInfo({showNavBar}){
         {showNavBar && <NavigationBar />}
         <div className="flex flex-col bg-white">
           <div className="flex flex-col items-center px-5 pt-16 pb-10 w-full bg-[linear-gradient(0deg,#F4F3EE_0%,#F4F3EE_100%,#89023E)] max-md:max-w-full">
-            <div className="self-center bg-maroon text-white">
+            <div className="flex self-center bg-maroon text-white">
               {/* Book Cover */}
               {bookData.length > 0 ? (
                   <><img src={bookData[0].volumeInfo.imageLinks && bookData[0].volumeInfo.imageLinks.smallThumbnail} alt='' /></>
                 ) : (
-                  <>No Information</>
+                  <>
+                    <div className="flex justify-center items-center w-40 h-56 border-black border-2 bg-gray-200 text-black align-center">
+                  <span>No Image Available</span>
+                </div>
+                  </>
                 )}
 
               </div>

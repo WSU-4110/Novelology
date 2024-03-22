@@ -2,9 +2,10 @@ import { doc, setDoc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
 export const AddBookToFirestore = async (BookData) => {
-  console.log("Book data: ");
-  const book_title = BookData.volumeInfo.title;
-  const book_author = BookData.volumeInfo.authors;
+  console.log("Book data: ",BookData);
+  if (BookData){
+  const book_title = BookData.volumeInfo.title ?(BookData.volumeInfo.title):('No information');
+  const book_author = BookData.volumeInfo.authors? (BookData.volumeInfo.authors):('No information');
   console.log("Title: ", book_title);
   const industryIdentifiers = BookData.volumeInfo.industryIdentifiers;
   console.log("ISBNs: :", industryIdentifiers);
@@ -40,6 +41,9 @@ export const AddBookToFirestore = async (BookData) => {
   } else {
     console.log("Book already exists in the database.");
   }
+} else{
+  console.log("Book Data is still being retrieved from Google Books.");
+}
 };
 
 export const CheckDuplicateBook = async (isbn) => {
