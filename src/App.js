@@ -14,6 +14,7 @@ import ReaderProfilePage from './components/ReaderProfilePage';
 import AuthorProfilePage from './components/AuthorProfilePage';
 import BookRating from './components/BookRating.js';
 import SearchResultsBook from './components/SearchResultsBook.js';
+import ReaderQandA from './components/ReaderQandA.js';
 
 
 import SampleHome from './pages/sampleHome.js'
@@ -71,6 +72,7 @@ const App = () => {
           <Route path="/bookinfo" element={<BookInfo showNavBar={true}/>}/>
           <Route path="/rating" element={<BookRating showNavBar={true}/>}/>
           <Route path="/SearchResultsBook" element={<SearchResultsBook />} />
+          <Route path="/ReaderQandA" element={<ReaderQandA />} />
 
           
           </Routes>
