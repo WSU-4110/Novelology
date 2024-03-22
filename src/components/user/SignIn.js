@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import NovelologyCircleBorderLogo from '../../NovelologyCircleBorderLogo.png';
+import logoWithCircleBorder from '../../assets/logo_with_circle_border-removebg.png'; // Path to novelology logo in assets
 
 
 // Define the SignIn component
@@ -136,7 +136,7 @@ export const SignIn = (props) => {
       <div style={signInBoxStyle}>
 
       <img
-          src={NovelologyCircleBorderLogo}
+          src={logoWithCircleBorder}
           alt="Novelology Logo"
           style={{
             width: '184px',
