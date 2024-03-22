@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import trashIcon from '../../assets/trash-icon.png'; // Path to trash icon asset in src/assets
-import logoWithCircleBorder from '../../assets/logo_with_circle_border-removebg.png'; // Path to logo asset in src/assets
+import logoWithCircleBorder from '../../assets/logo_with_circle_border-removebg.png'; // Path to novelology logo in assets
 
 // Page Container Style
 const pageContainerStyle = () => ({
