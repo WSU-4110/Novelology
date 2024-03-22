@@ -26,14 +26,15 @@ export async function handleSignUpWithPopup(navigate, setLoading) {
 
         if (docSnapshot.exists()) {
             // User already exists, log in instead of signing up
-            await signInWithEmailAndPassword(auth, result.user.email, result.user.uid);
+            toast.success("Welcome back!");
         } else {
             // User does not exist in the database, add the user data to the database
             await addUserToDatabase(result.user.uid, result.user.email, result.user.displayName, navigate);
+            navigate('/setup-account');
         }
 
         // Redirect to setup-account page after successful sign-up or login
-        navigate('/setup-account');
+        navigate('/');
     } catch (error) {
         console.error("Error signing up with Google:", error);
     } finally {
