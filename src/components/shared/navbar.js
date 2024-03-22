@@ -11,6 +11,7 @@ import { onSnapshot } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { useEffect, useState } from 'react';
 import { collection } from 'firebase/firestore';
+import ProfilePicture from './ProfilePicture';
 
 export default function Navbar() {
     const [newNotifications, setNewNotifications] = React.useState(false);
@@ -20,6 +21,7 @@ export default function Navbar() {
         // If there are new notifications, setNewNotifications to true
         // if there are no new notifications, setNewNotifications to false
 
+    
         
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -51,7 +53,7 @@ export default function Navbar() {
                 <FontAwesomeIcon icon={faHome} className="rounded-full w-8 p-2 h-8 bg-[#F4D7B7] text-[#e3bd96] cursor-pointer" />
             </Link>
             <Link to="/profile" data-tip="Profile" data-for="profile-tooltip">
-                <FontAwesomeIcon icon={faUser} className="rounded-full bg-[#F4D7B7] text-[#e3bd96] w-8 h-8 p-2 cursor-pointer" />
+                <ProfilePicture uid={auth.currentUser?.uid} alt="Profile Picture" />
             </Link>
             <Link to="/create-post" data-tip="Create a Post" data-for="create-post-tooltip">
                 <FontAwesomeIcon icon={faPlus} className="rounded-full w-8 h-8 bg-[#F4D7B7] text-[#e3bd96] p-2 cursor-pointer" />
