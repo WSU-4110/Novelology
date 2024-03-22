@@ -8,12 +8,15 @@ import { Link } from 'react-router-dom';
 import { faEllipsisH } from '@fortawesome/free-solid-svg-icons';
 import PostOptionsPopup from './PostOptionsPopup';
 import ReactDOM from 'react-dom';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../firebase';
 import formatTimeDifference from '../../functions/formatTimeDifference';
 import fetchPFP from '../../functions/fetchPFP';
 import { runTransaction } from 'firebase/firestore';
 import LazyImage from '../shared/LazyImage';
+import DOMPurify from 'dompurify';
+import createNotification from '../../functions/createNotification';
+import { auth } from '../../firebase';
 
 class PostComponent extends Component {
   constructor(props) {
@@ -75,6 +78,7 @@ class PostComponent extends Component {
         } else {
           // Like the post
           currentLikes++;
+          await createNotification(auth.currentUser.id, postData.uid, serverTimestamp(), "like");
           likedBy.push(currentUserId);
         }
   
@@ -218,8 +222,8 @@ class PostComponent extends Component {
         )}
 
 
-        {/* Render post content */}
-        <p>{post.data.text}</p>
+        {/* Render post content and JSON purify it */}
+        <p dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.data.text) }} />
 
         {/* Render comments */}
         <div className="border-t border-gray-300 pt-4">

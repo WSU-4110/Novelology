@@ -55,6 +55,13 @@ const PostOptionsPopup = ({ onClose, postId}) => {
     onClose();
   };
 
+  const handleSharePost = () => {
+    // Add logic to handle sharing the post
+    navigator.clipboard.writeText(postId);
+    toast.info('Link copied to clipboard.');
+    onClose();
+  };
+
   const handleMuteUser = async () => {
     try {
       if (!postId) {
@@ -141,10 +148,10 @@ const PostOptionsPopup = ({ onClose, postId}) => {
           <li
             className="px-4 py-2 flex items-center hover:bg-gray-100 focus:bg-gray-100 focus:outline-none cursor-pointer transition duration-300"
             role="menuitem"
-            onClick={handleSavePost}
+            onClick={handleSharePost}
           >
             <FontAwesomeIcon icon={faShare} className="mr-2" />
-            Save Post
+            Share Post
           </li>
           <li
             className="px-4 py-2 flex items-center hover:bg-gray-100 focus:bg-gray-100 focus:outline-none cursor-pointer transition duration-300"
