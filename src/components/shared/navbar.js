@@ -9,15 +9,24 @@ import { handleLogout } from '../../functions/Auth';
 import { Tooltip } from 'react-tooltip';
 import { onSnapshot } from 'firebase/firestore';
 import { db } from '../../firebase';
+import { useEffect, useState } from 'react';
 import { collection } from 'firebase/firestore';
 
 export default function Navbar() {
     const [newNotifications, setNewNotifications] = React.useState(false);
-
+    const [user, setUser] = useState(null);
         // Fetch notifications from the database
         // subscribe to the notifications collection of the current user
         // If there are new notifications, setNewNotifications to true
         // if there are no new notifications, setNewNotifications to false
+
+        
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            setUser(user);
+        });
+        return () => unsubscribe();
+    }, []); 
 
         if (auth.currentUser) {
         const subscribe = onSnapshot(collection(db, 'users', auth.currentUser.uid, 'notifications'), (snapshot) => {

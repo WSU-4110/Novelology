@@ -56,13 +56,10 @@ export async function handleSignInWithPopup(navigate, setLoading) {
         const docSnapshot = await getDoc(userRef);
 
         if (!docSnapshot.exists()) {
-            // User does not exist in the database, sign up
-            console.log('User signed up for the first time');
-            // Perform actions specific to first sign-up
-            await addUserToDatabase(user.uid, user.email, user.displayName, navigate);
-        } else {
+            toast.error("This account does not exist. Please sign up first.");
+         } else {
             // Redirect to setup-account page after successful sign-in or login
-            navigate('/setup-account');
+            navigate('/');
         }
     } catch (error) {
         console.error("Error signing in with Google:", error);
