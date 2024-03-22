@@ -1,6 +1,6 @@
 import React from 'react';
 import lockIcon from '../../assets/lock-icon.png'; // Path to lock icon asset
-import logoWithCircleBorder from '../../assets/logo_with_circle_border-removebg.png'; // Path to logo asset
+import logoWithCircleBorder from '../../assets/logo_with_circle_border-removebg.png'; // Path to novelology logo in assets
 
 // Styles
 const pageStyles = () => ({
