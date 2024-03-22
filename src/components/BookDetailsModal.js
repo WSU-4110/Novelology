@@ -24,10 +24,10 @@ const Modal = ({ show, item, onClose }) => {
       item.volumeInfo.industryIdentifiers &&
       item.volumeInfo.industryIdentifiers.length > 0
     ) {
-      console.log("before error");
+      console.log("Enter AddBookToFirestore component");
       //Add book to Firebase.
       AddBookToFirestore(item);
-      console.log("after error");
+      console.log("Exit AddBookToFirestore component");
 
       //navigating to BookInfo Page with ISBN.
       navigate(

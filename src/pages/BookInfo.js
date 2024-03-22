@@ -5,6 +5,7 @@ import {useParams} from 'react-router-dom';
 import { SearchISBN } from '../components/shared/SearchISBN';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../firebase';
+import { AddBookToFirestore,CheckDuplicateBook } from '../functions/AddBook.js'
 // import { AddBookRating } from '../functions/AddRatingToBook';
 
 export default function BookInfo({showNavBar}){
@@ -13,8 +14,19 @@ export default function BookInfo({showNavBar}){
   const [rating, setRating] = useState(null);
   const bookData = SearchISBN(isbn);
   if (bookData.length == 0){
-    console.log("Error: Book Not Available (BookLength=0)")
+    console.log("Error: Book Not Available from Google API (BookLength=0)")
   }
+  console.log(bookData);
+  useEffect(() => {
+    const fetchData = async()=>{
+    const isADuplicateBook = await CheckDuplicateBook(isbn);
+    if (!isADuplicateBook){
+      AddBookToFirestore(bookData[0]);
+    }
+    }
+    fetchData();
+    console.log("Book Data from BookInfo inside useEffect: ", bookData[0]);
+  },[bookData])
 
   const handleChangeInRating = (currentRating) => {
     setRating(currentRating);
