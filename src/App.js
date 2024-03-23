@@ -15,6 +15,8 @@ import AuthorProfilePage from './components/AuthorProfilePage';
 import BookRating from './components/BookRating.js';
 import SearchResultsBook from './components/SearchResultsBook.js';
 import ReaderQandA from './components/ReaderQandA.js';
+import HomeLoggedIn from './components/HomeLoggedIn.js';
+
 
 
 import SampleHome from './pages/sampleHome.js'
@@ -70,6 +72,7 @@ const App = () => {
             <Route path="/samplehome" element={<SampleHome showNavBar={true}/>}/>
             <Route path="/SearchResultsBook" element={<SearchResultsBook />} />
             <Route path="/ReaderQandA" element={<ReaderQandA />} />
+            <Route path="/HomeLoggedIn" element={<HomeLoggedIn />} />
             <Route path="/sign_in" element={<SignIn showNavBar={false}/>}/>
             <Route path="/onboarding" element={<UserOnboarding showNavBar={false}/>}/>
             <Route path="/bookinfo" element={<BookInfo showNavBar={true}/>}/>
