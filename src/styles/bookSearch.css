@@ -26,6 +26,6 @@
     padding: 1.5rem;
     position:relative;
     box-sizing: border-box;
-    overflow:hidden;
+    overflow:scroll;
     /* font-size: 1.3rem; */
 }

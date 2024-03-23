@@ -74,6 +74,7 @@ function SelectGenres() {
       console.error("Error updating genres in Firestore:", error);
     }
   };
+  
 
 
   return (

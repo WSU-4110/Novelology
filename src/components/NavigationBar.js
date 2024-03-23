@@ -3,7 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../firebase';
 import { handleLogout } from '../functions/Auth';
+import SideBar,{SideBarItem} from './SideBar.js';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHome, faUser, faPlus, faSignOutAlt, faSignInAlt, faPersonCircleQuestion, faBookBookmark, faGear, faBell } from '@fortawesome/free-solid-svg-icons';
 
+import "../styles/sideBar.css"
 export default function NavigationBar() {
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
@@ -25,8 +29,28 @@ export default function NavigationBar() {
       <>
       {user ? (
         //When user is logged in
+        <>
+        <div className="fixed left-0 top-0 bottom-0 bg-white w-[5.2rem] z-10">
+
+        <SideBar>
+
+          <SideBarItem icon={<FontAwesomeIcon icon={faHome} size={20}/>} text="Home" active alert />
+          <SideBarItem icon={<FontAwesomeIcon icon={faUser} size={20}/>} text="Profile"/>
+          <SideBarItem icon={<FontAwesomeIcon icon={faBell} size={20}/>} text="Notifications" alert />
+          <SideBarItem icon={<FontAwesomeIcon icon={faPlus} size={20}/>} text="Create Post" />
+          <SideBarItem icon={<FontAwesomeIcon icon={faBookBookmark} size={20} />} text="Book Lists" />
+          <SideBarItem icon={<FontAwesomeIcon icon={faPersonCircleQuestion} size={20}/>} text="Reader Q&A" />
+          <SideBarItem icon={<FontAwesomeIcon icon={faGear} size={20}/>} text="Settings" alert />
+
+
+        </SideBar>
+        </div>
+
+        <div className="ml-[5.2rem]">
         <div className="flex justify-center items-center px-16 py-1.0 w-full text-base whitespace-nowrap bg-maroon max-md:px-5 max-md:max-w-full">
+        
         <div className="flex gap-5 justify-between items-center w-full max-w-[1080px] max-md:flex-wrap max-md:max-w-full">
+        
         <img
                     loading="lazy"
                     srcSet={require("../assets/novelology_newlogo.png")}
@@ -83,8 +107,11 @@ export default function NavigationBar() {
           </button>
         </div>
       </div>
+      </div>
+      </>
       ):(
         //When user is logged out
+        <>
         <div className="flex flex-col bg-lightcolor">
           <div className="flex z-10 flex-col pb-0 w-full max-md:max-w-full">
             <div className="flex justify-center items-center px-16 py-1.0 w-full whitespace-nowrap bg-maroon max-md:px-5 max-md:max-w-full ">
@@ -175,6 +202,7 @@ export default function NavigationBar() {
             </div>
           </div>
         </div>
+        </>
       )}
         
 
