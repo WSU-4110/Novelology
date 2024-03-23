@@ -6,7 +6,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { AddBookToFirestore } from "../functions/AddBook.js";
 import AddToBookList from "./BookStacks/AddToBookList.js";
 import { serverTimestamp } from "firebase/firestore";
-
+import { GetISBN13 } from "../functions/AddBook.js";
 
 
 const Modal = ({ show, item, onClose }) => {
@@ -19,25 +19,11 @@ const Modal = ({ show, item, onClose }) => {
   let thumbnail =
     item.volumeInfo.imageLinks && item.volumeInfo.imageLinks.smallThumbnail;
   function navigateToBookInfo() {
-    if (
-      item.volumeInfo &&
-      item.volumeInfo.industryIdentifiers &&
-      item.volumeInfo.industryIdentifiers.length > 0
-    ) {
+    
       console.log("Enter AddBookToFirestore component");
       //Add book to Firebase.
-      AddBookToFirestore(item);
+      AddBookToFirestore(item,navigate);
       console.log("Exit AddBookToFirestore component");
-
-      //navigating to BookInfo Page with ISBN.
-      navigate(
-        "/bookinfo/" + item.volumeInfo.industryIdentifiers[0].identifier
-      );
-    } else {
-      console.log(
-        "Error: ISBN/ Industry identifiers array is undefined or empty."
-      );
-    }
   }
 
   return (
