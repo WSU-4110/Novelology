@@ -3,13 +3,13 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../../firebase';
 import { FaGoogle } from 'react-icons/fa';
 import { handleSignInWithPopup } from "../../functions/Auth";
-
-
+import { useNavigate } from "react-router-dom";
 export function SignIn() {
   const [loading, setLoading] = useState(false);
 
   const emailRef = useRef();
   const passwordRef = useRef();
+  const navigate = useNavigate();
 
   async function handleSignInWithEmailAndPassword() {
     setLoading(true);
@@ -19,6 +19,14 @@ export function SignIn() {
       alert("Error signing in with email: " + error.message);
     }
     setLoading(false);
+  }
+
+  const signInWithGoogle = async () => {
+    try {
+      handleSignInWithPopup(navigate, setLoading)
+    } catch (error) {
+      console.error("Error signing in with Google:", error);
+    }
   }
 
   return (
@@ -33,8 +41,8 @@ export function SignIn() {
           id="register"
           onClick={(event) => {
               event.preventDefault(); // Prevent default form submission
-              handleSignInWithPopup().catch((error) => console.error('Error during sign-in:', error));
-          }}
+              signInWithGoogle();
+            }}
       >
           <FaGoogle className="mr-2" /> Sign In with Google
       </button>
