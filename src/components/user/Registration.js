@@ -9,16 +9,15 @@ import { FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa"; // Import FaEyeSla
 const ReactiveInputField = ({ type, placeholder, inputRef, onChange }) => (
   <div className="relative">
     <label
-      className="input-label"
       htmlFor={placeholder}
-      style={{ color: "#ffffff" }} // Set label color to white
+      style={{ color: "white" }} 
     >
       {placeholder}
       <span className="text-red-500"> *</span> {/* Indicates a required field */}
     </label>
     <input
       className="mt-2 rounded-lg p-2.5 outline-none focus:ring focus:ring-blue-300 w-full shadow-lg"
-      style={{ boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.8)" }} // Inline style for boxShadow
+      style={{ boxShadow: "0 0.25rem 0.5rem rgba(0, 0, 0, 0.8)" }} // Converted boxShadow to rem
       ref={inputRef}
       type={type}
       required
@@ -35,17 +34,15 @@ const ReactivePasswordInputField = ({ placeholder, inputRef, onChange }) => {
   return (
     <div className="relative">
       <label
-        className="input-label"
         htmlFor={placeholder}
-        style={{ color: "#ffffff" }} // Set label color to white
+        style={{ color: "white" }} 
       >
         {placeholder}
-        <span className="text-red-500"> *</span>{" "}
-        {/* Indicates a required field */}
+        <span className="text-red-500"> *</span> {/* Indicates a required field */}
       </label>
       <input
         className="mt-2 rounded-lg p-2.5 outline-none focus:ring focus:ring-blue-300 w-full shadow-lg"
-        style={{ boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.8)" }} // Inline style for boxShadow
+        style={{ boxShadow: "0 0.25rem 0.5rem rgba(0, 0, 0, 0.8)" }} // Converted boxShadow to rem
         ref={inputRef}
         type={showPassword ? "text" : "password"}
         required
@@ -68,8 +65,8 @@ const ReactivePasswordInputField = ({ placeholder, inputRef, onChange }) => {
 
 export function Registration() {
   const [loading, setLoading] = useState(false);
-  // Adding state hooks for user input validation and feedback
   const [passwordError, setPasswordError] = useState('');
+  const [isFormValid, setIsFormValid] = useState(false); // New state to track form validity
   const navigate = useNavigate();
 
   // useRef hooks for form inputs
@@ -83,14 +80,12 @@ export function Registration() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        navigate("/user-onboarding"); // Updated path
+        navigate("/user-onboarding");
       }
     });
     return unsubscribe;
   }, [navigate]);
 
-  
-  // Function to validate password and confirm password fields
   const validatePasswords = () => {
     const password = passwordRef.current.value;
     const confirmPassword = confirmPasswordRef.current.value;
@@ -105,14 +100,22 @@ export function Registration() {
     return true;
   };
 
-  // Handler for input change to validate passwords in real-time
   const handleInputChange = () => {
     validatePasswords();
+    // Check if all fields are filled
+    const allFieldsFilled = [
+      emailRef.current.value,
+      passwordRef.current.value,
+      confirmPasswordRef.current.value,
+      usernameRef.current.value,
+      firstNameRef.current.value,
+      lastNameRef.current.value
+    ].every(field => field !== '');
+    setIsFormValid(allFieldsFilled && validatePasswords());
   };
 
-  // Function to handle sign-up with email and password
   const handleSignUpWithEmail = async () => {
-    if (!validatePasswords()) return;
+    if (!isFormValid) return;
   
     setLoading(true);
     try {
@@ -120,7 +123,7 @@ export function Registration() {
       const password = passwordRef.current.value;
       const username = usernameRef.current.value;
       await signUpWithEmail(email, password, username);
-      navigate("/user-onboarding"); // Updated path
+      navigate("/user-onboarding");
     } catch (error) {
       console.error("Signup failed:", error);
       alert("Signup failed: " + error.message);
@@ -128,178 +131,37 @@ export function Registration() {
       setLoading(false);
     }
   };
-  
 
-  // Function to handle form submission
   const handleSubmit = (event) => {
     event.preventDefault();
     handleSignUpWithEmail();
   };
 
-  // Styles
-  const styles = {
-    mainContainer: {
-      display: "flex",
-      justifyContent: "flex-start",
-      alignItems: "center",
-      width: "100%",
-      minHeight: "100vh",
-      overflow: "auto",
-      flexDirection: "column",
-      backgroundColor: "rgba(91, 46, 72, 1)",
-      paddingTop: "20px",
-      paddingBottom: "20px",
-    },
-    logo: {
-      width: "184px",
-      height: "172px",
-      marginBottom: "20px",
-    },
-    signUpTitle: {
-      color: "rgba(255, 255, 255, 1)",
-      fontFamily: "Montserrat",
-      fontSize: "65px",
-      fontWeight: "400",
-      marginBottom: "20px",
-      marginTop: "30px",
-    },
-    gridContainer: {
-      display: "grid",
-      gridTemplateColumns: "1fr 1fr",
-      gap: "60px",
-      marginBottom: "40px",
-      marginTop: "30px",
-    },
-    label: {
-      color: "rgba(255, 255, 255, 0.9)",
-      fontFamily: "Montserrat",
-      paddingLeft: "10px",
-    },
-    input: {
-      padding: "10px",
-      borderRadius: "20px",
-      marginTop: "5px",
-      width: "100%",
-      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.8)", // Added shadow
-    },
-    createAccountButton: {
-      backgroundColor: "rgba(91, 46, 72, 1)",
-      width: "509px",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      padding: "10px 45px",
-      borderRadius: "20px",
-      marginBottom: "20px",
-      marginTop: "30px",
-      boxShadow: "0px 4px 8px rgba(0, 0, 0, 1)", // Added shadow
-    },
-
-    signUpWithGoogleButtonText: {
-      color: "rgba(0, 0, 0, 0.8)",
-      fontFamily: "Montserrat",
-      fontSize: "18px", // Slightly smaller font size for differentiation
-      fontWeight: "400",
-      textAlign: "center", // Center the text within the button
-    },
-
-    buttonText: {
-      color: "white",
-      fontFamily: "Montserrat",
-      fontSize: "20px",
-      fontWeight: "400",
-    },
-    orTextContainer: {
-      marginBottom: "20px",
-      marginTop: "10px",
-    },
-    orText: {
-      color: "rgba(255, 255, 255, 0.7)",
-      fontFamily: "Montserrat",
-      fontSize: "16px",
-    },
-    googleButton: {
-      backgroundColor: "#ffffff",
-      width: "302px",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      gap: "10px",
-      padding: "10px 45px",
-      borderRadius: "20px",
-      overflow: "hidden",
-      marginTop: "10px",
-      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.8)", // Added shadow
-    },
-  };
-
-  // JSX Structure with styles applied
   return (
-    <div style={styles.mainContainer}>
-    <img
-      src={logoWithCircleBorder}
-      alt="Novelology Logo"
-      style={styles.logo}
-    />
-
-    <span style={styles.signUpTitle}>Sign Up</span>
-
-    <div style={styles.gridContainer}>
-      <ReactiveInputField
-        key="firstName"
-        type="text"
-        placeholder="Enter your first name"
-        inputRef={firstNameRef}
-        onChange={(e) => handleInputChange(e, "firstName")}
-      />
-      <ReactiveInputField
-        key="lastName"
-        type="text"
-        placeholder="Enter your last name"
-        inputRef={lastNameRef}
-        onChange={(e) => handleInputChange(e, "lastName")}
-      />
-      <ReactiveInputField
-        key="email"
-        type="email"
-        placeholder="Enter your email address"
-        inputRef={emailRef}
-        onChange={(e) => handleInputChange(e, "email")}
-      />
-      <ReactiveInputField
-        key="username"
-        type="text"
-        placeholder="Choose a username"
-        inputRef={usernameRef}
-        onChange={(e) => handleInputChange(e, "username")}
-      />
-      <ReactivePasswordInputField
-        placeholder="Create a password"
-        inputRef={passwordRef}
-        onChange={(e) => handleInputChange(e, "password")}
-      />
-      <ReactivePasswordInputField
-        placeholder="Confirm your password"
-        inputRef={confirmPasswordRef}
-        onChange={(e) => handleInputChange(e, "confirmPassword")}
-      />
-    </div>
-
-      <div style={styles.createAccountButton}>
-        <button style={styles.buttonText} onClick={(event) => handleSubmit(event, navigate)}
->Create Account</button>
+    <div className="flex flex-col items-center justify-center w-full min-h-screen bg-maroon" style={{ paddingTop: "1.25rem", paddingBottom: "1.25rem", fontFamily: 'Montserrat' }}>
+      <img src={logoWithCircleBorder} alt="Novelology Logo" style={{ width: "11.5rem", height: "10.75rem", marginBottom: "1.25rem" }} />
+      <span style={{ color: "white", fontSize: "4.0625rem", fontWeight: "400", marginBottom: "1.25rem", marginTop: "1.875rem" }}>Sign Up</span>
+      <form style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "3.75rem", marginBottom: "2.5rem", marginTop: "1.875rem" }}>
+        <ReactiveInputField type="text" placeholder="Enter your first name" inputRef={firstNameRef} onChange={handleInputChange} />
+        <ReactiveInputField type="text" placeholder="Enter your last name" inputRef={lastNameRef} onChange={handleInputChange} />
+        <ReactiveInputField type="email" placeholder="Enter your email address" inputRef={emailRef} onChange={handleInputChange} />
+        <ReactiveInputField type="text" placeholder="Choose a username" inputRef={usernameRef} onChange={handleInputChange} />
+        <ReactivePasswordInputField placeholder="Create a password" inputRef={passwordRef} onChange={handleInputChange} />
+        <ReactivePasswordInputField placeholder="Confirm your password" inputRef={confirmPasswordRef} onChange={handleInputChange} />
+      </form>
+      
+      <button
+        onClick={handleSubmit}
+        className="bg-maroon text-white w-[31.8125rem] justify-center items-center py-[0.625rem] px-[2.8125rem] rounded-[1.25rem] mb-[1.25rem] mt-[1.875rem] shadow-[0px_4px_8px_rgba(0,0,0,1)] flex font-[Montserrat] text-[1.25rem] font-[400]">
+        Create Account
+      </button>
+      <div className="mb-[1.25rem] mt-[0.625rem]">
+        <span className="text-[rgba(255,255,255,0.7)] font-[Montserrat] text-[1rem]">---------- OR ----------</span>
       </div>
-
-      <div style={styles.orTextContainer}>
-        <span style={styles.orText}>---------- OR ----------</span>
-      </div>
-
-      <div style={styles.googleButton}>
+      <div className="bg-white w-[18.875rem] flex justify-center items-center gap-[0.625rem] py-[0.625rem] px-[2.8125rem] rounded-[1.25rem] overflow-hidden mt-[0.625rem] shadow-[0px_4px_8px_rgba(0,0,0,0.8)]">
         <button
-          className="flex items-center w-full bg-white border border-gray-300 rounded-[1rem] shadow-md px-6 py-2 text-sm font-medium text-gray-800 mt-4 mb-4"
-          id="register"
-          onClick={(event) => handleSignUpWithPopup(event, navigate)}
-        >
+          onClick={() => handleSignUpWithPopup(navigate)}
+          className="bg-none border-none flex items-center text-[rgba(0,0,0,0.8)] font-[Montserrat] text-[1.125rem] font-[400]">
           <FaGoogle className="mr-2" /> Continue with Google
         </button>
       </div>
