@@ -1,22 +1,31 @@
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase'; // Import your Firebase configuration
 
 const fetchUIDwithUsername = async (username) => {
     try {
-        // Query the users collection to find the user with the specified username
-        const userQuery = query(collection(db, 'users'), where('username', '==', username));
-        const querySnapshot = await getDocs(userQuery);
+        // Convert the username to lowercase to match the document ID
+        const lowerCaseUsername = username.toLowerCase();
 
-        // Check if the query snapshot is not empty
-        if (!querySnapshot.empty) {
-            // Assuming username is unique, retrieve the first document and return its UID
-            const doc = querySnapshot.docs[0];
-            return doc.id;
+        // Reference the document directly using its ID (which is the lowercase username)
+        const userDocRef = doc(db, 'usernames', lowerCaseUsername);
+        //console.log("userDocRef", userDocRef);
+        const userDocSnapshot = await getDoc(userDocRef);
+
+        // Check if the document exists
+        if (userDocSnapshot.exists()) {
+            // Document found, return the UID field
+            //console.log("userDocSnapshot.data()", userDocSnapshot.data());
+            //console.log(`Username '${username}' found. UID:`, userDocSnapshot.data().UID);
+
+            if (userDocSnapshot.data().UID === undefined) {
+                return userDocSnapshot.data().uid;
+            }
+
+            return userDocSnapshot.data().UID;
         } else {
             // Username not found, return null or throw an error
+            //console.log(`Username '${username}' not found.`);
             return null;
-            // Alternatively, you can throw an error:
-            // throw new Error('User not found for the specified username.');
         }
     } catch (error) {
         console.error('Error fetching UID with username:', error);

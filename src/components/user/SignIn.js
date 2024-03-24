@@ -1,3 +1,33 @@
+import { useRef, useState } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from '../../firebase';
+import { FaGoogle } from 'react-icons/fa';
+import { handleSignInWithPopup } from "../../functions/Auth";
+import { useNavigate } from "react-router-dom";
+export function SignIn() {
+  const [loading, setLoading] = useState(false);
+
+  const emailRef = useRef();
+  const passwordRef = useRef();
+  const navigate = useNavigate();
+
+  async function handleSignInWithEmailAndPassword() {
+    setLoading(true);
+    try {
+      await signInWithEmailAndPassword(auth, emailRef.current.value, passwordRef.current.value);
+    } catch (error) {
+      alert("Error signing in with email: " + error.message);
+    }
+    setLoading(false);
+  }
+
+  const signInWithGoogle = async () => {
+    try {
+      handleSignInWithPopup(navigate, setLoading)
+    } catch (error) {
+      console.error("Error signing in with Google:", error);
+    }
+  }
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import logoWithCircleBorder from '../../assets/logo_with_circle_border-removebg.png'; // Path to novelology logo in assets
@@ -132,26 +162,27 @@ export const SignIn = (props) => {
   };
 
   return (
-    <div style={mainContainerStyle}>
-      <div style={signInBoxStyle}>
+    <div className="min-w-20 p-1">
+      <h1 style={{ fontSize: '1.0rem', marginBottom: '2.5rem', textAlign: 'center' }}>
+      Sign In
+      </h1>
 
-      <img
-          src={logoWithCircleBorder}
-          alt="Novelology Logo"
-          style={{
-            width: '184px',
-            height: '172px',
-            marginBottom: '20px',
-          }}
-        />
+      <form>
+      <button
+          className="flex items-center w-full bg-white border border-gray-300 rounded-[5rem] shadow-md px-6 py-2 text-sm font-medium text-gray-800 mt-4 mb-4"
+          id="register"
+          onClick={(event) => {
+              event.preventDefault(); // Prevent default form submission
+              signInWithGoogle();
+            }}
+      >
+          <FaGoogle className="mr-2" /> Sign In with Google
+      </button>
 
-        {/* Sign In title */}
-        <span style={textStyle(65, 400, '20px')}>Sign In</span>
-        
 
-        {/* Sign in with Google button (Placeholder for actual implementation) */}
-        <div style={googleSignInButtonStyle}>
-          <span style={textStyle(20, 400, '20px', 'rgba(0, 0, 0, 1)')}>Sign in with Google</span>
+
+      <div className="h-2 w-full flex flex-row mb-2 select-none">
+      <div className="w-[45%] h-[.05em] bg-black">
         </div>
 
         {/* Divider text */}

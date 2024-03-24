@@ -61,15 +61,20 @@ class Feed extends Component {
       await new Promise((resolve) => setTimeout(resolve, 1000));
   
       const currentUserID = this.props.currentUser.uid;
-      
-      // Fetch the following list from the current user document
+  
+      // Fetch the following list and muted list from the current user document
       const userDocRef = doc(db, 'users', currentUserID);
       const userDocSnapshot = await getDoc(userDocRef);
-      const followingList = userDocSnapshot.exists() ? userDocSnapshot.data().following : [];
+      const userData = userDocSnapshot.exists() ? userDocSnapshot.data() : {};
+      const followingList = userData.following || [];
+      const mutedList = userData.muted || [];
   
-      // Fetch posts from users in the following list
+      // Filter out muted users from the following list
+      const filteredFollowingList = followingList.filter(userID => !mutedList.includes(userID));
+  
+      // Fetch posts from users in the filtered following list
       const fetchedPosts = [];
-      for (const followedUserID of followingList) {
+      for (const followedUserID of filteredFollowingList) {
         const q = query(collection(db, 'posts'), where('uid', '==', followedUserID));
         const userPostsSnapshot = await getDocs(q);
         userPostsSnapshot.forEach((doc) => {
@@ -99,6 +104,7 @@ class Feed extends Component {
       this.setState({ isLoading: false });
     }
   };
+  
   
   
   fetchCommentsForPost = async (post) => {
@@ -175,15 +181,14 @@ class Feed extends Component {
     }
   };
 
-  handleCommentChange = (e, postId) => {
-    const { value } = e.target;
-    this.setState((prevState) => ({
-      newComments: {
-        ...prevState.newComments,
-        [postId]: value,
-      },
-    }));
-  };
+  // takes the event and the postId as arguments
+  // immediately destructures the value from the event object
+  // then updates the newComments state object with the new value for the postId.
+  handleCommentChange = ({ target: { value } }, postId) =>
+  this.setState(({ newComments }) => ({
+    newComments: { ...newComments, [postId]: value }
+  }));
+
 
   handleDeleteComment = async (deletedCommentId) => {
     const { comments } = this.state;
@@ -207,20 +212,50 @@ class Feed extends Component {
   handleSortBy = (sortByType) => {
     const { filteredPosts } = this.state;
     let sortedPosts;
-    if (sortByType === 'time') {
+  
+    if (sortByType === 'newest') {
       sortedPosts = [...filteredPosts].sort((a, b) => b.data.createdAt - a.data.createdAt);
+    } else if (sortByType === 'oldest') {
+      sortedPosts = [...filteredPosts].sort((a, b) => a.data.createdAt - b.data.createdAt);
     } else if (sortByType === 'popularity') {
-      // Implement sorting by popularity logic
+      sortedPosts = [...filteredPosts].sort((a, b) => (b.data.likes || 0) - (a.data.likes || 0));
+    } else if (sortByType === 'comments') {
+      sortedPosts = [...filteredPosts].sort((a, b) => (b.data.commentsCount || 0) - (a.data.commentsCount || 0));
+    } else if (sortByType === 'engagement') {
+      sortedPosts = [...filteredPosts].sort((a, b) => {
+        const engagementA = (a.data.likes || 0) + (a.data.commentsCount || 0);
+        const engagementB = (b.data.likes || 0) + (b.data.commentsCount || 0);
+        return engagementB - engagementA;
+      });
+    } else if (sortByType === 'textLength') {
+      sortedPosts = [...filteredPosts].sort((a, b) => b.data.text.length - a.data.text.length);
+    } else {
+      sortedPosts = filteredPosts; // Default case
     }
+  
     this.setState({ filteredPosts: sortedPosts });
   };
   
 
+  
+
   handleScroll = () => {
+    const { isLoading, allPostsFetched } = this.state;
     const postContainer = this.postContainerRef.current;
-    if (!this.state.isLoading && !this.state.allPostsFetched && postContainer && window.innerHeight + window.scrollY >= postContainer.offsetHeight) {
-      this.fetchPosts();
-    }
+  
+    // Check if the user is scrolling near the bottom of the post container
+    const isScrollingNearBottom = postContainer &&
+      window.innerHeight + window.scrollY >= postContainer.offsetHeight - 100; // Adjust the offset for earlier triggering
+  
+    // Debounce the scroll event to avoid excessive calls
+    if (this.scrollTimeout) clearTimeout(this.scrollTimeout);
+    this.scrollTimeout = setTimeout(() => {
+      // Fetch more posts if the user is scrolling near the bottom
+      if (!isLoading && !allPostsFetched && isScrollingNearBottom) {
+        this.setState({ isLoading: true }); // Set loading state
+        this.fetchPosts();
+      }
+    }, 100); // Adjust the debounce time as needed
   };
 
   render() {
@@ -233,6 +268,16 @@ class Feed extends Component {
           <button className="mr-2" onClick={() => this.handleFilterByType('all')}>All</button>
           <button className="mr-2" onClick={() => this.handleFilterByType('image')}>Images</button>
           <button onClick={() => this.handleFilterByType('video')}>Videos</button>
+        </div>
+        <div className="mb-4">
+          <label className="mr-4">Sort by:</label>
+          <select onChange={(e) => this.handleSortBy(e.target.value)}>
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="popularity">Popularity</option>
+            <option value="comments">Comments</option>
+            <option value="engagement">Engagement</option>
+          </select>
         </div>
         <div ref={this.postContainerRef} className="post-container" style={{ minHeight: 'calc(100vh - 100px)' }}>
           {filteredPosts.map((post, index) => (

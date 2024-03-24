@@ -142,6 +142,18 @@ const signUpWithEmail = async (email, password, username, firstName, lastName) =
   
     setLoading(true);
     try {
+      // validate username
+      if (usernameRef.current.value.trim().length < 3 || usernameRef.current.value.trim().length > 20 || !/^[a-zA-Z0-9_]*$/.test(usernameRef.current.value.trim())) {
+        alert("Username must be between 3-20 characters and can only contain letters, numbers, and underscores");
+        setLoading(false);
+        throw new Error("Invalid username");
+      }
+
+      await signUpWithEmail(
+        emailRef.current.value.trim(),
+        passwordRef.current.value.trim(),
+        usernameRef.current.value.trim()
+      );
       const email = emailRef.current.value;
       const password = passwordRef.current.value;
       const username = usernameRef.current.value;

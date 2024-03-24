@@ -1,26 +1,26 @@
-export async function searchUsers(nameQuery) {
-    const q = nameQuery.trim();
+import { getDocs, collection } from 'firebase/firestore';
+import { db } from '../firebase.js';
+
+export async function searchUsers(idQuery) {
+    console.log('Searching for:', idQuery);
+    const q = idQuery.trim();
     const results = [];
 
     if (q !== '') {
+        const qRef = collection(db, 'usernames'); // Replace 'usernames' with your collection name
         try {
-            // Simulated data for testing
-            const simulatedData = [
-                { id: '1', username: 'user1', email: 'user1@example.com' },
-                { id: '2', username: 'user2', email: 'user2@example.com' },
-                { id: '3', username: 'user3', email: 'user3@example.com' },
-            ];
-
-            // Simulated search logic
-            simulatedData.forEach(user => {
-                if (user.username.toLowerCase().includes(q.toLowerCase())) {
-                    results.push(user);
+            const qSnapshot = await getDocs(qRef);
+            console.log('Snapshot:', qSnapshot);
+            qSnapshot.forEach(doc => {
+                // Check if document ID starts with the query or contains the query
+                if (doc.id.startsWith(q.toLowerCase()) || doc.id.includes(q)) { 
+                    results.push({ id: doc.id, UID: doc.data().UID });
                 }
             });
-
+            console.log('Results:', results);
             return results;
         } catch (error) {
-            console.error('Error searching:', error);
+            console.error('Error searching users:', error);
             return [];
         }
     } else {

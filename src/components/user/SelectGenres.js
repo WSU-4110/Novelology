@@ -74,37 +74,51 @@ function SelectGenres() {
       console.error("Error updating genres in Firestore:", error);
     }
   };
+  
 
 
   return (
     <>
-      <div className="flex flex-wrap justify-start gap-2 my-4">
-        {selectedGenres.map((genre) => (
-          <div
-            key={genre}
-            className="bg-blue-500 text-white rounded-full px-4 py-2 cursor-pointer"
-            onClick={() => handleGenreUnselect(genre)} // Add onClick handler for unselecting genre
-          >
-            {genre}
+      <div className="flex flex-col rounded-lg shadow-2xl items-center px-4 pt-7 pb-16 mt-6 max-w-full text-xl text-center text-black shadow-sm bg-maroon bg-opacity-50 w-[908px] max-md:px-5">
+        <div className="flex gap-5 divide-x divide-maroon justify-between mb-4 max-w-full w-[600px] max-md:flex-wrap">
+          
+          <div className="flex flex-col pl-4">
+            <div className="text-lg font-semibold">Preferred Genres</div>
+            <div className="flex flex-wrap justify-start gap-2 my-4">
+              {selectedGenres.map((genre) => (
+                <div
+                  key={genre}
+                  className="bg-maroon text-white rounded-full px-4 py-2 cursor-pointer"
+                  onClick={() => handleGenreUnselect(genre)} // Add onClick handler for unselecting genre
+                >
+                  {genre}
+                </div>
+              ))}
+            </div>
           </div>
-        ))}
-      </div>
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold">Select Genres</h2>
-        <div className="flex flex-wrap justify-start gap-2 mt-2">
-          {genreSuggestions
-            .filter((suggestion) => !selectedGenres.includes(suggestion)) // Filter out selected genres
-            .map((suggestion) => (
-              <div
-                key={suggestion}
-                className="bg-gray-200 hover:bg-gray-300 rounded-full px-4 py-2 cursor-pointer"
-                onClick={() => handleGenreSelect(suggestion)}
-              >
-                {suggestion}
-              </div>
-            ))}
+
+          <div className="flex flex-col pl-5">
+            <div className="text-lg font-semibold">Choose from </div>
+            <div className="flex flex-wrap justify-start gap-2 mt-2">
+              {genreSuggestions
+                .filter((suggestion) => !selectedGenres.includes(suggestion)) // Filter out selected genres
+                .map((suggestion) => (
+                  <div
+                    key={suggestion}
+                    className="bg-maroon bg-opacity-40 hover:bg-gray-300 rounded-full px-4 py-2 cursor-pointer"
+                    onClick={() => handleGenreSelect(suggestion)}
+                  >
+                    {suggestion}
+                  </div>
+                ))}
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* <div className="mb-4">
+        <h2 >Select Genres</h2>
+      </div> */}
     </>
   );
 }

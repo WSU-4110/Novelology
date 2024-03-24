@@ -6,7 +6,9 @@ const LazyImage = ({ src, alt, placeholder, width, height, className }) => {
   const [isVisible, setIsVisible] = useState(false);
   const observer = useRef(null);
 
+  // IntersectionObserver is a browser API that allows you to observe when an element comes into view.
   useEffect(() => {
+    // If the browser does not support IntersectionObserver, we will load the image immediately.
     observer.current = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
@@ -16,10 +18,13 @@ const LazyImage = ({ src, alt, placeholder, width, height, className }) => {
       });
     });
 
+    // If the image is in the viewport, we will load the image immediately.
     if (imgRef.current) {
       observer.current.observe(imgRef.current);
     }
 
+
+    // Clean up the observer when the component is unmounted.
     return () => {
       if (imgRef.current) {
         observer.current.unobserve(imgRef.current);
@@ -39,6 +44,8 @@ const LazyImage = ({ src, alt, placeholder, width, height, className }) => {
   );
 };
 
+
+// Set the default value for the placeholder prop.
 LazyImage.defaultProps = {
   placeholder: faSpinner 
 };

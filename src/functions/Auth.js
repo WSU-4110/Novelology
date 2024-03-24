@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, signInWithEmailAndPassword, deleteUser } from 'firebase/auth';
 import { auth, db, provider} from '../firebase';
-import { useNavigate } from "react-router";
 import { doc, setDoc, getDoc, deleteDoc} from 'firebase/firestore';
 import { getStorage, ref, deleteObject } from "firebase/storage";
+import { toast } from 'react-toastify';
 
 const storage = getStorage();
 
@@ -26,14 +26,15 @@ export async function handleSignUpWithPopup(navigate, setLoading) {
 
         if (docSnapshot.exists()) {
             // User already exists, log in instead of signing up
-            await signInWithEmailAndPassword(auth, result.user.email, result.user.uid);
+            toast.success("Welcome back!");
         } else {
             // User does not exist in the database, add the user data to the database
             await addUserToDatabase(result.user.uid, result.user.email, result.user.displayName, navigate);
+            navigate('/setup-account');
         }
 
         // Redirect to setup-account page after successful sign-up or login
-        navigate('/setup-account');
+        navigate('/');
     } catch (error) {
         console.error("Error signing up with Google:", error);
     } finally {
@@ -56,13 +57,10 @@ export async function handleSignInWithPopup(navigate, setLoading) {
         const docSnapshot = await getDoc(userRef);
 
         if (!docSnapshot.exists()) {
-            // User does not exist in the database, sign up
-            console.log('User signed up for the first time');
-            // Perform actions specific to first sign-up
-            await addUserToDatabase(user.uid, user.email, user.displayName, navigate);
-        } else {
+            toast.error("This account does not exist. Please sign up first.");
+         } else {
             // Redirect to setup-account page after successful sign-in or login
-            navigate('/setup-account');
+            navigate('/');
         }
     } catch (error) {
         console.error("Error signing in with Google:", error);
@@ -76,6 +74,16 @@ export async function handleSignInWithPopup(navigate, setLoading) {
 
 async function addUserToDatabase(uid, email, displayName, navigate) {
     try {
+
+        // check if username already exists
+        const usernameRef = doc(db, "usernames", displayName.toLowerCase());
+        const usernameSnapshot = await getDoc(usernameRef);
+        if (usernameSnapshot.exists()) {
+            toast.error('Username is invalid, or already in use. Please try another username.');
+            console.error('Username already exists');
+            return;
+        }
+
         // Remove any spaces from the display name
         const username = displayName.replace(/\s/g, '');
 
@@ -91,6 +99,8 @@ async function addUserToDatabase(uid, email, displayName, navigate) {
             followers: [],
             following: [],
             UID: uid
+        }).then(() => {
+            navigate('/setup-account');
         });
 
         await setDoc(doc(db, "usernames", username.toLowerCase()),{
@@ -98,8 +108,6 @@ async function addUserToDatabase(uid, email, displayName, navigate) {
         }); // Add username to usernames collection
         console.log("User added to database successfully");
 
-        // Redirect to setup-account page after user is successfully added to the database
-        navigate('/setup-account');
     } catch (error) {
         console.error("Error adding user to database:", error);
     }
