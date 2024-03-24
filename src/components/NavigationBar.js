@@ -1,4 +1,5 @@
 import * as React from "react";
+import {useState} from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../firebase';
@@ -6,13 +7,15 @@ import { handleLogout } from '../functions/Auth';
 import SideBar,{SideBarItem} from './SideBar.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faUser, faPlus, faSignOutAlt, faSignInAlt, faPersonCircleQuestion, faBookBookmark, faGear, faBell } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
 
 import "../styles/sideBar.css"
 export default function NavigationBar() {
   const navigate = useNavigate();
+  const [activeItem, setActiveItem] = useState(false);
   const [user] = useAuthState(auth);
 
-
+  // setActiveItem('bookLists');
   const handleSignIn=()=> {
     window.location.href = '/sign_in';
   }
@@ -24,6 +27,11 @@ export default function NavigationBar() {
       document.getElementById("dropdown").scrollIntoView({ behavior: "smooth" });
     });
   });
+  // Doesn't work
+  const handleItemClick = () => {
+    console.log("is this idiot even running?");
+    // setActiveItem(itemName);
+  };
   
     return (
       <>
@@ -33,15 +41,24 @@ export default function NavigationBar() {
         <div className="fixed left-0 top-0 bottom-0 bg-white w-[5.2rem] z-10">
 
         <SideBar>
-
-          <SideBarItem icon={<FontAwesomeIcon icon={faHome} size={20}/>} text="Home" active alert />
-          <SideBarItem icon={<FontAwesomeIcon icon={faUser} size={20}/>} text="Profile"/>
-          <SideBarItem icon={<FontAwesomeIcon icon={faBell} size={20}/>} text="Notifications" alert />
-          <SideBarItem icon={<FontAwesomeIcon icon={faPlus} size={20}/>} text="Create Post" />
-          <SideBarItem icon={<FontAwesomeIcon icon={faBookBookmark} size={20} />} text="Book Lists" />
-          <SideBarItem icon={<FontAwesomeIcon icon={faPersonCircleQuestion} size={20}/>} text="Reader Q&A" />
-          <SideBarItem icon={<FontAwesomeIcon icon={faGear} size={20}/>} text="Settings" alert />
-
+        <Link to="/" data-tip="Home" data-for="home-tooltip">
+          <SideBarItem icon={<FontAwesomeIcon icon={faHome}/>} text="Home" active alert />
+        </Link>
+        <Link to="/bookinfo" data-tip="Profile" data-for="profile-tooltip">
+          <SideBarItem icon={<FontAwesomeIcon icon={faUser}/>} text="Profile"
+           />
+        </Link>
+        <Link to="/notifications" data-tip="Notifications" data-for="notifications-tooltip">
+          <SideBarItem icon={<FontAwesomeIcon icon={faBell}/>} text="Notifications" alert />
+        </Link>
+        <Link to="/create-post" data-tip="Create a Post" data-for="create-post-tooltip">
+          <SideBarItem icon={<FontAwesomeIcon icon={faPlus}/>} text="Create Post" />
+        </Link>
+          <SideBarItem icon={<FontAwesomeIcon icon={faBookBookmark} />} text="Book Lists" />
+          <SideBarItem icon={<FontAwesomeIcon icon={faPersonCircleQuestion} />} text="Reader Q&A" />
+        <Link to="/settings" data-tip="Settings" data-for="settings-tooltip">
+          <SideBarItem icon={<FontAwesomeIcon icon={faGear}/>} text="Settings" alert />
+          </Link>
 
         </SideBar>
         </div>

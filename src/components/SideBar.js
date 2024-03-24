@@ -64,8 +64,8 @@ export function SideBarItem({ icon, text, active, alert }) {
         transition-colors group
         ${
           active
-            ? "bg-gradient-to-tr from-indigo-200 to-indigo-100 text-indigo-800"
-            : "hover:bg-indigo-50 text-gray-600"
+            ? "bg-gradient-to-tr from-gray-200 to-red-300 text-maroon"
+            : "hover:bg-gray-200 text-gray-600"
         }
         `}
     >
@@ -79,7 +79,7 @@ export function SideBarItem({ icon, text, active, alert }) {
       </span>
       {alert && (
         <div
-          className={`absolute right-2 w-2 h-2 rounded bg-indigo-400 ${
+          className={`absolute right-2 w-2 h-2 rounded bg-maroon ${
             expanded ? "" : "top-2"
           }`}
         />

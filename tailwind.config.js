@@ -7,7 +7,8 @@ module.exports = {
     extend: {
       colors: {
         maroon: '#5B2E48',
-        lightcolor: '#F4F3EE'
+        lightcolor: '#F4F3EE',
+        lightmaroon: '#5B2E28'
       }
     },
   },
