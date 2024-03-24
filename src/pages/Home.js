@@ -33,9 +33,9 @@ export default function Home() {
     return (
         <main>
             <div>
-                <div>
+                {/*<div>
                     <Searchbar onSearch={(query) => handleSearch(query, setSearchResults, setSearchStatus)} />
-                </div>
+                </div>*/}
             </div>
             {!user ? (
                 <div> logged out</div>

@@ -2,7 +2,7 @@
 import './styles/App.css';
 import React, { Fragment, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/shared/navbar';
+import NavigationBar from './components/NavigationBar.js';
 import Home from './pages/Home';
 import Error from './components/shared/Error';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,14 +13,15 @@ import { ToastContainer } from 'react-toastify';
 import ReaderProfilePage from './components/ReaderProfilePage';
 import AuthorProfilePage from './components/AuthorProfilePage';
 import BookRating from './components/BookRating.js';
-// import AddBook from './functions/AddBook.js';
 
+import AddBook from './functions/AddBook.js';
 
 import SampleHome from './pages/sampleHome.js'
 import SignIn from './pages/Signin.js';
 import Notifications from './pages/Notifications.js';
 import UserOnboarding from "./pages/UserOnboarding.js";
 import BookInfo from "./pages/BookInfo.js"
+
 // Lazy-loaded components
 const SetUpAccount = React.lazy(() => import('./pages/SetUpAccount'));
 const Submit = React.lazy(() => import('./pages/Submit'));
@@ -37,18 +38,23 @@ const App = () => {
     <Router>
       <ToastContainer />
       <Fragment>
-      <div className="flex justify-center align-middle">
-          <img src={require('./assets/novelology_newlogo.png')} alt="Novelology Logo" style={{ height: '12em', width: '12em' }} />
+
+        <div className="flex justify-center align-middle">
+          <img src={require('./assets/novelology_newlogo.png')} alt="Novelology Logo" className='w-48 h-48' />
         </div>
-            {/* <LoggedOutNavBar /> */}
-          <Navbar />
+           
+        <NavigationBar />
         <Suspense fallback={<FontAwesomeIcon icon={faSpinner} spin />}>
-          {/* <NavigationBar /> */}
+          
+
+
           <Routes className="flex">
             <Route path="/" element={<Home />} />
+
             <Route element={<PrivateRoute />}>
               <Route path="/onboarding" element={<SetUpAccount />} /> {/* Route for Onboarding component */}
             </Route>
+
             <Route path="/settings" element={<Settings />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/users/:username" element={<UserPage />} />
