@@ -1,12 +1,49 @@
 import { MdOutlineNavigateBefore, MdNavigateNext } from "react-icons/md";
-import { useState, createContext, useContext } from "react";
+import { useState, createContext, useContext, useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
-
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth, db } from '../firebase.js';
+import fetchPFP from '../functions/fetchPFP';
+import { doc, getDoc } from 'firebase/firestore';
 
 const SidebarContext = createContext();
 export default function SideBar({ children }) {
   const [expanded, setExpanded] = useState(false);
+  const [user, loading] = useAuthState(auth);
+  const [userData, setUserData] = useState(null);
+  const [fetchedProfilePicture, setFetchedProfilePicture] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+        try {
+            if (user && !userData) {
+                const userRef = doc(db, 'users', user.uid);
+                const docSnapshot = await getDoc(userRef);
+
+                if (docSnapshot.exists()) {
+                    const userData = docSnapshot.data();
+                    setUserData(userData);
+                    localStorage.setItem('userData', JSON.stringify(userData)); 
+                } else {
+                    console.log('User document does not exist');
+                }
+
+                const profilePictureURL = await fetchPFP(user.uid);
+                if (profilePictureURL !== fetchedProfilePicture) {
+                    setFetchedProfilePicture(profilePictureURL);
+                    localStorage.setItem('profilePicture', profilePictureURL); 
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+        } 
+    };
+
+    fetchUserData();
+}, [user, userData, fetchedProfilePicture]);
+const defaultProfilePicture = require('../assets/default-profile-picture.jpg');
+
   return (
     <aside className="h-screen">
       <nav
@@ -37,7 +74,8 @@ export default function SideBar({ children }) {
 
         <div className="border-t flex p-3">
           <img
-            src={require("../assets/default-profile-picture.jpg")}
+            src={fetchedProfilePicture || defaultProfilePicture} 
+
             className="w-10 h-10 rounded-md"
           />
           <div
@@ -46,8 +84,8 @@ export default function SideBar({ children }) {
             } `}
           >
             <div className="leading-4">
-              <h4 className="font-semibold">UserName</h4>
-              <span className="text-xs text-gray-600">Email</span>
+              <h4 className="font-semibold">{userData && userData.username}</h4>
+              <span className="text-xs text-gray-600">{userData && userData.email}</span>
             </div>
           </div>
         </div>

@@ -44,7 +44,7 @@ export default function NavigationBar() {
         <Link to="/" data-tip="Home" data-for="home-tooltip">
           <SideBarItem icon={<FontAwesomeIcon icon={faHome}/>} text="Home" active alert />
         </Link>
-        <Link to="/bookinfo" data-tip="Profile" data-for="profile-tooltip">
+        <Link to="/profile" data-tip="Profile" data-for="profile-tooltip">
           <SideBarItem icon={<FontAwesomeIcon icon={faUser}/>} text="Profile"
            />
         </Link>

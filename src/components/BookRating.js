@@ -12,7 +12,7 @@ export default function BookRating({RatingChange}){
 
     }
     useEffect(()=>{
-        console.log("rating from bookrating: " + rating);
+        // console.log("rating from bookrating: " + rating);
 
     },[rating]
     )
