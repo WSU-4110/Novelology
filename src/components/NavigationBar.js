@@ -11,27 +11,10 @@ import { Link } from 'react-router-dom';
 
 import "../styles/sideBar.css"
 export default function NavigationBar() {
-  const navigate = useNavigate();
-  const [activeItem, setActiveItem] = useState(false);
   const [user] = useAuthState(auth);
-
-  // setActiveItem('bookLists');
   const handleSignIn=()=> {
     window.location.href = '/sign_in';
   }
-  document.addEventListener("DOMContentLoaded", function () {
-    const navigateButton = document.getElementById("dropdown-button");
-
-    navigateButton.addEventListener("click", function () {
-      // Scroll to the target div
-      document.getElementById("dropdown").scrollIntoView({ behavior: "smooth" });
-    });
-  });
-  // Doesn't work
-  const handleItemClick = () => {
-    console.log("is this idiot even running?");
-    // setActiveItem(itemName);
-  };
   
     return (
       <>
@@ -77,7 +60,6 @@ export default function NavigationBar() {
           <div className="flex my-auto text-base gap-3">
                  
 
-                 <check>
                    <form class="flex flex-col gap-3 md:flex-row">
                      <select
                        id="searchType"
@@ -114,7 +96,6 @@ export default function NavigationBar() {
                        </button>
                      </div>
                    </form>
-                   </check>
           </div>
           <button className="text-gray-900 bg-lightcolor border border-gray-300 focus:outline-none 
             hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 
