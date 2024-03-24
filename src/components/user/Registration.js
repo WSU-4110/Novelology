@@ -6,6 +6,8 @@ import { auth, db } from "../../firebase";
 import { signUpWithEmail, handleSignUpWithPopup } from "../../functions/Auth";
 import { FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa"; // Import FaEyeSlash for the hidden eye icon
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 
 const ReactiveInputField = ({ type, placeholder, inputRef, onChange }) => (
   <div className="relative">
@@ -116,16 +118,37 @@ export function Registration() {
     setIsFormValid(allFieldsFilled && validatePasswords());
   };
 
+  // This function now also takes firstName, lastName, and username as arguments
+const signUpWithEmail = async (email, password, username, firstName, lastName) => {
+  // Create user with email and password
+  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  const user = userCredential.user;
+
+  // Store additional user details in Firestore
+  await setDoc(doc(db, "users", user.uid), {
+    username,
+    firstName,
+    lastName,
+    email,
+    password,
+  });
+
+  return user; // Return the created user
+};
+
   const handleSignUpWithEmail = async (e) => {
     e.preventDefault();
     if (!isFormValid || loading) return;
-
+  
     setLoading(true);
     try {
       const email = emailRef.current.value;
       const password = passwordRef.current.value;
       const username = usernameRef.current.value;
-      await signUpWithEmail(email, password, username);
+      const firstName = firstNameRef.current.value;
+      const lastName = lastNameRef.current.value;
+      // Now passing additional details to signUpWithEmail
+      await signUpWithEmail(email, password, username, firstName, lastName);
       navigate('/user-onboarding');
     } catch (error) {
       console.error('Signup failed:', error);
@@ -136,8 +159,8 @@ export function Registration() {
   };
 
   const handleSubmit = (event) => {
-    event.preventDefault();
-    handleSignUpWithEmail();
+    event.preventDefault(); // This is where preventDefault is correctly used
+    handleSignUpWithEmail(event); // Now passing the event to handleSignUpWithEmail
   };
 
   const handleSignUpWithPopup = async (navigate) => {
