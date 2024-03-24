@@ -9,7 +9,7 @@ function SampleHome({showNavBar}) {
     <>
     {showNavBar && <NavigationBar />}
     <div className="flex flex-col mt-0 bg-lightcolor">
-      <div className="flex z-10 flex-col pb-7 w-full max-md:max-w-full">
+      <div className="flex z-5 flex-col pb-7 w-full max-md:max-w-full">
 
         <div className="overflow-hidden relative flex-col justify-center items-center px-16 pt-52 pb-52 mt-0 w-full text-6xl text-black min-h-[705px] max-md:px-5 max-md:py-10 max-md:max-w-full max-md:text-4xl">
           <img

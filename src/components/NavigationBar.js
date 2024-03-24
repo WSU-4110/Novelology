@@ -1,14 +1,21 @@
 import * as React from "react";
+import {useState} from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../firebase';
 import { handleLogout } from '../functions/Auth';
+import SideBar,{SideBarItem} from './SideBar.js';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHome, faUser, faPlus, faSignOutAlt, faSignInAlt, faPersonCircleQuestion, faBookBookmark, faGear, faBell } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
 
+import "../styles/sideBar.css"
 export default function NavigationBar() {
   const navigate = useNavigate();
+  const [activeItem, setActiveItem] = useState(false);
   const [user] = useAuthState(auth);
 
-
+  // setActiveItem('bookLists');
   const handleSignIn=()=> {
     window.location.href = '/sign_in';
   }
@@ -20,13 +27,47 @@ export default function NavigationBar() {
       document.getElementById("dropdown").scrollIntoView({ behavior: "smooth" });
     });
   });
+  // Doesn't work
+  const handleItemClick = () => {
+    console.log("is this idiot even running?");
+    // setActiveItem(itemName);
+  };
   
     return (
       <>
       {user ? (
         //When user is logged in
+        <>
+        <div className="fixed left-0 top-0 bottom-0 bg-white w-[5.2rem] z-10">
+
+        <SideBar>
+        <Link to="/" data-tip="Home" data-for="home-tooltip">
+          <SideBarItem icon={<FontAwesomeIcon icon={faHome}/>} text="Home" active alert />
+        </Link>
+        <Link to="/profile" data-tip="Profile" data-for="profile-tooltip">
+          <SideBarItem icon={<FontAwesomeIcon icon={faUser}/>} text="Profile"
+           />
+        </Link>
+        <Link to="/notifications" data-tip="Notifications" data-for="notifications-tooltip">
+          <SideBarItem icon={<FontAwesomeIcon icon={faBell}/>} text="Notifications" alert />
+        </Link>
+        <Link to="/create-post" data-tip="Create a Post" data-for="create-post-tooltip">
+          <SideBarItem icon={<FontAwesomeIcon icon={faPlus}/>} text="Create Post" />
+        </Link>
+          <SideBarItem icon={<FontAwesomeIcon icon={faBookBookmark} />} text="Book Lists" />
+          <SideBarItem icon={<FontAwesomeIcon icon={faPersonCircleQuestion} />} text="Reader Q&A" />
+        <Link to="/settings" data-tip="Settings" data-for="settings-tooltip">
+          <SideBarItem icon={<FontAwesomeIcon icon={faGear}/>} text="Settings" alert />
+          </Link>
+
+        </SideBar>
+        </div>
+
+        <div className="ml-[5.2rem]">
         <div className="flex justify-center items-center px-16 py-1.0 w-full text-base whitespace-nowrap bg-maroon max-md:px-5 max-md:max-w-full">
+        
         <div className="flex gap-5 justify-between items-center w-full max-w-[1080px] max-md:flex-wrap max-md:max-w-full">
+        
         <img
                     loading="lazy"
                     srcSet={require("../assets/novelology_newlogo.png")}
@@ -83,8 +124,11 @@ export default function NavigationBar() {
           </button>
         </div>
       </div>
+      </div>
+      </>
       ):(
         //When user is logged out
+        <>
         <div className="flex flex-col bg-lightcolor">
           <div className="flex z-10 flex-col pb-0 w-full max-md:max-w-full">
             <div className="flex justify-center items-center px-16 py-1.0 w-full whitespace-nowrap bg-maroon max-md:px-5 max-md:max-w-full ">
@@ -175,6 +219,7 @@ export default function NavigationBar() {
             </div>
           </div>
         </div>
+        </>
       )}
         
 
