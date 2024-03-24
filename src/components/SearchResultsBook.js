@@ -23,46 +23,12 @@ export default function SearchResultsBook() {
         {/* 3 */}
         <div className="flex justify-between items-center w-full">
             {/* 3.1 */}
-            <div className="flex flex-col justify-center items-end w-full">
-                {/* 3.1.1 */}
-                <div className="flex items-center">
-                    <div className="mr-2 text-lg font-extralight px-4 py-1 rounded-full bg-gray border-2 border-slate-200">
-                    Search by Book Title, User, or Author
-                    </div>
-                    <button className="px-4 py-1 rounded-full bg-maroon text-lg font-extralight text-white">
-                    Search
-                    </button>
-                </div>
-                {/* 3.1.2 */}
-                <div className="flex flex-row justify-center items-center w-full space-x-10">
-                    <div>
-                    All
-                    </div>
-                    <div>
-                    Title 
-                    </div>
-                    <div>
-                    Users
-                    </div>
-                    <div>
-                    Authors
-                    </div>
-                </div>
-            </div>
-
+            
             {/* 3.2 */}
-            <div className="flex flex-col justify-center items-start w-full">
-            </div>
-
-            {/* 3.3 */}
-            <div className="flex flex-col justify-center items-start w-full">
-            </div>
-
-            {/* 3.4 */}
-            <div className="flex flex-col justify-center items-start w-full text-xl">
-                Select Genres
-                {/* 3.4.1 */}
-                <div className="space-x-1 space-y-2">
+            <div className="flex flex-col justify-center items-center w-full w-full text-xl">
+            Select Genres
+                {/* 3.1.1 */}
+                <div className="flex flex-row justify-center items-center space-x-2">
                     <button className="px-4 py-1 rounded-full bg-pink-900 text-lg  font-extralight text-white">
                     Horror
                     </button>
@@ -77,6 +43,30 @@ export default function SearchResultsBook() {
                     </button>
                     <button className="px-4 py-1 rounded-full bg-pink-900 text-lg  font-extralight text-white">
                     Fantasy
+                    </button>
+                </div>
+
+            </div>
+
+            {/* 3.3 */}
+            <div className="flex flex-col justify-center items-start w-full">
+            </div>
+
+            {/* 3.4 */}
+            <div className="flex flex-col justify-center items-start w-full text-xl">
+                {/* 3.4.1 */}
+                <div className="flex flex-col justify-center items-start w-full">
+                    <button className="text-lg  font-extralight space-x-1 space-y-2">
+                    All
+                    </button>
+                    <button className="text-lg  font-extralight space-x-1 space-y-2">
+                    Title
+                    </button>
+                    <button className="text-lg  font-extralight space-x-1 space-y-2">
+                    Users
+                    </button>
+                    <button className="text-lg  font-extralight space-x-1 space-y-2">
+                    Authors
                     </button>
                 </div>
             </div>
