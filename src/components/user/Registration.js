@@ -51,8 +51,9 @@ const ReactivePasswordInputField = ({ placeholder, inputRef, onChange }) => {
       />
       <button
         onClick={togglePasswordVisibility}
-        className="absolute right-2 top-1/2 transform -translate-y-1/2"
+        className="absolute right-2 top-1/2 transform -translate-y-1/2 translate-y-1" // Adjusted here
         type="button"
+        style={{ outline: 'none' }} // Added to remove outline on focus for better UI
       >
         {showPassword ? (
           <FaEyeSlash className="text-gray-400" />
