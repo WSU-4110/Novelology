@@ -5,6 +5,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "../../firebase";
 import { signUpWithEmail, handleSignUpWithPopup } from "../../functions/Auth";
 import { FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa"; // Import FaEyeSlash for the hidden eye icon
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 const ReactiveInputField = ({ type, placeholder, inputRef, onChange }) => (
   <div className="relative">
@@ -114,19 +115,20 @@ export function Registration() {
     setIsFormValid(allFieldsFilled && validatePasswords());
   };
 
-  const handleSignUpWithEmail = async () => {
-    if (!isFormValid) return;
-  
+  const handleSignUpWithEmail = async (e) => {
+    e.preventDefault();
+    if (!isFormValid || loading) return;
+
     setLoading(true);
     try {
       const email = emailRef.current.value;
       const password = passwordRef.current.value;
       const username = usernameRef.current.value;
       await signUpWithEmail(email, password, username);
-      navigate("/user-onboarding");
+      navigate('/user-onboarding');
     } catch (error) {
-      console.error("Signup failed:", error);
-      alert("Signup failed: " + error.message);
+      console.error('Signup failed:', error);
+      alert('Signup failed: ' + error.message);
     } finally {
       setLoading(false);
     }
@@ -135,6 +137,21 @@ export function Registration() {
   const handleSubmit = (event) => {
     event.preventDefault();
     handleSignUpWithEmail();
+  };
+
+  const handleSignUpWithPopup = async (navigate) => {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      navigate('/user-onboarding'); 
+    } catch (error) {
+
+      console.error("Authentication with Google failed:", error.code, error.message);
+
+      alert("Failed to sign in with Google: " + error.message);
+    }
   };
 
   return (
