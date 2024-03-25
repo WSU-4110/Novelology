@@ -8,8 +8,6 @@ export default function SearchResultsBook() {
         <div>
             <div className="flex flex-col bg-white space-y-10">
         
-                {/* 1 */}
-                <NavigationBar />
             
                 {/* 2 */}
                 <div className="flex flex-col justify-center items-center w-full">
@@ -39,9 +37,6 @@ export default function SearchResultsBook() {
                             <BookRating />
                             </div>
                             <button className="px-3 py-1.0 rounded-full bg-maroon text-lg font-extralight text-white flex flex col gap-2">
-                            Add to Book List
-                            </button>
-                            <button className="px-3 py-1.0 rounded-full bg-maroon text-lg font-extralight text-white flex flex col gap-2">
                             </button>
                         </div>
                     </div>
@@ -60,9 +55,6 @@ export default function SearchResultsBook() {
                             <div className="flex flex-col justify-center items-start w-full text-lg font-extralight">
                             <BookRating />
                             </div>
-                            <button className="px-3 py-1.0 rounded-full bg-maroon text-lg font-extralight text-white flex flex col gap-2">
-                            Add to Book List
-                            </button>
                             <button className="px-3 py-1.0 rounded-full bg-maroon text-lg font-extralight text-white flex flex col gap-2">
                             </button>
                         </div>
@@ -93,7 +85,7 @@ export default function SearchResultsBook() {
                         {/* 3.4.2 */}
                         <div className="flex flex-row justify-center items-center w-full space-y-6">
                             {/* 3.4.2.1 */}
-                            <div className="flex flex-col justify-center items-center w-full">
+                            <div className="flex flex-col justify-center items-center w-full mt-5">
                                 <button className="text-lg  font-extralight space-x-3 space-y-2">
                                 All
                                 </button>
