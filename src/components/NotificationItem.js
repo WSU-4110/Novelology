@@ -7,6 +7,7 @@ import { doc, setDoc, collection, addDoc, deleteDoc, arrayUnion, arrayRemove, up
 import { toast } from 'react-toastify';
 import MiniUserCard from './user/MiniUserCard';
 import fetchUsernameWithUID from '../functions/fetchUsernameWithUID';
+import { Link } from 'react-router-dom';
 
 class NotificationItem extends Component {
   state = {
@@ -123,7 +124,10 @@ class NotificationItem extends Component {
       case 'follow_accepted':
         return (
           <div>
-            <span className="font-bold">{username}</span> accepted your follow request.
+            <Link to={`/users/${username}`} className="font-bold">
+              {username}
+            </Link>
+             accepted your follow request.
           </div>
         );
       case 'like':
