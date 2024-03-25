@@ -44,6 +44,7 @@ const App = () => {
         </div>
            
         <NavigationBar />
+        
         <Suspense fallback={<FontAwesomeIcon icon={faSpinner} spin />}>
           
 

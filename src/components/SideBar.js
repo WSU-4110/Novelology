@@ -76,7 +76,7 @@ const defaultProfilePicture = require('../assets/default-profile-picture.jpg');
           <img
             src={fetchedProfilePicture || defaultProfilePicture} 
 
-            className="w-10 h-10 rounded-md"
+            className="w-10 h-10 rounded-full ml-2"
           />
           <div
             className={`flex justify-between items-center overflow-hidden transition-all ${

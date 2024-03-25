@@ -1,6 +1,6 @@
 import * as React from "react";
 import {useState} from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../firebase';
 import { handleLogout } from '../functions/Auth';
@@ -15,7 +15,6 @@ export default function NavigationBar() {
   const handleSignIn=()=> {
     window.location.href = '/sign_in';
   }
-  
     return (
       <>
       {user ? (
@@ -25,14 +24,14 @@ export default function NavigationBar() {
 
         <SideBar>
         <Link to="/" data-tip="Home" data-for="home-tooltip">
-          <SideBarItem icon={<FontAwesomeIcon icon={faHome}/>} text="Home" active alert />
+          <SideBarItem icon={<FontAwesomeIcon icon={faHome}/>} text="Home" />
         </Link>
         <Link to="/profile" data-tip="Profile" data-for="profile-tooltip">
           <SideBarItem icon={<FontAwesomeIcon icon={faUser}/>} text="Profile"
            />
         </Link>
         <Link to="/notifications" data-tip="Notifications" data-for="notifications-tooltip">
-          <SideBarItem icon={<FontAwesomeIcon icon={faBell}/>} text="Notifications" alert />
+          <SideBarItem icon={<FontAwesomeIcon icon={faBell}/>} text="Notifications" />
         </Link>
         <Link to="/create-post" data-tip="Create a Post" data-for="create-post-tooltip">
           <SideBarItem icon={<FontAwesomeIcon icon={faPlus}/>} text="Create Post" />
@@ -40,7 +39,7 @@ export default function NavigationBar() {
           <SideBarItem icon={<FontAwesomeIcon icon={faBookBookmark} />} text="Book Lists" />
           <SideBarItem icon={<FontAwesomeIcon icon={faPersonCircleQuestion} />} text="Reader Q&A" />
         <Link to="/settings" data-tip="Settings" data-for="settings-tooltip">
-          <SideBarItem icon={<FontAwesomeIcon icon={faGear}/>} text="Settings" alert />
+          <SideBarItem icon={<FontAwesomeIcon icon={faGear}/>} text="Settings" />
           </Link>
 
         </SideBar>
