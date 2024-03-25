@@ -1,34 +1,34 @@
 import logoWithCircleBorder from "../../assets/novelology_newlogo.png"; // Path to novelology logo in assets
-import logoWithCircleBorder from "../../assets/logo_with_circle_border-removebg.png"; // Path to novelology logo in assets
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "../../firebase";
 import { signUpWithEmail, handleSignUpWithPopup } from "../../functions/Auth";
 import { FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa"; // Import FaEyeSlash for the hidden eye icon
-import { useNavigate } from "react-router-dom";
-import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
-import { auth, db } from "../../firebase";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 
-// Reactive input field component
-const ReactiveInputField = ({ type, placeholder, inputRef, onChange }) => {
-  return (
-    <div className="relative">
-      <label className="input-label" htmlFor={placeholder}>
-        {placeholder}
-        <span className="text-red-500">*</span> {/* Red asterisk */}
-      </label>
-      <input
-        className="mt-1 mb-1 rounded-md p-0.5 outline-none focus:ring focus:ring-blue-300 h-8 w-full"
-        ref={inputRef} // Forward inputRef to the input element's ref prop
-        type={type}
-        required
-        onChange={onChange}
-      />
-    </div>
-  );
-};
+
+const ReactiveInputField = ({ type, placeholder, inputRef, onChange }) => (
+  <div className="relative">
+    <label
+      htmlFor={placeholder}
+      style={{ color: "white" }} 
+    >
+      {placeholder}
+      <span className="text-red-500"> *</span> {/* Indicates a required field */}
+    </label>
+    <input
+      className="mt-2 rounded-lg p-2.5 outline-none focus:ring focus:ring-blue-300 w-full shadow-lg"
+      style={{ boxShadow: "0 0.25rem 0.5rem rgba(0, 0, 0, 0.8)" }} // Converted boxShadow to rem
+      ref={inputRef}
+      type={type}
+      required
+      onChange={onChange}
+    />
+  </div>
+);
 
 const ReactivePasswordInputField = ({ placeholder, inputRef, onChange }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -37,10 +37,12 @@ const ReactivePasswordInputField = ({ placeholder, inputRef, onChange }) => {
 
   return (
     <div className="relative">
-      <label htmlFor={placeholder} style={{ color: "white" }}>
+      <label
+        htmlFor={placeholder}
+        style={{ color: "white" }} 
+      >
         {placeholder}
-        <span className="text-red-500"> *</span>{" "}
-        {/* Indicates a required field */}
+        <span className="text-red-500"> *</span> {/* Indicates a required field */}
       </label>
       <input
         className="mt-2 rounded-lg p-2.5 outline-none focus:ring focus:ring-blue-300 w-full shadow-lg"
@@ -54,7 +56,7 @@ const ReactivePasswordInputField = ({ placeholder, inputRef, onChange }) => {
         onClick={togglePasswordVisibility}
         className="absolute right-2 top-1/2 transform -translate-y-1/2 translate-y-1" // Adjusted here
         type="button"
-        style={{ outline: "none" }} // Added to remove outline on focus for better UI
+        style={{ outline: 'none' }} // Added to remove outline on focus for better UI
       >
         {showPassword ? (
           <FaEyeSlash className="text-gray-400" />
@@ -68,7 +70,7 @@ const ReactivePasswordInputField = ({ placeholder, inputRef, onChange }) => {
 
 export function Registration() {
   const [loading, setLoading] = useState(false);
-  const [passwordError, setPasswordError] = useState("");
+  const [passwordError, setPasswordError] = useState('');
   const [isFormValid, setIsFormValid] = useState(false); // New state to track form validity
   const navigate = useNavigate();
 
@@ -93,13 +95,13 @@ export function Registration() {
     const password = passwordRef.current.value;
     const confirmPassword = confirmPasswordRef.current.value;
     if (password !== confirmPassword) {
-      setPasswordError("Passwords do not match");
+      setPasswordError('Passwords do not match');
       return false;
     } else if (password.length < 8) {
-      setPasswordError("Password must be at least 8 characters long");
+      setPasswordError('Password must be at least 8 characters long');
       return false;
     }
-    setPasswordError("");
+    setPasswordError('');
     return true;
   };
 
@@ -112,54 +114,38 @@ export function Registration() {
       confirmPasswordRef.current.value,
       usernameRef.current.value,
       firstNameRef.current.value,
-      lastNameRef.current.value,
-    ].every((field) => field !== "");
+      lastNameRef.current.value
+    ].every(field => field !== '');
     setIsFormValid(allFieldsFilled && validatePasswords());
   };
 
   // This function now also takes firstName, lastName, and username as arguments
-  const signUpWithEmail = async (
-    email,
-    password,
+const signUpWithEmail = async (email, password, username, firstName, lastName) => {
+  // Create user with email and password
+  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  const user = userCredential.user;
+
+  // Store additional user details in Firestore
+  await setDoc(doc(db, "users", user.uid), {
     username,
     firstName,
-    lastName
-  ) => {
-    // Create user with email and password
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    const user = userCredential.user;
+    lastName,
+    email,
+    password,
+  });
 
-    // Store additional user details in Firestore
-    await setDoc(doc(db, "users", user.uid), {
-      username,
-      firstName,
-      lastName,
-      email,
-      password,
-    });
-
-    return user; // Return the created user
-  };
+  return user; // Return the created user
+};
 
   const handleSignUpWithEmail = async (e) => {
     e.preventDefault();
     if (!isFormValid || loading) return;
-
+  
     setLoading(true);
     try {
       // validate username
-      if (
-        usernameRef.current.value.trim().length < 3 ||
-        usernameRef.current.value.trim().length > 20 ||
-        !/^[a-zA-Z0-9_]*$/.test(usernameRef.current.value.trim())
-      ) {
-        alert(
-          "Username must be between 3-20 characters and can only contain letters, numbers, and underscores"
-        );
+      if (usernameRef.current.value.trim().length < 3 || usernameRef.current.value.trim().length > 20 || !/^[a-zA-Z0-9_]*$/.test(usernameRef.current.value.trim())) {
+        alert("Username must be between 3-20 characters and can only contain letters, numbers, and underscores");
         setLoading(false);
         throw new Error("Invalid username");
       }
@@ -176,10 +162,10 @@ export function Registration() {
       const lastName = lastNameRef.current.value;
       // Now passing additional details to signUpWithEmail
       await signUpWithEmail(email, password, username, firstName, lastName);
-      navigate("/user-onboarding");
+      navigate('/user-onboarding');
     } catch (error) {
-      console.error("Signup failed:", error);
-      alert("Signup failed: " + error.message);
+      console.error('Signup failed:', error);
+      alert('Signup failed: ' + error.message);
     } finally {
       setLoading(false);
     }
@@ -196,182 +182,45 @@ export function Registration() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      navigate("/user-onboarding");
+      navigate('/user-onboarding'); 
     } catch (error) {
-      console.error(
-        "Authentication with Google failed:",
-        error.code,
-        error.message
-      );
+
+      console.error("Authentication with Google failed:", error.code, error.message);
 
       alert("Failed to sign in with Google: " + error.message);
     }
   };
 
   return (
-    <div
-      className="flex flex-col items-center justify-center w-full min-h-screen bg-maroon"
-      style={{
-        paddingTop: "1.25rem",
-        paddingBottom: "1.25rem",
-        fontFamily: "Montserrat",
-      }}
-    >
-      <img
-        src={logoWithCircleBorder}
-        alt="Novelology Logo"
-        style={{
-          width: "11.5rem",
-          height: "10.75rem",
-          marginBottom: "1.25rem",
-        }}
-      />
-      <span
-        style={{
-          color: "white",
-          fontSize: "4.0625rem",
-          fontWeight: "400",
-          marginBottom: "1.25rem",
-          marginTop: "1.875rem",
-        }}
-      >
-        Sign Up
-      </span>
-      <form
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "3.75rem",
-          marginBottom: "2.5rem",
-          marginTop: "1.875rem",
-        }}
-      >
-        <ReactiveInputField
-          type="text"
-          placeholder="Enter your first name"
-          inputRef={firstNameRef}
-          onChange={handleInputChange}
-        />
-        <ReactiveInputField
-          type="text"
-          placeholder="Enter your last name"
-          inputRef={lastNameRef}
-          onChange={handleInputChange}
-        />
-        <ReactiveInputField
-          type="email"
-          placeholder="Enter your email address"
-          inputRef={emailRef}
-          onChange={handleInputChange}
-        />
-        <ReactiveInputField
-          type="text"
-          placeholder="Choose a username"
-          inputRef={usernameRef}
-          onChange={handleInputChange}
-        />
-        <ReactivePasswordInputField
-          placeholder="Create a password"
-          inputRef={passwordRef}
-          onChange={handleInputChange}
-        />
-        <ReactivePasswordInputField
-          placeholder="Confirm your password"
-          inputRef={confirmPasswordRef}
-          onChange={handleInputChange}
-        />
+    <div className="flex flex-col items-center justify-center w-full min-h-screen bg-maroon" style={{ paddingTop: "1.25rem", paddingBottom: "1.25rem", fontFamily: 'Montserrat' }}>
+      <img src={logoWithCircleBorder} alt="Novelology Logo" style={{ width: "11.5rem", height: "10.75rem", marginBottom: "1.25rem" }} />
+      <span style={{ color: "white", fontSize: "4.0625rem", fontWeight: "400", marginBottom: "1.25rem", marginTop: "1.875rem" }}>Sign Up</span>
+      <form style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "3.75rem", marginBottom: "2.5rem", marginTop: "1.875rem" }}>
+        <ReactiveInputField type="text" placeholder="Enter your first name" inputRef={firstNameRef} onChange={handleInputChange} />
+        <ReactiveInputField type="text" placeholder="Enter your last name" inputRef={lastNameRef} onChange={handleInputChange} />
+        <ReactiveInputField type="email" placeholder="Enter your email address" inputRef={emailRef} onChange={handleInputChange} />
+        <ReactiveInputField type="text" placeholder="Choose a username" inputRef={usernameRef} onChange={handleInputChange} />
+        <ReactivePasswordInputField placeholder="Create a password" inputRef={passwordRef} onChange={handleInputChange} />
+        <ReactivePasswordInputField placeholder="Confirm your password" inputRef={confirmPasswordRef} onChange={handleInputChange} />
       </form>
-
+      
       <button
         onClick={handleSubmit}
-        className="bg-maroon text-white w-[31.8125rem] justify-center items-center py-[0.625rem] px-[2.8125rem] rounded-[1.25rem] mb-[1.25rem] mt-[1.875rem] shadow-[0px_4px_8px_rgba(0,0,0,1)] flex font-[Montserrat] text-[1.25rem] font-[400]"
-      >
+        className="bg-maroon text-white w-[31.8125rem] justify-center items-center py-[0.625rem] px-[2.8125rem] rounded-[1.25rem] mb-[1.25rem] mt-[1.875rem] shadow-[0px_4px_8px_rgba(0,0,0,1)] flex font-[Montserrat] text-[1.25rem] font-[400]">
         Create Account
       </button>
       <div className="mb-[1.25rem] mt-[0.625rem]">
-        <span className="text-[rgba(255,255,255,0.7)] font-[Montserrat] text-[1rem]">
-          ---------- OR ----------
-        </span>
+        <span className="text-[rgba(255,255,255,0.7)] font-[Montserrat] text-[1rem]">---------- OR ----------</span>
       </div>
-      <form className="flex flex-col">
-        <ReactiveInputField
-          type="text"
-          placeholder="E-Mail Address"
-          inputRef={emailRef}
-          onChange={handleInputChange}
-        />
-        <ReactivePasswordInputField
-          type="password"
-          placeholder="Password"
-          inputRef={passwordRef}
-          onChange={handleInputChange}
-        />
-        {!passwordValid &&
-          passwordRef.current &&
-          confirmPasswordRef.current && (
-            <>{/* Display password requirements */}</>
-          )}
-        {passwordValid && (
-          <p className="text-green-500 text-xs select-none">Great password!</p>
-        )}
-        <ReactivePasswordInputField
-          type="password"
-          placeholder="Confirm Password"
-          inputRef={confirmPasswordRef}
-          onChange={handleInputChange}
-        />
-        {!passwordValid &&
-          (passwordRef.current?.value !== "" ||
-            confirmPasswordRef.current?.value !== "") && (
-            <>
-              {!passwordRequirements.minLength && (
-                <p className="text-red-500 text-xs select-none">
-                  Password must be at least 8 characters long
-                </p>
-              )}
-              {!passwordRequirements.hasUpperCase && (
-                <p className="text-red-500 text-xs select-none">
-                  Password must contain at least one uppercase letter
-                </p>
-              )}
-              {!passwordRequirements.hasLowerCase && (
-                <p className="text-red-500 text-xs select-none">
-                  Password must contain at least one lowercase letter
-                </p>
-              )}
-              {!passwordRequirements.hasSpecialSymbol && (
-                <p className="text-red-500 text-xs select-none">
-                  Password must contain at least one special symbol
-                </p>
-              )}
-              {!passwordRequirements.hasNumber && (
-                <p className="text-red-500 text-xs select-none">
-                  Password must contain at least one number
-                </p>
-              )}
-              {!passwordRequirements.match && (
-                <p className="text-red-500 text-xs select-none">
-                  Passwords do not match
-                </p>
-              )}
-            </>
-          )}
-
-        <ReactiveInputField
-          type="text"
-          placeholder="Username"
-          inputRef={usernameRef}
-          onChange={handleInputChange}
-        />
+      <div className="bg-white w-[18.875rem] flex justify-center items-center gap-[0.625rem] py-[0.625rem] px-[2.8125rem] rounded-[1.25rem] overflow-hidden mt-[0.625rem] shadow-[0px_4px_8px_rgba(0,0,0,0.8)]">
         <button
-          type="button"
-          disabled={loading}
-          onClick={handleSignUpWithEmail}
-          className="shadow w-1/2 flex justify-center pt-1 pb-1 mt-2"
-        >
-          Sign Up
+          onClick={() => handleSignUpWithPopup(navigate)}
+          className="bg-none border-none flex items-center text-[rgba(0,0,0,0.8)] font-[Montserrat] text-[1.125rem] font-[400]">
+          <FaGoogle className="mr-2" /> Continue with Google
         </button>
-      </form>
+      </div>
     </div>
   );
-}
+};
+
+export default Registration;
