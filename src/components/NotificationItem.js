@@ -5,8 +5,29 @@ import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { auth, db } from '../firebase';
 import { doc, setDoc, collection, addDoc, deleteDoc, arrayUnion, arrayRemove, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { toast } from 'react-toastify';
+import MiniUserCard from './user/MiniUserCard';
+import fetchUsernameWithUID from '../functions/fetchUsernameWithUID';
 
 class NotificationItem extends Component {
+  state = {
+    showMiniUserCard: false,
+    username: '',
+  };
+
+  async componentDidMount() {
+    const { fromUserId } = this.props;
+    const username = await fetchUsernameWithUID(fromUserId);
+    this.setState({ username });
+  }
+
+  handleMouseEnter = () => {
+    this.setState({ showMiniUserCard: true });
+  };
+
+  handleMouseLeave = () => {
+    this.setState({ showMiniUserCard: false });
+  };
+
   handleDismiss = async () => {
     const currentUser = auth.currentUser;
     const notificationId = this.props.id;
@@ -75,30 +96,39 @@ class NotificationItem extends Component {
   renderNotificationContent = () => {
     const { type, fromUserId, timestamp } = this.props;
     const formattedTime = formatTimeDifference(timestamp);
+    const { showMiniUserCard, username } = this.state;
+    
 
     switch (type) {
       case 'follow_request':
-        return  <div className="flex">
-          {fromUserId} requested to follow you.
-          <br/> @{formattedTime}
-
-          <button onClick={this.handleAccept}>
-            <FontAwesomeIcon icon={faCheck} onClick={this.handleAccept} />
-            Accept
-          </button>
-          <FontAwesomeIcon icon={faTimes} onClick={this.handleReject} />
-        </div>
+        return (
+          <div className="flex items-center justify-between">
+            <div>
+              <span className="font-bold">
+              {showMiniUserCard && <MiniUserCard username={username} />}
+              requested to follow you.
+              </span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <button className="p-1 bg-green-500 text-white rounded-full hover:bg-green-600" onClick={this.handleAccept}>
+                <FontAwesomeIcon icon={faCheck} />
+              </button>
+              <button className="p-1 bg-red-500 text-white rounded-full hover:bg-red-600" onClick={this.handleDismiss}>
+                <FontAwesomeIcon icon={faTimes} />
+              </button>
+            </div>
+          </div>
+        );
       case 'follow_accepted':
-        return <div>
-          {fromUserId} accepted your follow request.
-          @{formattedTime}
-        </div>;
-
+        return (
+          <div>
+            <span className="font-bold">{username}</span> accepted your follow request.
+          </div>
+        );
       case 'like':
-        return <div>{fromUserId} liked your post.</div>;
+        return <div><span className="font-bold">{username}</span> liked your post.</div>;
       case 'comment':
-        return <div>New comment from {fromUserId}</div>;
-      // Add more cases for other notification types
+        return <div>New comment from <span className="font-bold">{username}</span></div>;
       default:
         return <div>Unknown notification type</div>;
     }
@@ -106,14 +136,12 @@ class NotificationItem extends Component {
 
   render() {
     const { read } = this.props;
-
     return (
-      <div className={`${read ? 'bg-[#f0f0f0]' : 'bg-[#fff]'}`}>
-        {this.renderNotificationContent()}
-        <button onClick={this.handleDismiss}>Dismiss</button>
+      <div className={`p-4 border m-4 w-1/2 border-gray-200 ${read ? 'bg-gray-100' : 'bg-white'}`}>
+        <div className="text-sm text-gray-700">{this.renderNotificationContent()}</div>
+         <button className="mt-2 text-blue-500 hover:text-blue-600" onClick={this.handleDismiss}>Dismiss</button>
       </div>
     );
   }
 }
-
 export default NotificationItem;
