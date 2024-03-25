@@ -51,7 +51,7 @@ export default function NavigationBar() {
         </SideBar>
         </div>
 
-        <div className="ml-10">
+        <div className="ml-20">
         <div className="flex justify-center items-center px-16 py-1.0 w-full text-base whitespace-nowrap bg-maroon max-md:px-5 max-md:max-w-full">
         
         <div className="flex gap-5 justify-between items-center w-full max-w-[1080px] max-md:flex-wrap max-md:max-w-full">
