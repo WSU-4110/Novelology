@@ -4,7 +4,7 @@ import { faHome, faUser, faPlus, faSignOutAlt, faSignInAlt, faGear, faBell } fro
 import { Link } from 'react-router-dom';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../firebase';
-import Modal from './HandleSignInClick';
+import Modal from './Modal';
 import { handleLogout } from '../../functions/Auth';
 import { Tooltip } from 'react-tooltip';
 import { onSnapshot } from 'firebase/firestore';
