@@ -56,12 +56,14 @@ export default function NavigationBar() {
         
         <div className="flex gap-5 justify-between items-center w-full max-w-[1080px] max-md:flex-wrap max-md:max-w-full">
         
+        <Link to="/">
         <img
                     loading="lazy"
                     srcSet={require("../assets/novelology_newlogo.png")}
                     style={{ height: "5em", width: "5em" }}
                     className="self-stretch aspect-[1.08] w-[85px]"
                   />
+        </Link>
           <div className="flex my-auto text-base gap-3">
                  
 
