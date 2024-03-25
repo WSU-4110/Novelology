@@ -1,7 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
-import logoWithCircleBorder from '../../assets/logo_with_circle_border-removebg.png'; // Path to novelology logo in assets
+import logoWithCircleBorder from '../../assets/novelology_newlogo.png'; // Path to novelology logo in assets
 
 const ResetPasswordPage = (props) => {
   return (
