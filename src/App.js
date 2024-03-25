@@ -14,8 +14,6 @@ import ReaderProfilePage from './components/ReaderProfilePage';
 import AuthorProfilePage from './components/AuthorProfilePage';
 import BookRating from './components/BookRating.js';
 
-import AddBook from './functions/AddBook.js';
-
 import SampleHome from './pages/sampleHome.js'
 import SignIn from './pages/Signin.js';
 import Notifications from './pages/Notifications.js';
@@ -41,8 +39,8 @@ const App = () => {
 
         <div className="flex justify-center align-middle">
           <img src={require('./assets/novelology_newlogo.png')} alt="Novelology Logo" className='w-48 h-48' />
-        </div>
-           
+        </div> 
+
         <NavigationBar />
         
         <Suspense fallback={<FontAwesomeIcon icon={faSpinner} spin />}>

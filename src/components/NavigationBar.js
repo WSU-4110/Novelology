@@ -8,10 +8,16 @@ import SideBar,{SideBarItem} from './SideBar.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faUser, faPlus, faSignOutAlt, faSignInAlt, faPersonCircleQuestion, faBookBookmark, faGear, faBell } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
+import Searchbar from './shared/Searchbar.js';
+import { handleSearch } from '../functions/searchFunctions';
+import { Tooltip } from 'react-tooltip';
+import { onSnapshot } from 'firebase/firestore';
 
 import "../styles/sideBar.css"
 export default function NavigationBar() {
   const [user] = useAuthState(auth);
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchStatus, setSearchStatus] = useState('');
   const handleSignIn=()=> {
     window.location.href = '/sign_in';
   }
@@ -59,11 +65,11 @@ export default function NavigationBar() {
           <div className="flex my-auto text-base gap-3">
                  
 
-                   <form class="flex flex-col gap-3 md:flex-row">
+                   <form class="flex flex-col gap-3 md:flex-row w-20">
                      <select
                        id="searchType"
                        name="searchType"
-                       class="w-1/5 h-10 border-2 border-maroon bg-lightcolor focus:outline-none focus:border-maroon text-black rounded-full px-2 md:px-3 py-0 md:py-1 tracking-wider"
+                       class="w-full h-10 border-2 border-maroon bg-lightcolor focus:outline-none focus:border-maroon text-black rounded-full px-2 md:px-3 py-0 md:py-1 tracking-wider"
                      >
                        <option value="All" selected="">
                          All
@@ -73,28 +79,10 @@ export default function NavigationBar() {
                        <option value="ByGenre">Book by Genre</option>
                        <option value="ByAuthor">Book by Author</option>
                      </select>
-
-                     <div class="flex w-4/5 gap-2">
-                       <input
-                         type="text"
-                         id="search_input"
-                         className="bg-lightcolor border border-gray-300 text-gray-900 text-sm rounded-full 
-           focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
-           dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                         placeholder="Enter your search title"
-                       />
-
-                       <button
-                         type="submit"
-                         className="flex text-gray-900 bg-lightcolor border border-gray-300 focus:outline-none 
-           hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 
-           dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 
-           dark:focus:ring-gray-700"
-                       >
-                         Search
-                       </button>
-                     </div>
-                   </form>
+                     </form>
+                     <Searchbar onSearch={(query) => handleSearch(query, setSearchResults, setSearchStatus)} />
+                
+                  
           </div>
           <button className="text-gray-900 bg-lightcolor border border-gray-300 focus:outline-none 
             hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 
