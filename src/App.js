@@ -23,7 +23,7 @@ import UserOnboarding from "./pages/UserOnboarding.js";
 import BookInfo from "./pages/BookInfo.js"
 // Lazy-loaded components
 const SetUpAccount = React.lazy(() => import('./pages/SetUpAccount'));
-const Submit = React.lazy(() => import('./pages/Submit'));
+const Submit = React.lazy(() => import('./pages/Submit/Submit'));
 const Settings = React.lazy(() => import('./pages/Settings'));
 const UserPage = React.lazy(() => import('./pages/UserPage'));
 const Profile = React.lazy(() => import('./pages/Profile'));

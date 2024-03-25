@@ -41,8 +41,9 @@ export default function Post(postid){
               {postData && <>
                 <Link to={`/post/${finalPid}`}>
                 <PostIDComponent props= {postData}/>
-                <PostIDSubComponent props = {postData}/>
+                
                 </Link>
+                <PostIDSubComponent props = {postData}/>
                 
               </>
           

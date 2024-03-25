@@ -1,4 +1,3 @@
-import React from 'react';
 import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { db } from '../../../firebase'; 
 

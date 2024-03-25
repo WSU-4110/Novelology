@@ -1,4 +1,6 @@
 import { addDoc, serverTimestamp } from 'firebase/firestore';
+import {collection} from 'firebase/firestore';
+import { db } from '../../../firebase';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import DOMPurify, { sanitize } from 'dompurify';
@@ -23,7 +25,9 @@ const formats = [
 
 class Form {
     constructor(formValue, user, messageRef, file) {
-        this.messageRef = messageRef;
+        this.messageRef = collection(db, messageRef)
+        this.formValue = formValue
+        this.user = user
         this.payload = {
             text: formValue || "",
             createdAt: serverTimestamp(),
@@ -36,6 +40,8 @@ class Form {
     }
 
     async sendMessage(payload) {
+       
+        if (!this.user || (!this.formValue )) return
         return await addDoc(this.messageRef, payload);
     }
 }
@@ -53,7 +59,7 @@ export function FormGUI({ formValue, setFormValue, sendMessage }) {
 
             />
             {console.log(formValue)}
-
+            
             <div className='flex justify-end mt-2'>
                 <button onClick={sendMessage} className="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded-full">
                     submit
