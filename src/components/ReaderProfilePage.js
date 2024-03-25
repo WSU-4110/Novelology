@@ -18,6 +18,7 @@ export default function ReaderProfilePage() {
   const [fetchedProfilePicture, setFetchedProfilePicture] = useState(null);
   const [isLoading, setIsLoading] = useState(false); // Set loading to false initially
   const [show, setShow] = useState(false);
+  var bookData;
   const noShow = () => setShow(false);
 
   useEffect(() => {
@@ -67,6 +68,8 @@ export default function ReaderProfilePage() {
   }
 
   const defaultProfilePicture = require("../assets/default-profile-picture.jpg");
+
+  
 
   return (
     <div>
@@ -176,6 +179,7 @@ export default function ReaderProfilePage() {
                       {show && <NewBookList show={show} onClose={noShow} user={user} />}
                     </div>
                     <div>
+
                       <DisplayBookLists user={user} >
                       </DisplayBookLists>
                     </div>

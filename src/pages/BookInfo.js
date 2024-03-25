@@ -9,6 +9,7 @@ import {AddBookToFirestore,CheckDuplicateBook} from "../functions/AddBook.js";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { AddBookRating, DisplayUserBookRating, UserRated } from '../functions/AddRatingToBook';
+import AddToBookList from '../components/BookStacks/AddToBookList';
 
 
 export default function BookInfo({ showNavBar }) {
@@ -17,6 +18,9 @@ export default function BookInfo({ showNavBar }) {
 
   const [rating, setRating] = useState(null);
   const [BookData, setBookData] = useState([]);
+  const [bookListShow, setBookListShow] = useState(false);
+  const noBookListShow = () => setBookListShow(false);
+
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -112,6 +116,9 @@ export default function BookInfo({ showNavBar }) {
           <div id="star-rating" className="pt-8">
             <div className="font-semibold">Star rating</div>
           </div>
+          <div id="add-to-book-list" className="pt-8">
+          <button onClick={()=>setBookListShow(true)} className="font-semibold bg-maroon p-3 rounded-2xl text-white hover:opacity-70">Add to Book List</button>
+          </div>
           <div id="description" className="pt-8">
             <div className="text-center font-semibold">Description</div>
             <br />
@@ -195,6 +202,8 @@ export default function BookInfo({ showNavBar }) {
             <hr className="h-[0.12em] mt-2 bg-black" />
           </div>
         </div>
+        {bookListShow && <AddToBookList show={bookListShow} onClose={noBookListShow} />}
+
       </div>
     </>
   );

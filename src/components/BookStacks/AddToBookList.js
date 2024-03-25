@@ -1,7 +1,12 @@
 import react from "react";
 import { FaRegTimesCircle } from "react-icons/fa";
+import {DisplayBookListsWhileAddingBook} from "./DisplayBookLists";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth, db } from "../../firebase.js";
 
 const AddToBookList = ({ show, onClose }) => {
+  const [user] = useAuthState(auth);
+
   if (!show) return null;
 
   return (
@@ -13,21 +18,16 @@ const AddToBookList = ({ show, onClose }) => {
           </button>
           <h2 className="text-xl pb-5 text-maroon">Add this book to your book lists</h2>
           <h4 className="text-base pb-2">Select a book list</h4>
-
+          <DisplayBookListsWhileAddingBook user={user} >
+                      </DisplayBookListsWhileAddingBook>
           <div className="flex flex-col">
-            <div>
-              <input
-                type="text"
-                placeholder="New Book List name"
-                className="text-sm p-2"
-              />
-            </div>
+            
             <div className="flex justify-center mt-3">
               <button
                 type="submit"
                 className="bg-maroon text-white p-2 rounded-full text-sm "
               >
-                Create
+                Add
               </button>
             </div>
           </div>
