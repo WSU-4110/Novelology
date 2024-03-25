@@ -12,15 +12,21 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 import ReaderProfilePage from './components/ReaderProfilePage';
 import AuthorProfilePage from './components/AuthorProfilePage';
+import ReviewerProfilePage from './components/ReviewerProfilePage';
+import ArtistProfilePage from './components/ArtistProfilePage';
 import BookRating from './components/BookRating.js';
+import Registration from './components/user/Registration.js';
+import DeleteAccountPage from './components/user/DeleteAccountPage.js';
+import ChangePassword from './components/user/ChangePassword.js';
+
+
 // import AddBook from './functions/AddBook.js';
-
-
 import SampleHome from './pages/sampleHome.js'
 import SignIn from './pages/Signin.js';
 import Notifications from './pages/Notifications.js';
 import UserOnboarding from "./pages/UserOnboarding.js";
 import BookInfo from "./pages/BookInfo.js"
+
 // Lazy-loaded components
 const SetUpAccount = React.lazy(() => import('./pages/SetUpAccount'));
 const Submit = React.lazy(() => import('./pages/Submit'));
@@ -63,9 +69,14 @@ const App = () => {
             </Route>
             <Route path="*" element={<Error />} />
             <Route path="/notifications" element={<Notifications />} />
+            <Route path="/delete-account" element={<DeleteAccountPage />} />
+            <Route path="/change-password" element={<ChangePassword />} />
 
             <Route path="/AuthorProfilePage" element={<AuthorProfilePage />} />
             <Route path="/ReaderProfilePage" element={<ReaderProfilePage />} />
+            <Route path="/ArtistProfilePage" element={<ArtistProfilePage />} />
+            <Route path="/ReviewerProfilePage" element={<ReviewerProfilePage />} />
+            <Route path="/-Register" element={<Registration />} />
             <Route path="/samplehome" element={<SampleHome showNavBar={true}/>}/>
           <Route path="/sign_in" element={<SignIn showNavBar={false}/>}/>
           <Route path="/setup-account" element={<UserOnboarding showNavBar={false}/>}/>
