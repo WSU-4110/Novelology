@@ -82,14 +82,14 @@ export function Registration() {
   const firstNameRef = useRef(null);
   const lastNameRef = useRef(null);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        navigate("/user-onboarding");
-      }
-    });
-    return unsubscribe;
-  }, [navigate]);
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
+  //     if (user) {
+  //       navigate("/onboarding");
+  //     }
+  //   });
+  //   return unsubscribe;
+  // }, [navigate]);
 
   const validatePasswords = () => {
     const password = passwordRef.current.value;
@@ -150,11 +150,6 @@ const signUpWithEmail = async (email, password, username, firstName, lastName) =
         throw new Error("Invalid username");
       }
 
-      await signUpWithEmail(
-        emailRef.current.value.trim(),
-        passwordRef.current.value.trim(),
-        usernameRef.current.value.trim()
-      );
       const email = emailRef.current.value;
       const password = passwordRef.current.value;
       const username = usernameRef.current.value;
@@ -162,7 +157,7 @@ const signUpWithEmail = async (email, password, username, firstName, lastName) =
       const lastName = lastNameRef.current.value;
       // Now passing additional details to signUpWithEmail
       await signUpWithEmail(email, password, username, firstName, lastName);
-      navigate('/user-onboarding');
+      navigate('/onboarding');
     } catch (error) {
       console.error('Signup failed:', error);
       alert('Signup failed: ' + error.message);
@@ -178,15 +173,18 @@ const signUpWithEmail = async (email, password, username, firstName, lastName) =
 
   const handleSignUpWithPopup = async (navigate) => {
     const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({
+      prompt: 'select_account' // This will prompt the user to select a Google account in the popup
+    });
+  
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-
-      navigate('/user-onboarding'); 
+  
+      // Navigate to the onboarding page after successful sign-in
+      navigate('/onboarding'); 
     } catch (error) {
-
       console.error("Authentication with Google failed:", error.code, error.message);
-
       alert("Failed to sign in with Google: " + error.message);
     }
   };

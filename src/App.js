@@ -53,7 +53,7 @@ const App = () => {
           <Routes className="flex">
             <Route path="/" element={<Home />} />
             <Route element={<PrivateRoute />}>
-              <Route path="/onboarding" element={<SetUpAccount />} /> {/* Route for Onboarding component */}
+              <Route path="/onboarding" element={<UserOnboarding />} /> {/* Route for Onboarding component */}
             </Route>
             <Route path="/settings" element={<Settings />} />
             <Route path="/profile" element={<Profile />} />
@@ -76,7 +76,7 @@ const App = () => {
             <Route path="/ReaderProfilePage" element={<ReaderProfilePage />} />
             <Route path="/ArtistProfilePage" element={<ArtistProfilePage />} />
             <Route path="/ReviewerProfilePage" element={<ReviewerProfilePage />} />
-            <Route path="/-Register" element={<Registration />} />
+            <Route path="/Register" element={<Registration />} />
             <Route path="/samplehome" element={<SampleHome showNavBar={true}/>}/>
           <Route path="/sign_in" element={<SignIn showNavBar={false}/>}/>
           <Route path="/setup-account" element={<UserOnboarding showNavBar={false}/>}/>
