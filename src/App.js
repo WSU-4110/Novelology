@@ -2,7 +2,7 @@
 import './styles/App.css';
 import React, { Fragment, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/shared/navbar';
+import NavigationBar from './components/NavigationBar.js';
 import Home from './pages/Home';
 import Error from './components/shared/Error';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,17 +13,13 @@ import { ToastContainer } from 'react-toastify';
 import ReaderProfilePage from './components/ReaderProfilePage';
 import AuthorProfilePage from './components/AuthorProfilePage';
 import BookRating from './components/BookRating.js';
-import SearchResultsBook from './components/SearchResultsBook.js';
-import ReaderQandA from './components/ReaderQandA.js';
-import HomeLoggedIn from './components/HomeLoggedIn.js';
-
-
 
 import SampleHome from './pages/sampleHome.js'
 import SignIn from './pages/Signin.js';
 import Notifications from './pages/Notifications.js';
 import UserOnboarding from "./pages/UserOnboarding.js";
 import BookInfo from "./pages/BookInfo.js"
+
 // Lazy-loaded components
 const SetUpAccount = React.lazy(() => import('./pages/SetUpAccount'));
 const Submit = React.lazy(() => import('./pages/Submit'));
@@ -40,18 +36,20 @@ const App = () => {
     <Router>
       <ToastContainer />
       <Fragment>
-      <div className="flex justify-center align-middle">
-          <img src={require('./assets/novelology_newlogo.png')} alt="Novelology Logo" style={{ height: '12em', width: '12em' }} />
-        </div>
-            {/* <LoggedOutNavBar /> */}
-          <Navbar />
+
+        <NavigationBar />
+        
         <Suspense fallback={<FontAwesomeIcon icon={faSpinner} spin />}>
-          {/* <NavigationBar /> */}
+          
+
+
           <Routes className="flex">
             <Route path="/" element={<Home />} />
+
             <Route element={<PrivateRoute />}>
-              <Route path="/setup-account" element={<SetUpAccount />} /> {/* Route for Onboarding component */}
+              <Route path="/onboarding" element={<SetUpAccount />} /> {/* Route for Onboarding component */}
             </Route>
+
             <Route path="/settings" element={<Settings />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/users/:username" element={<UserPage />} />
@@ -70,13 +68,12 @@ const App = () => {
             <Route path="/AuthorProfilePage" element={<AuthorProfilePage />} />
             <Route path="/ReaderProfilePage" element={<ReaderProfilePage />} />
             <Route path="/samplehome" element={<SampleHome showNavBar={true}/>}/>
-            <Route path="/SearchResultsBook" element={<SearchResultsBook />} />
-            <Route path="/ReaderQandA" element={<ReaderQandA />} />
-            <Route path="/HomeLoggedIn" element={<HomeLoggedIn />} />
-            <Route path="/sign_in" element={<SignIn showNavBar={false}/>}/>
-            <Route path="/onboarding" element={<UserOnboarding showNavBar={false}/>}/>
-            <Route path="/bookinfo" element={<BookInfo showNavBar={true}/>}/>
-            <Route path="/rating" element={<BookRating showNavBar={true}/>}/>
+          <Route path="/sign_in" element={<SignIn showNavBar={false}/>}/>
+          <Route path="/setup-account" element={<UserOnboarding showNavBar={false}/>}/>
+          <Route path="/bookinfo/:isbn" element={<BookInfo showNavBar={true}/>}/>
+          <Route path="/rating" element={<BookRating showNavBar={true}/>}/>
+          {/* <Route path="/addbook" element={<AddBook/>}/> */}
+          
           </Routes>
         </Suspense>
       </Fragment>

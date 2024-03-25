@@ -1,47 +1,77 @@
 import * as React from "react";
-import { useNavigate } from "react-router-dom";
+import {useState} from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../firebase';
 import { handleLogout } from '../functions/Auth';
+import SideBar,{SideBarItem} from './SideBar.js';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHome, faUser, faPlus, faSignOutAlt, faSignInAlt, faPersonCircleQuestion, faBookBookmark, faGear, faBell } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
+import Searchbar from './shared/Searchbar.js';
+import { handleSearch } from '../functions/searchFunctions';
+import { Tooltip } from 'react-tooltip';
+import { onSnapshot } from 'firebase/firestore';
 
+import "../styles/sideBar.css"
 export default function NavigationBar() {
-  const navigate = useNavigate();
   const [user] = useAuthState(auth);
-
-
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchStatus, setSearchStatus] = useState('');
   const handleSignIn=()=> {
     window.location.href = '/sign_in';
   }
-  document.addEventListener("DOMContentLoaded", function () {
-    const navigateButton = document.getElementById("dropdown-button");
-
-    navigateButton.addEventListener("click", function () {
-      // Scroll to the target div
-      document.getElementById("dropdown").scrollIntoView({ behavior: "smooth" });
-    });
-  });
-  
     return (
       <>
       {user ? (
         //When user is logged in
+        <>
+        <div className="fixed left-0 top-0 bottom-0 bg-white w-[5.2rem] z-10">
+
+        <SideBar>
+        <Link to="/" data-tip="Home" data-for="home-tooltip">
+          <SideBarItem icon={<FontAwesomeIcon icon={faHome}/>} text="Home" />
+        </Link>
+        <Link to="/profile" data-tip="Profile" data-for="profile-tooltip">
+          <SideBarItem icon={<FontAwesomeIcon icon={faUser}/>} text="Profile"
+           />
+        </Link>
+        <Link to="/notifications" data-tip="Notifications" data-for="notifications-tooltip">
+          <SideBarItem icon={<FontAwesomeIcon icon={faBell}/>} text="Notifications" />
+        </Link>
+        <Link to="/create-post" data-tip="Create a Post" data-for="create-post-tooltip">
+          <SideBarItem icon={<FontAwesomeIcon icon={faPlus}/>} text="Create Post" />
+        </Link>
+          <SideBarItem icon={<FontAwesomeIcon icon={faBookBookmark} />} text="Book Lists" />
+          <SideBarItem icon={<FontAwesomeIcon icon={faPersonCircleQuestion} />} text="Reader Q&A" />
+        <Link to="/settings" data-tip="Settings" data-for="settings-tooltip">
+          <SideBarItem icon={<FontAwesomeIcon icon={faGear}/>} text="Settings" />
+          </Link>
+
+        </SideBar>
+        </div>
+
+        <div className="ml-20">
         <div className="flex justify-center items-center px-16 py-1.0 w-full text-base whitespace-nowrap bg-maroon max-md:px-5 max-md:max-w-full">
+        
         <div className="flex gap-5 justify-between items-center w-full max-w-[1080px] max-md:flex-wrap max-md:max-w-full">
+        
+        <Link to="/">
         <img
                     loading="lazy"
                     srcSet={require("../assets/novelology_newlogo.png")}
                     style={{ height: "5em", width: "5em" }}
                     className="self-stretch aspect-[1.08] w-[85px]"
                   />
+        </Link>
           <div className="flex my-auto text-base gap-3">
                  
 
-                 <check>
-                   <form class="flex flex-col gap-3 md:flex-row">
+                   <form class="flex flex-col gap-3 md:flex-row w-20">
                      <select
                        id="searchType"
                        name="searchType"
-                       class="w-1/5 h-10 border-2 border-maroon bg-lightcolor focus:outline-none focus:border-maroon text-black rounded-full px-2 md:px-3 py-0 md:py-1 tracking-wider"
+                       class="w-full h-10 border-2 border-maroon bg-lightcolor focus:outline-none focus:border-maroon text-black rounded-full px-2 md:px-3 py-0 md:py-1 tracking-wider"
                      >
                        <option value="All" selected="">
                          All
@@ -51,29 +81,10 @@ export default function NavigationBar() {
                        <option value="ByGenre">Book by Genre</option>
                        <option value="ByAuthor">Book by Author</option>
                      </select>
-
-                     <div class="flex w-4/5 gap-2">
-                       <input
-                         type="text"
-                         id="search_input"
-                         className="bg-lightcolor border border-gray-300 text-gray-900 text-sm rounded-full 
-           focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
-           dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                         placeholder="Enter your search title"
-                       />
-
-                       <button
-                         type="submit"
-                         className="flex text-gray-900 bg-lightcolor border border-gray-300 focus:outline-none 
-           hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 
-           dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 
-           dark:focus:ring-gray-700"
-                       >
-                         Search
-                       </button>
-                     </div>
-                   </form>
-                   </check>
+                     </form>
+                     <Searchbar onSearch={(query) => handleSearch(query, setSearchResults, setSearchStatus)} />
+                
+                  
           </div>
           <button className="text-gray-900 bg-lightcolor border border-gray-300 focus:outline-none 
             hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 
@@ -83,8 +94,11 @@ export default function NavigationBar() {
           </button>
         </div>
       </div>
+      </div>
+      </>
       ):(
         //When user is logged out
+        <>
         <div className="flex flex-col bg-lightcolor">
           <div className="flex z-10 flex-col pb-0 w-full max-md:max-w-full">
             <div className="flex justify-center items-center px-16 py-1.0 w-full whitespace-nowrap bg-maroon max-md:px-5 max-md:max-w-full ">
@@ -175,6 +189,7 @@ export default function NavigationBar() {
             </div>
           </div>
         </div>
+        </>
       )}
         
 
