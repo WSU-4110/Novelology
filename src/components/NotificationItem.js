@@ -8,17 +8,20 @@ import { toast } from 'react-toastify';
 import MiniUserCard from './user/MiniUserCard';
 import fetchUsernameWithUID from '../functions/fetchUsernameWithUID';
 import { Link } from 'react-router-dom';
+import fetchPFP from '../functions/fetchPFP';
 
 class NotificationItem extends Component {
   state = {
     showMiniUserCard: false,
     username: '',
+    pfpURL: '',
   };
 
   async componentDidMount() {
     const { fromUserId } = this.props;
     const username = await fetchUsernameWithUID(fromUserId);
-    this.setState({ username });
+    const pfpURL = await fetchPFP(fromUserId);
+    this.setState({ username, pfpURL });
   }
 
   handleMouseEnter = () => {
@@ -98,36 +101,40 @@ class NotificationItem extends Component {
   renderNotificationContent = () => {
     const { type, fromUserId, timestamp } = this.props;
     const formattedTime = formatTimeDifference(timestamp);
-    const { showMiniUserCard, username } = this.state;
+    const { showMiniUserCard, username, pfpURL } = this.state;
     
 
     switch (type) {
       case 'follow_request':
         return (
           <div className="flex items-center justify-between">
-            <div>
-              <span className="font-bold">
-              {showMiniUserCard && <MiniUserCard username={username} />}
-              requested to follow you.
-              </span>
+            <div className="flex items-center justify-center text-center gap-2">
+              <Link to={`users/${username}`} className="font-bold flex items-center">
+                <img src={pfpURL} className="w-8 h-8 rounded-full mr-2" alt="Profile" />
+                {username}
+              </Link>
+              <p>requested to follow you.</p>
             </div>
             <div className="flex items-center space-x-2">
-              <button className="p-1 bg-green-500 text-white rounded-full hover:bg-green-600" onClick={this.handleAccept}>
-                <FontAwesomeIcon icon={faCheck} />
+              <button className="p-1 w-20 h-8 bg-green-600 text-white rounded-md hover:bg-green-200" onClick={this.handleAccept}>
+                Approve
               </button>
-              <button className="p-1 bg-red-500 text-white rounded-full hover:bg-red-600" onClick={this.handleDismiss}>
-                <FontAwesomeIcon icon={faTimes} />
+              <button className="p-1 w-20 bg-red-600 h-8 text-white rounded-md hover:bg-red-200" onClick={this.handleDismiss}>
+                Deny
               </button>
             </div>
           </div>
         );
       case 'follow_accepted':
         return (
-          <div>
-            <Link to={`/users/${username}`} className="font-bold">
-              {username}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center justify-center text-center gap-2">
+              <Link to={`users/${username}`} className="font-bold flex items-center">
+                <img src={pfpURL} className="w-8 h-8 rounded-full mr-2" alt="Profile" />
+                {username}
             </Link>
-             accepted your follow request.
+             <p>accepted your follow request.</p>
+          </div>
           </div>
         );
       case 'like':
@@ -142,9 +149,9 @@ class NotificationItem extends Component {
   render() {
     const { read } = this.props;
     return (
-      <div className={`p-4 border m-4 w-1/2 border-gray-200 ${read ? 'bg-gray-100' : 'bg-white'}`}>
+      <div className={`p-4 border m-4 w- border-gray-200 ${read ? 'bg-gray-100' : 'bg-white'}`}>
         <div className="text-sm text-gray-700">{this.renderNotificationContent()}</div>
-         <button className="mt-2 text-blue-500 hover:text-blue-600" onClick={this.handleDismiss}>Dismiss</button>
+         <button className="mt-4 bg-gray-100 rounded-md p-1 text-gray-500 hover:text-gray-800 " onClick={this.handleDismiss}>Dismiss</button>
       </div>
     );
   }

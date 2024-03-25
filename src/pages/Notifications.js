@@ -90,14 +90,27 @@ class Notifications extends Component {
     const { notifications, unreadCount, totalCount } = this.state;
 
     return (
-      <div className='border w-3/4 ml-32' >
-        <h2>Notifications</h2>
-        <div>
-          Unread: {unreadCount} | Total: {totalCount}
-        </div>
-        <button onClick={this.markAllAsRead}>Mark all as read</button>
-        <button onClick={this.clearAllNotifications}>Clear all</button>
-        <div className="flex-col mb-4">
+      <div className='border ml-[15%] max-w-[800px] p-4 mx-auto mt-5' >
+        <h2 className="text-2xl font-bold text-maroon mb-4">Notifications</h2>
+          <div className="mb-4">
+            <span className="text-gray-700">Unread: {unreadCount}</span> | 
+            <span className="text-gray-700">Total: {totalCount}</span>
+          </div>
+          <div className="flex gap-4">
+            <button 
+              onClick={this.markAllAsRead}
+              className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
+            >
+              Mark all as read
+            </button>
+            <button 
+              onClick={this.clearAllNotifications}
+              className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
+            >
+              Clear all
+            </button>
+          </div>
+        <div className="flex-col gap-2">
           {notifications.map((notification) => (
             <NotificationItem key={notification.id} {...notification} />
           ))}

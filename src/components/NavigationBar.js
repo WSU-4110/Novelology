@@ -21,12 +21,13 @@ export default function NavigationBar() {
   const handleSignIn=()=> {
     window.location.href = '/sign_in';
   }
-  return (
-    <>
+    return (
+      <>
       {user ? (
+        //When user is logged in
         <>
-          <div className="fixed left-0 top-0 bottom-0 bg-white w-[5.2rem] z-10">
-         
+        <div className="fixed left-0 top-0 bottom-0 bg-white w-[5.2rem] z-10">
+
         <SideBar>
         <Link to="/" data-tip="Home" data-for="home-tooltip">
           <SideBarItem icon={<FontAwesomeIcon icon={faHome}/>} text="Home" />
