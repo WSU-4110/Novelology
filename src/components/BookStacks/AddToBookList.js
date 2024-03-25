@@ -14,6 +14,7 @@ export const AddBookToBookList = (bookListData,userAuth) =>{
   const addingBookToBookList = new BookList(bookListData.bookListTitle,bookListData.genre, userAuth, bookListData.docID);
   addingBookToBookList.AddBookToBookList(ISBN13);
 }
+
 const AddToBookList = ({ show, onClose,uniqueBook }) => {
   const [user] = useAuthState(auth);
   book = uniqueBook;
@@ -34,14 +35,7 @@ const AddToBookList = ({ show, onClose,uniqueBook }) => {
                       </DisplayBookListsWhileAddingBook>
           <div className="flex flex-col">
             
-            <div className="flex justify-center mt-3">
-              <button
-                type="submit"
-                className="bg-maroon text-white p-2 rounded-full text-sm "
-              >
-                Add
-              </button>
-            </div>
+            
           </div>
         </div>
       </div>

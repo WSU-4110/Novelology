@@ -45,25 +45,17 @@ const Modal = ({ show, item, onClose }) => {
               <br />
               <button
                 onClick={navigateToBookInfo}
-                class="text-white bg-blue-700 hover:bg-blue-800 
-                            focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 
+                class="text-white bg-maroon hover:opacity-60 
+                            focus:outline-none focus:ring-4 focus:ring-maroon font-medium rounded-full text-sm px-5 py-2.5 
                             text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
                 More
               </button>
-              <button
-                onClick={() => setBookListShow(true)} 
-                class="text-white bg-blue-700 hover:bg-blue-800 
-                            focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 
-                            text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              >
-                Add to Book List
-              </button>
+             
             </div>
           </div>
           <p className="description">{item.volumeInfo.description}</p>
         </div>
-        {bookListShow && <AddToBookList show={bookListShow} onClose={noBookListShow} />}
 
       </div>
     </>

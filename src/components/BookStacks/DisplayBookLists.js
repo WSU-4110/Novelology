@@ -3,6 +3,9 @@ import { db } from "../../firebase";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { AddBookToBookList } from "./AddToBookList";
+import {RemoveBookFromBookList} from "./RemoveFromBookList.js";
+import { DeleteBookList } from "./DeleteBookList.js";
+import RenameBookListModal from "./RenameBookListModal.js";
 
 const checkBookListCollectionEmpty = async (user) => {
   try {
@@ -97,7 +100,7 @@ const DisplayBookLists = ({ user }) => {
             <b>You have {BookListCount} book list(s)</b>
           </p>
           {Array.from({ length: BookListCount }, (_, index) => (
-            <DisplayBookListItems key={index} bookData={BookLists[index]} />
+            <DisplayBookListItems key={index} bookData={BookLists[index] } userAuth={user}/>
           ))}
         </>
       )}
@@ -105,7 +108,10 @@ const DisplayBookLists = ({ user }) => {
   );
 };
 
-export const DisplayBookListItems = ({ bookData }) => {
+export const DisplayBookListItems = ({ bookData, userAuth }) => {
+  const [show, setShow] = useState(false);
+  const noShow = () => setShow(false);
+
   return (
     <div>
       <div className="flex flex-row gap-5 border-b border-gray-500">
@@ -123,10 +129,16 @@ export const DisplayBookListItems = ({ bookData }) => {
           </Link>
         </div>
         <div>
-          <button className="hover:text-bold">Edit</button>
+          <button onClick={() =>DeleteBookList(bookData, userAuth)} className="hover:text-bold">Delete Book List</button>
+        </div>
+        <div>
+          <button onClick={() =>setShow(true)} className="hover:text-bold">Rename Book List</button>
         </div>
       </div>
+      {show && <RenameBookListModal show={show} onClose={noShow} user={userAuth} bookListData={bookData} />}
+
     </div>
+
   );
 };
 
@@ -287,7 +299,7 @@ export const DisplayBookListItemsWhileAddingBooks = ({
                         <>Error</>
                       )}
                       <div>
-                      <button>Remove Book from book list</button>
+                      <button onClick={() => RemoveBookFromBookList(bookListData, userAuth)}>Remove Book from book list</button>
                     </div>
                     </div>
                     

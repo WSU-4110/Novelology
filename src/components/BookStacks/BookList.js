@@ -1,5 +1,5 @@
 import React from "react";
-import { doc, setDoc, getDoc,getDocs, collection, addDoc, updateDoc, increment, arrayUnion } from "firebase/firestore";
+import { doc, setDoc, getDoc,getDocs, collection, addDoc, updateDoc, deleteDoc , increment, arrayUnion } from "firebase/firestore";
 import { db } from "../../firebase";
 
 export class BookList {
@@ -84,8 +84,22 @@ export class BookList {
 
     }
     RemoveBookFromBookList = (isbn) =>{}
-    RenameBookList = () =>{
+    RenameBookList = async(title) =>{
+      const uid = this.user.uid;
+      try {
+        const subcollectionRef = collection(db, "users", uid, "BookLists");
+        const docRef = doc(subcollectionRef, this.docID);
+  
+        // Set document data to the document reference
+        await updateDoc(docRef, {
+          bookListTitle: title,
+        });
+        this.listName = title;
 
+        console.log(`Book List renamed to ${this.listName}.`);
+      } catch (error) {
+        console.error("Error renaming the book list:", error);
+      }
     }
     getBookCount = (props) =>{}
     DisplayBookList = () =>{
@@ -95,5 +109,19 @@ export class BookList {
         console.log(this.user);
         console.log(this.docID);
     }
-    DeleteBookList = (props) =>{}
+    DeleteBookList = async() =>{
+
+      const uid = this.user.uid;
+      try {
+        const subcollectionRef = collection(db, "users", uid, "BookLists");
+        const docRef = doc(subcollectionRef, this.docID);
+  
+        await deleteDoc(docRef);
+        console.log(`Document successfully deleted.`);
+
+      } catch (error) {
+        console.error("Error deleting book list", error);
+      }
+
+    }
 }
