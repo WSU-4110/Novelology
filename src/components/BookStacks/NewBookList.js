@@ -1,11 +1,21 @@
 import react from "react";
 import { FaRegTimesCircle } from "react-icons/fa";
+import {BookList} from "./BookList.js";
 
-const NewBookListModal = ({ show, onClose }) => {
+const NewBookListModal = ({ show, onClose, user }) => {
   if (!show) return null;
 
-  const CreateNewBookList=()=>{
+  const CreateNewBookList=(event)=>{
+    event.preventDefault();
     console.log("Creating new book list");
+    const bookListName = document.getElementById("bookListName").value;
+    const bookListGenre = document.getElementById("genres").value;
+    const userDetails = user;
+    console.log("bookListName: " + bookListName);
+    console.log("bookListGenre: " + bookListGenre);
+    console.log("userDetails: " + userDetails);
+    const NewList = new BookList(bookListName, bookListGenre, userDetails);
+    NewList.DisplayBookList();
     
   }
   return (
@@ -23,6 +33,7 @@ const NewBookListModal = ({ show, onClose }) => {
             <div>
               <input
                 type="text"
+                id="bookListName"
                 placeholder="New Book List name"
                 className="text-sm p-2"
               />
@@ -31,6 +42,7 @@ const NewBookListModal = ({ show, onClose }) => {
             <div>
               <input
                 type="text"
+                id="genres"
                 placeholder="Enter a genre"
                 className="text-sm p-2"
               />
