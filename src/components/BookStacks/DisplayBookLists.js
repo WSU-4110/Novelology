@@ -1,6 +1,8 @@
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { AddBookToBookList } from "./AddToBookList";
 
 const checkBookListCollectionEmpty = async (user) => {
   try {
@@ -116,16 +118,13 @@ export const DisplayBookListItems = ({ bookData }) => {
           <div>{bookData.bookCount}</div>
         </div>
         <div>
-          <button className="hover:text-bold">
-          Add Book
-          </button>
+          <Link to="/search/''" data-tip="Settings" data-for="settings-tooltip">
+            <button className="hover:text-bold">Add Book</button>
+          </Link>
         </div>
         <div>
-          <button className="hover:text-bold">
-          Edit
-          </button>
+          <button className="hover:text-bold">Edit</button>
         </div>
-        
       </div>
     </div>
   );
@@ -180,7 +179,11 @@ export const DisplayBookListsWhileAddingBook = ({ user }) => {
             <b>You have {BookListCount} book list(s)</b>
           </p>
           {Array.from({ length: BookListCount }, (_, index) => (
-            <DisplayBookListItemsWhileAddingBooks key={index} bookData={BookLists[index]} />
+            <DisplayBookListItemsWhileAddingBooks
+              key={index}
+              bookListData={BookLists[index]}
+              userAuth={user}
+            />
           ))}
         </>
       )}
@@ -188,24 +191,111 @@ export const DisplayBookListsWhileAddingBook = ({ user }) => {
   );
 };
 
-export const DisplayBookListItemsWhileAddingBooks = ({ bookData }) => {
+export const DisplayBookListItemsWhileAddingBooks = ({
+  bookListData,
+  userAuth,
+}) => {
+  const [books, setBooks] = useState([]);
+
+  useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const fetchedBooks = await Promise.all(
+          bookListData.books.map(async (isbn) => {
+            try {
+              const bookRef = doc(db, "books", isbn);
+              const docSnap = await getDoc(bookRef);
+
+              if (docSnap.exists()) {
+                return docSnap.data();
+              } else {
+                console.log("No such document for ISBN:", isbn);
+                return null;
+              }
+            } catch (error) {
+              console.error("Error fetching book data for ISBN:", isbn, error);
+              return null;
+            }
+          })
+        );
+
+        setBooks(fetchedBooks.filter((book) => book !== null));
+      } catch (error) {
+        console.error("Error fetching books:", error);
+      }
+    };
+
+    fetchBooks();
+  }, [bookListData.books]);
+
   return (
-    <div>
+    <div className="mb-10">
       <div className="flex flex-row gap-5 border-b border-gray-500">
         <div className="flex flex-row gap-2 border-r border-gray-500">
           <div>Title:</div>
-          <div className="pr-4">{bookData.bookListTitle}</div>
+          <div className="pr-4">{bookListData.bookListTitle}</div>
         </div>
         <div className="flex flex-row gap-2">
           <div>Number of Books:</div>
-          <div>{bookData.bookCount}</div>
+          <div>{bookListData.bookCount}</div>
         </div>
         <div>
-          <button className="hover:text-bold">
-          Add Book
+          <button
+            onClick={() => AddBookToBookList(bookListData, userAuth)}
+            className="hover:text-bold"
+          >
+            Add Book
           </button>
         </div>
-        
+      </div>
+      <div>
+        <div className="mt-5">
+          {bookListData.bookCount > 0 && (
+            <>
+              {books.map((book, index) => (
+                  <div className="flex flex-row mb-5" key={index}>
+                    {book ? (
+                      <div key={index}>
+                        <img
+                          src={
+                            book.volumeInfo &&
+                            book.volumeInfo.imageLinks &&
+                            book.volumeInfo.imageLinks.smallThumbnail
+                          }
+                          alt=""
+                        />
+                      </div>
+                    ) : (
+                      <>Error</>
+                    )}
+
+                    <div className="flex flex-col ml-5 mt-3">
+                      <b>Book title:</b>
+                      {book ? (
+                        <div key={index}>
+                          {book.volumeInfo && book.volumeInfo.title}
+                        </div>
+                      ) : (
+                        <>Error</>
+                      )}
+                      <b>Author:</b>
+                      {book ? (
+                        <div key={index}>
+                          {book.volumeInfo && book.volumeInfo.authors}
+                        </div>
+                      ) : (
+                        <>Error</>
+                      )}
+                      <div>
+                      <button>Remove Book from book list</button>
+                    </div>
+                    </div>
+                    
+                  </div>
+              ))}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

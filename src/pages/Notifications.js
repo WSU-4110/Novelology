@@ -90,7 +90,7 @@ class Notifications extends Component {
     const { notifications, unreadCount, totalCount } = this.state;
 
     return (
-      <div>
+      <div className="ml-24">
         <h2>Notifications</h2>
         <div>
           Unread: {unreadCount} | Total: {totalCount}

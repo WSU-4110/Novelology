@@ -139,7 +139,7 @@ const SearchResults = () => {
     };
 
     return (
-        <div className="flex">
+        <div className="flex ml-20">
             {/* Display search results */}
             <div className="w-3/4 p-6">
                 <h1 className="text-xl font-bold mb-4">Search Results</h1>

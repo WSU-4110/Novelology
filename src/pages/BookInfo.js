@@ -12,7 +12,7 @@ import { AddBookRating, DisplayUserBookRating, UserRated } from '../functions/Ad
 import AddToBookList from '../components/BookStacks/AddToBookList';
 
 
-export default function BookInfo({ showNavBar }) {
+export default function BookInfo() {
   const [user] = useAuthState(auth);
   const { isbn } = useParams();
 
@@ -69,7 +69,6 @@ export default function BookInfo({ showNavBar }) {
   },[]);
   return (
     <>
-      {showNavBar && <NavigationBar />}
       <div className="flex flex-col bg-white">
         <div className="flex flex-col items-center px-5 pt-16 pb-10 w-full bg-[linear-gradient(0deg,#F4F3EE_0%,#F4F3EE_100%,#89023E)] max-md:max-w-full">
           <div className="flex self-center bg-maroon text-white">
@@ -116,9 +115,12 @@ export default function BookInfo({ showNavBar }) {
           <div id="star-rating" className="pt-8">
             <div className="font-semibold">Star rating</div>
           </div>
-          <div id="add-to-book-list" className="pt-8">
-          <button onClick={()=>setBookListShow(true)} className="font-semibold bg-maroon p-3 rounded-2xl text-white hover:opacity-70">Add to Book List</button>
-          </div>
+          {user?(
+            <div id="add-to-book-list" className="pt-8">
+            <button onClick={()=>setBookListShow(true)} className="font-semibold bg-maroon p-3 rounded-2xl text-white hover:opacity-70">Add to Book List</button>
+            </div>
+          ):(<></>)}
+          
           <div id="description" className="pt-8">
             <div className="text-center font-semibold">Description</div>
             <br />
@@ -202,7 +204,7 @@ export default function BookInfo({ showNavBar }) {
             <hr className="h-[0.12em] mt-2 bg-black" />
           </div>
         </div>
-        {bookListShow && <AddToBookList show={bookListShow} onClose={noBookListShow} />}
+        {bookListShow && <AddToBookList show={bookListShow} onClose={noBookListShow} uniqueBook={BookData}/>}
 
       </div>
     </>

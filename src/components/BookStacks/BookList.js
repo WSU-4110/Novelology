@@ -1,14 +1,14 @@
 import React from "react";
-import { doc, setDoc, getDoc,getDocs, collection, addDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc,getDocs, collection, addDoc, updateDoc, increment, arrayUnion } from "firebase/firestore";
 import { db } from "../../firebase";
 
 export class BookList {
     
-    constructor(listName, genre, user) {
+    constructor(listName, genre, user,id) {
         this.listName = listName;
         this.genre = genre;
         this.user = user;
-        this.docID = null;
+        this.docID = id;
     }
 
     CreateBookList = async() =>{
@@ -24,6 +24,7 @@ export class BookList {
               bookCount:0,
               books:[],
               timestamp: new Date(),
+              docID: docRef.id,
             });
             this.docID = docRef.id;
             console.log("New Book List created.");
@@ -64,10 +65,25 @@ export class BookList {
           console.error("Error fetching subcollection data:", error);
         }
     }
-    AddBookToBookList = () =>{
+    AddBookToBookList = async(isbn) =>{
+      const uid = this.user.uid;
+      try {
+        const subcollectionRef = collection(db, "users", uid, "BookLists");
+        const docRef = doc(subcollectionRef, this.docID);
+  
+        // Set document data to the document reference
+        await updateDoc(docRef, {
+          bookCount:increment(1),
+          books:arrayUnion(isbn),
+        });
+        console.log(`New Book added to ${this.listName}.`);
+
+      } catch (error) {
+        console.error("Error adding book to book list:", error);
+      }
 
     }
-    RemoveBookFromBookList = (props) =>{}
+    RemoveBookFromBookList = (isbn) =>{}
     RenameBookList = () =>{
 
     }

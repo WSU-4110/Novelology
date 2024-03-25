@@ -10,7 +10,7 @@ import fetchPFP from "../functions/fetchPFP";
 import fetchUsernameWithUID from "../functions/fetchUsernameWithUID.js";
 import DOMPurify from "dompurify";
 import NewBookList from "./BookStacks/NewBookList.js";
-import DisplayBookLists,{DisplayBookListItems} from "./BookStacks/DisplayBookLists.js";
+import DisplayBookLists from "./BookStacks/DisplayBookLists.js";
 
 export default function ReaderProfilePage() {
   const [user, loading] = useAuthState(auth);
@@ -72,10 +72,9 @@ export default function ReaderProfilePage() {
   
 
   return (
-    <div>
+    <div className="ml-5">
       <div className="flex flex-col bg-lightcolor">
         {/* 1 */}
-        <NavigationBar />
         {/* 2 */}
 
         <div className="h-80 w-full bg-gray-200"></div>

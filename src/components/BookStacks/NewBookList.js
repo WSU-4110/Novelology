@@ -14,7 +14,7 @@ const NewBookListModal = ({ show, onClose, user }) => {
     console.log("bookListName: " + bookListName);
     console.log("bookListGenre: " + bookListGenre);
     console.log("userDetails: " + userDetails);
-    const NewList = new BookList(bookListName, bookListGenre, userDetails);
+    const NewList = new BookList(bookListName, bookListGenre, userDetails,null);
     NewList.CreateBookList();
     NewList.DisplayBookList();
     
