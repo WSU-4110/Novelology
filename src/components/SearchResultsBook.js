@@ -12,7 +12,7 @@ export default function SearchResultsBook() {
                 {/* 2 */}
                 <div className="flex flex-col justify-center items-center w-full">
                     {/* 2.1 */}
-                    <div className="text-3xl font-bold flex flex-col gap-5" >
+                    <div className="text-3xl font-bold flex flex-col gap-5 mt-10" >
                     Search Results
                     </div>
                 </div>
