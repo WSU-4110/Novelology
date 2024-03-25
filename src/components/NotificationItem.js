@@ -58,6 +58,7 @@ class NotificationItem extends Component {
       const currentUser = auth.currentUser;
       const requesterId = this.props.fromUserId;
       const currentUserDocRef = doc(db, 'users', currentUser.uid);
+      const { username } = this.state;
   
       try {
         // Add the current user to the requester's following
@@ -88,7 +89,7 @@ class NotificationItem extends Component {
         console.error('Error accepting follow request: ', error);
       }
 
-      toast.success( this.props.fromUserId + " now follows you!");
+      toast.success( username + " now follows you!");
     }
   };
   
