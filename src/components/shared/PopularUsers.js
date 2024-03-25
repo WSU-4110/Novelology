@@ -40,13 +40,15 @@ const PopularUsers = () => {
 
   return (
     <>
-      <h2 className="text-xl font-bold">Popular Users</h2>
-      {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
-      <div className="flex flex-row gap-20">
-        {popularUsers.slice(0, 3).map(user => (
-          <UserCard key={user.id} userId={user.id} />
-        ))}
+      <div className='w-5/6 flex flex-col mx-auto'>
+          <h2 className="text-xl font-bold mb-4 text-gray-800 pt-4 mx-auto">Popular Users</h2>
+          {loading && <p className="text-gray-600">Loading...</p>}
+          {error && <p className="text-red-500">{error}</p>}
+          <div className="flex flex-col gap-4 justify-start w-full">
+              {popularUsers.slice(0, 3).map(user => (
+                  <UserCard key={user.id} userId={user.id} />
+              ))}
+          </div>
       </div>
     </>
   );

@@ -37,10 +37,6 @@ const App = () => {
       <ToastContainer />
       <Fragment>
 
-        <div className="flex justify-center align-middle">
-          <img src={require('./assets/novelology_newlogo.png')} alt="Novelology Logo" className='w-48 h-48' />
-        </div> 
-
         <NavigationBar />
         
         <Suspense fallback={<FontAwesomeIcon icon={faSpinner} spin />}>

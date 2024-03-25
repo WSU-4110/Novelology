@@ -263,7 +263,7 @@ class Feed extends Component {
     const { currentUser } = this.props;
   
     return (
-      <div className="w-3/5 mx-auto" style={{ maxWidth: '900px' }}>
+      <div className="w-full mx-auto">
         <div className="mb-7">
           <button className="mr-2" onClick={() => this.handleFilterByType('all')}>All</button>
           <button className="mr-2" onClick={() => this.handleFilterByType('image')}>Images</button>

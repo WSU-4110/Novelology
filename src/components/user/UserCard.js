@@ -192,37 +192,42 @@ const UserCard = ({ userId }) => {
     const defaultProfilePicture = require('../../assets/default-profile-picture.jpg');
 
     return (
-        <div className="user-card border rounded-lg shadow-md p-6 w-75">
+        <div className="user-card border rounded-lg shadow-md p-6 w-75 bg-white">
             {userData ? (
                 <div>
                     <Link to={`/users/${userData.username}`}>
-                        <h2 className="text-2xl font-semibold mb-4"><span className="text-blue-400">@</span> {userData.username}</h2>
+                        <h2 className="text-md font-semibold mb-4"><span className="text-blue-400">@</span> {userData.username}</h2>
                     </Link>
                     <div className="mr-8">
                         <img 
                             src={fetchedProfilePicture || defaultProfilePicture} 
                             alt="Profile" 
-                            className="w-24 h-24 rounded-full" 
+                            className="w-20 h-20 rounded-full" 
                         />
                     </div>
                     {userData.bio ? (
                         <p className="mb-2">
-                            <FaInfoCircle className="inline-block" />
                             <span className="font-semibold"></span> 
                             <span dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(userData.bio) }} />
                         </p>
                     ) : (
                         <p className="mb-2">
-                            <FaInfoCircle className="inline-block" />
-                            <span className="font-semibold"></span> 
-                            <span className="text-orange-500">No bio provided</span>
+
                         </p>
                     )}
-                    <div className="flex justify-between mb-4">
-                        <p className="font-semibold"><FaUser className="inline-block mr-2" /> Followers: {followersCount}</p>
-                        <p className="font-semibold"><FaUser className="inline-block mr-2" /> Following: {followingCount}</p>
+                    <div className="flex flex-col items-start mb-4">
+                        <div className="flex items-center bg-blue-100 text-blue-800 py-1 px-2 rounded-lg mb-2">
+                            <FaUser className="mr-1 text-xs" />
+                            <p className="font-semibold text-xs">Followers: {followersCount}</p>
+                        </div>
+                        <div className="flex items-center bg-green-100 text-green-800 py-1 px-2 rounded-lg">
+                            <FaUser className="mr-1 text-xs" />
+                            <p className="font-semibold text-xs">Following: {followingCount}</p>
+                        </div>
                     </div>
-                    {userData && userData.role && userData.role.length > 0 && (
+
+
+                    {userData && userData.role && userData.role.length > 0  && (
                         <div className="mb-2">
                             <p><strong>Roles:</strong></p>
                             <ul className="list-disc ml-4">
