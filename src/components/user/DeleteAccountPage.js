@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUnlockKeyhole } from '@fortawesome/free-solid-svg-icons';
-import logoWithCircleBorder from '../../assets/logo_with_circle_border-removebg.png';
+import logoWithCircleBorder from '../../assets/novelology_newlogo.png';
 
 const AccountDeletionPage = () => {
   const navigate = useNavigate();
