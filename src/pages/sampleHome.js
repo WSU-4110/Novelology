@@ -3,11 +3,10 @@ import NavigationBar from "../components/NavigationBar.js";
 import Footer from "../components/Footer.js";
 import { useNavigate } from 'react-router-dom';
 
-function SampleHome({showNavBar}) {
+function SampleHome() {
 
   return (
     <>
-    {showNavBar && <NavigationBar />}
     <div className="flex flex-col mt-0 bg-lightcolor">
       <div className="flex z-5 flex-col pb-7 w-full max-md:max-w-full">
 

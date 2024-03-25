@@ -33,20 +33,24 @@ export default function Home() {
     return (
         <main>
             <div>
-                <div>
+                {/*<div>
                     <Searchbar onSearch={(query) => handleSearch(query, setSearchResults, setSearchStatus)} />
-                </div>
+                </div>*/}
             </div>
             {!user ? (
                 <div> logged out</div>
                 
             ) : (
                 <>
-                    <div className='w-full flex flex-col justify-center items-center'>                
-                        <Feed currentUser={user} />
-                        <PopularUsers criteria='followers' />
-                       
+                    <div className='flex flex-row justify-start ml-24'>
+                        <div className='flex-1'>
+                            <Feed currentUser={user} />
+                        </div>
+                        <div className='flex-none w-1/4'>
+                            <PopularUsers criteria='followers' />
+                        </div>
                     </div>
+
                 </>
             )}
         </main>
