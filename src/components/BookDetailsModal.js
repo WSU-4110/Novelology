@@ -1,17 +1,13 @@
 import react, {useState} from "react";
 import "../styles/bookSearch.css";
 import { FaRegTimesCircle } from "react-icons/fa";
-import BookInfo from "../pages/BookInfo";
 import { useNavigate, Link } from "react-router-dom";
 import { AddBookToFirestore } from "../functions/AddBook.js";
-import AddToBookList from "./BookStacks/AddToBookList.js";
-import { serverTimestamp } from "firebase/firestore";
-import { GetISBN13 } from "../functions/AddBook.js";
+
 
 
 const Modal = ({ show, item, onClose }) => {
-    const [bookListShow, setBookListShow] = useState(false);
-    const noBookListShow = () => setBookListShow(false);
+    
 
     const navigate = useNavigate();
   if (!show) return null;

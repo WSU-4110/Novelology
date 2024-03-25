@@ -83,7 +83,35 @@ export class BookList {
       }
 
     }
-    RemoveBookFromBookList = (isbn) =>{}
+
+    RemoveBookFromBookList = async(isbn) =>{
+      const uid = this.user.uid;
+      try {
+        const subcollectionRef = collection(db, "users", uid, "BookLists");
+        const docRef = doc(subcollectionRef, this.docID);
+        
+        const docSnap = await getDoc(docRef);
+        if (!docSnap.exists()){
+          console.error("Document does not exist!");
+          return;
+        }
+        const currentBookCount = docSnap.data().bookCount;
+
+        const newCountValue = currentBookCount - 1;
+        const currentBooks = docSnap.data().books; 
+        const updatedBooks = currentBooks.filter(item => item !== isbn);
+        await updateDoc(docRef, {
+              books: updatedBooks,
+              bookCount:newCountValue,
+ 
+            });
+        console.log("Book removed from book list!")
+      }
+      catch(e){
+        console.error("Error removing book",e);
+      }
+    }
+
     RenameBookList = async(title) =>{
       const uid = this.user.uid;
       try {

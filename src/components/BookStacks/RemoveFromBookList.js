@@ -1,9 +1,12 @@
 import React from 'react';
-
-export const RemoveBookFromBookList = (bookListData, userAuth) =>{
+import { BookList } from './BookList';
+export const RemoveBookFromBookList = (bookListData, userAuth,bookID) =>{
     console.log("Remove book from book list called.");
     console.log("Book list data: ",bookListData);
     console.log("userAuth: ",userAuth);
+    console.log("isbn: ",bookID);
+    const RemoveBook = new BookList(bookListData.bookListTitle, bookListData.genre, userAuth,bookListData.docID);
+    RemoveBook.RemoveBookFromBookList(bookID);
 }
 
 const RemoveFromBookList = ()=>{

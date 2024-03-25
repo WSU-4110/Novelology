@@ -6,6 +6,7 @@ import { AddBookToBookList } from "./AddToBookList";
 import {RemoveBookFromBookList} from "./RemoveFromBookList.js";
 import { DeleteBookList } from "./DeleteBookList.js";
 import RenameBookListModal from "./RenameBookListModal.js";
+import { GetISBN13 } from '../../functions/AddBook';
 
 const checkBookListCollectionEmpty = async (user) => {
   try {
@@ -252,6 +253,8 @@ export const DisplayBookListItemsWhileAddingBooks = ({
           <div>{bookListData.bookCount}</div>
         </div>
         <div>
+        </div>
+        <div>
           <button
             onClick={() => AddBookToBookList(bookListData, userAuth)}
             className="hover:text-bold"
@@ -299,7 +302,7 @@ export const DisplayBookListItemsWhileAddingBooks = ({
                         <>Error</>
                       )}
                       <div>
-                      <button onClick={() => RemoveBookFromBookList(bookListData, userAuth)}>Remove Book from book list</button>
+                      <button onClick={() => RemoveBookFromBookList(bookListData, userAuth, GetISBN13(book))}>Remove Book from book list</button>
                     </div>
                     </div>
                     
