@@ -8,7 +8,7 @@ body {
   font-family:'Verdana'; 
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color:  #F4D7B7;
+  background-color: #ffff; /*the background color for the whole website*/
 }
 
 code {
