@@ -14,10 +14,11 @@ export function useSearchBook(query) {
         // Encode the query parameter to ensure proper URL formatting
         const encodedQuery = encodeURIComponent(query);
 
-        axios.get(`https://www.googleapis.com/books/v1/volumes?q=${encodedQuery}&orderBy=newest&maxResults=3`)
+        axios.get(`https://www.googleapis.com/books/v1/volumes?q=${encodedQuery}&maxResults=3`)
             .then(res => {
                 const items = res.data.items;
                 const bookList = items.map(item => ({
+                    
                     id: item.id,
                     title: item.volumeInfo.title,
                     authors: item.volumeInfo.authors ? item.volumeInfo.authors.join(', ') : 'Unknown Author',

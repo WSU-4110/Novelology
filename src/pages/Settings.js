@@ -113,6 +113,12 @@ export default function Settings() {
 
     const handleUsernameChangeRequest = async () => {
         try {
+
+            // Ensure desiered username is text only, no special characters, no spaces, etc
+            if (!desiredUsername.match(/^[a-zA-Z0-9_]*$/)) {
+                throw new Error('Username can only contain letters, numbers, and underscores.');
+            }
+
             const isAvailable = await checkUsernameAvailability();
     
             if (isAvailable) {
@@ -146,7 +152,7 @@ export default function Settings() {
             }
         } catch (error) {
             console.error('Error requesting username change:', error);
-            toast.error('Error requesting username change');
+            toast.error('Username is taken, or is invalid.');
         }
     };
     
@@ -219,7 +225,16 @@ export default function Settings() {
         }
     };
     
-    
+    const handleVisibilityChange = async (visibility) => {
+        try {
+            const userDoc = doc(db, 'users', auth.currentUser.uid);
+            await updateDoc(userDoc, {
+                visibility: visibility
+            });
+        } catch (error) {
+            console.error('Error updating user visibility:', error);
+        }
+    }
 
 
     return (
@@ -294,19 +309,32 @@ export default function Settings() {
 
                                 {/* Change Password*/}
                                 {user.providerData[0].providerId === EmailAuthProvider.PROVIDER_ID && (
-                                <div className="change-password-section">
-                                    <h1 className='text-2xl font-bold m-4'>Change Password:</h1>
-                                    <input type="password" id="currentPassword" className="border rounded p-2 mt-1" placeholder="Current Password" />
-                                    <input type="password" id="newPassword" className="border rounded p-2 mt-1" placeholder="New Password" />
-                                    <input type="password" id="confirmPassword" className="border rounded p-2 mt-1" placeholder="Confirm New Password" />
-                                    <button
-                                        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-4"
-                                        onClick={() => handleChangePassword(document.getElementById("currentPassword"), document.getElementById("newPassword").value, document.getElementById("confirmPassword").value)} 
-                                    > 
-                                    Change Password!
-                                    </button>
-                                </div>
-                            )}
+                                    <div className="change-password-section">
+                                        <h1 className='text-2xl font-bold m-4'>Change Password:</h1>
+                                        <input type="password" id="currentPassword" className="border rounded p-2 mt-1" placeholder="Current Password" />
+                                        <input type="password" id="newPassword" className="border rounded p-2 mt-1" placeholder="New Password" />
+                                        <input type="password" id="confirmPassword" className="border rounded p-2 mt-1" placeholder="Confirm New Password" />
+                                        <button
+                                            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-4"
+                                            onClick={() => handleChangePassword(document.getElementById("currentPassword"), document.getElementById("newPassword").value, document.getElementById("confirmPassword").value)} 
+                                        > 
+                                        Change Password!
+                                        </button>
+                                    </div>
+                                )}
+                                <br/>
+                                <h1>Account Visibility</h1>
+                                <input type='radio' id='public' name='visibility' value='public'
+                                    defaultChecked={userData.visibility === 'public' ? true : false}
+                                    onChange={() => {handleVisibilityChange('public')}}
+                                />
+                                <label for='public'>Public</label>
+                                <input type='radio' id='private' name='visibility' value='private'
+                                    defaultChecked={userData.visibility === 'private' ? true : false}
+                                    onChange={() => {handleVisibilityChange('private')}}
+                                />
+                                <label for='private'>Private</label>
+
                             </>
                         )}
                     </>
