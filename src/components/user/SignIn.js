@@ -4,6 +4,7 @@ import { auth } from '../../firebase';
 import { FaGoogle } from 'react-icons/fa';
 import { handleSignInWithPopup } from "../../functions/Auth";
 import { useNavigate } from "react-router-dom";
+
 export function SignIn() {
   const [loading, setLoading] = useState(false);
 
@@ -28,138 +29,12 @@ export function SignIn() {
       console.error("Error signing in with Google:", error);
     }
   }
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import logoWithCircleBorder from '../../assets/logo_with_circle_border-removebg.png'; // Path to novelology logo in assets
 
 
-// Define the SignIn component
-export const SignIn = (props) => {
-
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  // Function to navigate to the registration page
   const navigateToRegistration = () => {
-    window.location.href = '/register'; // URL of your registration page
+    navigate('/-Register');
   };
-
-  // Main container styling with maroon/purple background color
-  const mainContainerStyle = {
-    width: '100%',
-    minHeight: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'auto',
-    backgroundColor: 'rgba(91, 46, 72, 1)', // Background color for entire screen
-  };
-
-  const dontHaveAccountTextStyle = (fontSize, fontWeight, marginBottom, marginTop, color = 'rgba(255, 255, 255, 1)') => ({
-    color: color,
-    textAlign: 'center',
-    lineHeight: 'normal',
-    fontFamily: 'Montserrat',
-    fontSize: fontSize,
-    fontWeight: fontWeight,
-    textDecoration: 'none',
-    marginBottom: marginBottom,
-    marginTop: '60px', // Added marginTop for more control over spacing
-  });
-
-  // Adjusted sign in box styling for vertical coverage
-  const signInBoxStyle = {
-    maxWidth: '600px',
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-around', // Ensures even distribution of space
-    alignItems: 'center',
-    position: 'relative',
-    overflow: 'hidden',
-    paddingTop: '20px', // Padding at the top
-    paddingBottom: '20px', // Padding at the bottom
-  };
-
-  // Adjusted text styling function for minimal spacing
-  const textStyle = (fontSize, fontWeight, marginBottom, color = 'rgba(255, 255, 255, 1)') => ({
-    color: color,
-    textAlign: 'center',
-    lineHeight: 'normal',
-    fontFamily: 'Montserrat',
-    fontSize: fontSize,
-    fontWeight: fontWeight,
-    textDecoration: 'none',
-    marginBottom: marginBottom,
-    marginTop: '20px',
-  });
-
-  // Separate style for the "Sign In with Google" button
-  const googleSignInButtonStyle = {
-    backgroundColor: '#ffffff',
-    width: '300px',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: '1px',
-    borderRadius: '30px',
-    marginBottom: '15px',
-    marginTop: '70px',
-    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.8)',
-  };
-
-  // Adjusted function for login button styling
-  const loginButtonStyle = () => ({
-    // Existing login button styles
-    backgroundColor: 'rgba(91, 46, 72, 1)',
-    width: '300px',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: '20px',
-    borderRadius: '20px',
-    boxShadow: '0px 4px 8px rgba(0, 0, 0, 1)',
-    marginBottom: '10px', // Reduced spacing to minimize empty space
-    marginTop: '10px',
-  });
-
-  // Separate style for the sign-up button
-  const signUpButtonStyle = {
-    backgroundColor: '#ffffff',
-    width: '300px',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: '10px',
-    borderRadius: '40px',
-    marginBottom: '40px',
-    marginTop: '1px',
-    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.8)',
-  };
-
-  const inputFieldStyle = {
-    backgroundColor: '#ffffff',
-    width: '300px',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: '20px',
-    borderRadius: '20px',
-    marginBottom: '20px',
-    marginTop: '5px',
-    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.8)',
-  };
-
-  // Function to handle email change
-  const handleEmailChange = (event) => {
-    setEmail(event.target.value);
-  };
-
-  // Function to handle password change
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
+  
 
   return (
     <div className="min-w-20 p-1">
@@ -168,19 +43,43 @@ export const SignIn = (props) => {
       </h1>
 
       <form>
-      <button
-          className="flex items-center w-full bg-white border border-gray-300 rounded-[5rem] shadow-md px-6 py-2 text-sm font-medium text-gray-800 mt-4 mb-4"
-          id="register"
-          onClick={(event) => {
-              event.preventDefault(); // Prevent default form submission
-              signInWithGoogle();
-            }}
-      >
-          <FaGoogle className="mr-2" /> Sign In with Google
-      </button>
+        <button
+            className="flex items-center w-full bg-white border border-gray-300 rounded-[5rem] shadow-md px-6 py-2 text-sm font-medium text-gray-800 mt-4 mb-4"
+            id="register"
+            onClick={(event) => {
+                event.preventDefault(); // Prevent default form submission
+                signInWithGoogle();
+              }}
+        >
+            <FaGoogle className="mr-2" /> Sign In with Google
+        </button>
 
+        <div className="h-2 w-full flex flex-row mb-2 select-none">
+        <div className="w-[45%] h-[.05em] bg-black">
+          </div>
+          <p className="text-[.75em] relative top-[-.75em] mr-1 ml-1">OR</p>
+          <div className="w-[45%] h-[.05em] bg-black">
+          </div>
+        </div>
 
+          E-Mail Address
+          <input className="mt-1 mb-1 rounded-md p-0.5 outline-none focus:ring focus:ring-blue-300 h-8 w-full" ref={emailRef} placeholder="E-Mail Address" />
+          Password
+          <input className="mt-1 mb-1 rounded-md p-0.5 outline-none focus:ring focus:ring-blue-300 h-8 w-full" ref={passwordRef} type="password" placeholder="Password" />
+          <button type="button" disabled={loading} onClick={handleSignInWithEmailAndPassword}>
+            Sign In
+          </button>
 
+          {/* Sign Up button */}
+          
+          <button
+          type="button"
+          className="mt-4 w-full bg-blue-500 text-white rounded-md px-4 py-2"
+          onClick={navigateToRegistration}
+        >
+            Sign Up
+          </button>
+      </form>
       <div className="h-2 w-full flex flex-row mb-2 select-none">
       <div className="w-[45%] h-[.05em] bg-black">
         </div>
@@ -222,6 +121,4 @@ export const SignIn = (props) => {
       </div>
     </div>
   );
-};
-
-export default SignIn;
+}
