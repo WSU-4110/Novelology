@@ -6,6 +6,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, db } from '../firebase.js';
 import fetchPFP from '../functions/fetchPFP';
 import { doc, getDoc } from 'firebase/firestore';
+import { Link } from "react-router-dom";
 
 const SidebarContext = createContext();
 export default function SideBar({ children }) {
@@ -51,18 +52,12 @@ const defaultProfilePicture = require('../assets/default-profile-picture.jpg');
           expanded ? "w-80" : "w-[5.2rem]"
         }`}
       >
-        <div className="p-4 pb-2 h-20 bg-maroon flex justify-between items-center">
-          <img
-            loading="lazy"
-            srcSet={require("../assets/novelology_newlogo.png")}
-            className= {`bg-maroon rounded-lg overflow-hidden transition-all ${
-                expanded ? "w-16 h-14" : "w-0"
-              }`}
-          />
+        <div className="p-4 pb-2 h-20 w-full bg-maroon flex justify-between items-center">
+
           <p className={`text-lightcolor ${expanded ? "":"hidden"}`}>Novelology</p>
           <button
             onClick={() => setExpanded((curr) => !curr)}
-            className="p-1.5 rounded-lg bg-gray-50 hover:bg-gray-100"
+            className="p-1.5 rounded-lg w-full text-gray-50 hover:bg-secondary"
           >
             {expanded ? <MdOutlineNavigateBefore /> : <FontAwesomeIcon icon={faBars} />}
           </button>
@@ -72,19 +67,25 @@ const defaultProfilePicture = require('../assets/default-profile-picture.jpg');
           <ul className="flex-1 px-3">{children}</ul>
         </SidebarContext.Provider>
 
+        
         <div className="border-t flex p-3">
+        <Link to="/profile">
           <img
             src={fetchedProfilePicture || defaultProfilePicture} 
 
-            className="w-10 h-10 rounded-md"
+            className="w-10 h-10 rounded-full ml-2"
           />
+          </Link>
           <div
             className={`flex justify-between items-center overflow-hidden transition-all ${
               expanded ? "w-52 ml-3" : "w-0"
             } `}
           >
+            
             <div className="leading-4">
-              <h4 className="font-semibold">{userData && userData.username}</h4>
+              <h4 className="font-semibold">
+                <span className="text-blue-500">@</span>
+                {userData && userData.username}</h4>
               <span className="text-xs text-gray-600">{userData && userData.email}</span>
             </div>
           </div>
