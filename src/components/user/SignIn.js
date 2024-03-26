@@ -67,11 +67,4 @@ export function SignIn() {
       </form>
     </div>
   );
-<<<<<<< HEAD
 }
-=======
-}
-
-
-
->>>>>>> 0c2652132bb4c07c0670de5d228944b33e131aab
