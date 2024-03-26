@@ -39,6 +39,7 @@ const Login = React.lazy(() => import('./pages/Login'));
 const Post = React.lazy(() => import('./pages/Post'));
 const AuthorVerification = React.lazy(() => import('./pages/AuthorVerification'));
 const SearchResults = React.lazy(() => import('./pages/SearchResults'));
+const OldUserPage = React.lazy(() => import('./pages/OldUserPage'));
 
 const App = () => {
   return (
@@ -58,7 +59,8 @@ const App = () => {
               <Route path="/onboarding" element={<UserOnboarding />} /> {/* Route for Onboarding component */}
             </Route>
             <Route path="/settings" element={<Settings />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/old-profile" element={<OldUserPage />} />
+            <Route path="/profile" element={<UserPage />} />
             <Route path="/users/:username" element={<UserPage />} />
             <Route path="/create-post" element={<Submit />} />
             <Route path="/login/:redirect" element={<Login />} />
