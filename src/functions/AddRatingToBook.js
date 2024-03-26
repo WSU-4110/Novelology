@@ -1,33 +1,141 @@
-import { doc, setDoc, getDoc, collection, addDoc } from "firebase/firestore";
-import { db, updateDoc } from "../firebase";
+import {
+  doc,
+  setDoc,
+  getDoc,
+  collection,
+  addDoc,
+  deleteDoc,
+  increment,
+  updateDoc,
+  arrayUnion,
+} from "firebase/firestore";
+import { db } from "../firebase";
 import { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../firebase";
 
+//User side of Rating
 export const AddBookRating = async (rating, isbn, user) => {
   try {
     console.log(rating);
     console.log(isbn);
     const uid = user.uid;
     console.log("uid:", uid);
-    DisplayUserBookRating(user, isbn);
-    console.log("Existing user rating ended");
+
     try {
       const subcollectionRef = collection(db, "users", uid, "Ratings");
       const docRef = doc(subcollectionRef, isbn);
 
-      // Set document data to the document reference
       await setDoc(docRef, {
+        changes: false,
         isbn: isbn,
         rating: rating,
         timestamp: new Date(),
       });
       console.log("Rating added.");
+      // try {
+      //   const bookRef = doc(db, "books", isbn);
+      //   const docSnap = await getDoc(bookRef);
+
+      //   if (docSnap.exists()) {
+      //     if (CheckUserRatedBasedOnChanges(user, isbn)) {
+      //       console.log("User first rating adding to books data....");
+      //       const finalRating = docSnap.data().rating;
+      //       const ratingCount = docSnap.data().NumberOfRatings;
+      //       const RatingSumDisplay = docSnap.data().RatingSum;
+
+      //       console.log("Rating: ", finalRating);
+      //       console.log("Number of Ratings: ", ratingCount);
+      //       console.log("Ratings Sum: ", RatingSumDisplay);
+      //       const SumOfRatings = RatingSumDisplay + rating;
+      //       const tempRating = (finalRating + rating+5) / (ratingCount + 1);
+
+      //       await updateDoc(bookRef, {
+      //         NumberOfRatings: increment(1),
+      //         RatingSum: SumOfRatings,
+      //         rating: tempRating,
+      //       });
+      //       await incrementChanges(user, isbn);
+
+      //       console.log("Rating successfully added.");
+      //     } else {
+      //       console.log("User has already rated this book!");
+      //       const finalRating = docSnap.data().rating;
+      //       const ratingCount = docSnap.data().NumberOfRatings;
+      //       const RatingSumDisplay = docSnap.data().RatingSum;
+
+      //       console.log("Rating: ", finalRating);
+      //       console.log("Number of Ratings: ", ratingCount);
+      //       console.log("Ratings Sum: ", RatingSumDisplay);
+
+      //       const currentRating = DisplayUserBookRating(user, isbn);
+      //       const RemovedRating = RatingSumDisplay - currentRating;
+
+      //       const FinalSumOfRating = RemovedRating + rating;
+
+      //       const tempRating = FinalSumOfRating / ratingCount;
+
+      //       await updateDoc(bookRef, {
+      //         RatingSum: FinalSumOfRating,
+      //         rating: tempRating,
+      //       });
+
+      //       await incrementChanges(user, isbn);
+      //       console.log("New Rating successfully added.");
+      //     }
+      //   } else {
+      //     console.log("Book document doesn't exist!");
+      //   }
+      // } catch (e) {
+      //   console.error("Error adding rating to book in books: ", e);
+      // }
     } catch (error) {
-      console.error("Error adding rating to book:", error);
+      console.error("Error adding rating to book in users:", error);
     }
   } catch (error) {
     console.error("Error getting user Data:", error);
+  }
+};
+
+const CheckUserRatedBasedOnChanges = async (user, isbn) => {
+  try {
+    console.log(isbn);
+    const uid = user.uid;
+    console.log("uid:", uid);
+    try {
+      const docRef = doc(db, "users", uid, "Ratings", isbn);
+
+      // Get the document snapshot
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        console.log("Document changes:", docSnap.data().changes);
+        return docSnap.data().changes;
+      } else {
+        console.log("User did not rate!");
+        return false;
+      }
+    } catch (error) {
+      console.error("Error retrieving rating to book:", error);
+      return false;
+    }
+  } catch (error) {
+    console.error("Error getting user Data:", error);
+    return false;
+  }
+};
+
+const incrementChanges = async (user, isbn) => {
+  const uid = user.uid;
+  try {
+    const docRef = doc(db, "users", uid, "Ratings", isbn);
+
+    await updateDoc(docRef, {
+      changes: true,
+    });
+    console.log("Change incremented.");
+  } catch (error) {
+    console.error("Error incrementing changes in user Ratings", error);
   }
 };
 
@@ -37,111 +145,92 @@ export const DisplayUserBookRating = async (user, isbn) => {
     const uid = user.uid;
     console.log("uid:", uid);
     try {
-        const docRef = doc(db, 'users', uid, 'Ratings', isbn);
+      const docRef = doc(db, "users", uid, "Ratings", isbn);
 
-        // Get the document snapshot
-        const docSnap = await getDoc(docRef);
+      // Get the document snapshot
+      const docSnap = await getDoc(docRef);
 
-        if (docSnap.exists()) {
-            console.log('Document data:', docSnap.data());
-            console.log('Document snapshot:', docSnap.data().rating);
-            return docSnap.data().rating;
-            
-        } else {
-            console.log('No such document!');
-        }
-
-      } catch (error) {
-        console.error("Error retrieving rating to book:", error);
+      if (docSnap.exists()) {
+        console.log("Document data:", docSnap.data());
+        console.log("Document snapshot:", docSnap.data().rating);
+        return docSnap.data().rating;
+      } else {
+        console.log("No such document!");
       }
-
+    } catch (error) {
+      console.error("Error retrieving rating to book:", error);
+    }
   } catch (error) {
     console.error("Error getting user Data:", error);
   }
 };
 
-export const UserRated = async(user,isbn) =>{
+export const UserRated = async (user, isbn) => {
+  try {
+    console.log(isbn);
+    const uid = user.uid;
+    console.log("uid:", uid);
     try {
-        console.log(isbn);
-        const uid = user.uid;
-        console.log("uid:", uid);
-        try {
-            const docRef = doc(db, 'users', uid, 'Ratings', isbn);
-    
-            // Get the document snapshot
-            const docSnap = await getDoc(docRef);
-    
-            if (docSnap.exists()) {
-                console.log('Document data:', docSnap.data().rating);
-                return true;
-                
-            } else {
-                console.log('No such document!');
-                return false;
-            }
-    
-          } catch (error) {
-            console.error("Error retrieving rating to book:", error);
-            return false;
-          }
-    
-      } catch (error) {
-        console.error("Error getting user Data:", error);
+      const docRef = doc(db, "users", uid, "Ratings", isbn);
+
+      // Get the document snapshot
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        console.log("Document data:", docSnap.data().rating);
+        return true;
+      } else {
+        console.log("User did not rate!");
         return false;
       }
-}
-// useEffect(()=>{})
-//const notificationsRef = collection(db, 'users', toUserId, 'notifications');
-// const washingtonRef = doc(db, "cities", "DC");
+    } catch (error) {
+      console.error("Error retrieving rating to book:", error);
+      return false;
+    }
+  } catch (error) {
+    console.error("Error getting user Data:", error);
+    return false;
+  }
+};
 
-// Set the "capital" field of the city 'DC'
-// await updateDoc(washingtonRef, {
-//     capital: true
-//   });
-// export const AddBookRating = async (rating, isbn) => {
-//   var tempRating, RatingCount;
-//   const [user] = useAuthState(auth);
-//   const uid = user ? user.uid : null;
-//   // const userBookRatingField = await doesBookRatingsFieldExist(uid, "bookRatings");
+export const RemoveRating = async (user, isbn) => {
+  const uid = user.uid;
+  try {
+    const subcollectionRef = collection(db, "users", uid, "Ratings");
+    const docRef = doc(subcollectionRef, isbn);
 
-// //   console.log("AddBookRating called");
-//   console.log("rating from AddBookRating: ", rating);
-//   console.log("isbn from AddBookRating: ", isbn);
+    await deleteDoc(docRef);
+    console.log(`Document successfully deleted.`);
+  } catch (error) {
+    console.error("Error deleting book rating", error);
+  }
+};
 
-//   const bookRef = doc(db, "books", isbn);
-//   const docSnap = await getDoc(bookRef);
+//Book side of Rating
 
-//   if (docSnap.exists()) {
-//     console.log("Document data:", docSnap.data());
-//     const bookData = docSnap.data();
-//     console.log("Book Rating FU: ", bookData.rating);
-//     console.log("Book Rating count: ", bookData.NumberOfRatings);
-//     RatingCount = bookData.NumberOfRatings + 1;
-//     tempRating = (bookData.rating + rating) / RatingCount;
+// export const AddBookRatingToBook = async (isbn, rating,user) => {
+//   console.log("AddBookRatingToBook");
+//     console.log("ISBN: ",isbn);
+//     console.log("rating: ",rating);
+//     try {
+//       const docRef = collection(db, "books", isbn);
+//       const docSnap = await getDoc(docRef);
+//       if (UserRated(user,isbn)){
+//         console.log("User already rated this book");
+//         return;
+//       }else{
+//         if (docSnap.exists()) {
+//           console.log('Document data:', docSnap.data());
+//           console.log('Document snapshot:', docSnap.data().rating);
+//           return;
+//         } else {
+//           console.log('No such document!');
+//           return;
+//         }
+//       }
 
-//     console.log("After Book Rating FU: ", tempRating);
-//     console.log("After Book Rating count: ", RatingCount);
-
-//     // await updateDoc(bookRef,{
-
-//     // });
-//   } else {
-//     // docSnap.data() will be undefined in this case
-//     console.log("No such document!");
-//   }
-// };
-
-// const doesBookRatingsFieldExist = async (documentId, fieldName) => {
-//   try {
-//     const docRef = doc(db, "users", documentId);
-//     const docSnap = await getDoc(docRef);
-//     if (docSnap.exists()) {
-//       const userData = docSnap.data();
-//       return fieldName in userData;
-//     } else {
-//       console.error("User document does not exist");
 //     }
-//   } catch (error) {
-//     console.error("Error checking field in collection:", error);
-//   }
-// };
+//     catch (error) {
+//       console.error("Error adding rating to book:", error);
+//     }
+// }

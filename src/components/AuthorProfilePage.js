@@ -1,7 +1,7 @@
 import * as React from "react";
 import NavigationBar from "./NavigationBar";
 
-export default function ReaderProfilePage() {
+export default function AuthorProfilePage() {
 
   return (
     <div>

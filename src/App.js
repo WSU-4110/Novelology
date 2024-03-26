@@ -15,6 +15,7 @@ import AuthorProfilePage from './components/AuthorProfilePage';
 import ReviewerProfilePage from './components/ReviewerProfilePage';
 import ArtistProfilePage from './components/ArtistProfilePage';
 import BookRating from './components/BookRating.js';
+import BookList from './pages/BookLists.js';
 import Registration from './components/user/Registration.js';
 import DeleteAccountPage from './components/user/DeleteAccountPage.js';
 import ChangePassword from './components/user/ChangePassword.js';
@@ -27,7 +28,7 @@ import SignIn from './pages/Signin.js';
 import Notifications from './pages/Notifications.js';
 import UserOnboarding from "./pages/UserOnboarding.js";
 import BookInfo from "./pages/BookInfo.js"
-
+// import RenameBookListModal from './components/BookStacks/RenameBookListModal.js';
 // Lazy-loaded components
 const SetUpAccount = React.lazy(() => import('./pages/SetUpAccount'));
 const Submit = React.lazy(() => import('./pages/Submit'));
@@ -85,6 +86,7 @@ const App = () => {
           <Route path="/setup-account" element={<UserOnboarding showNavBar={false}/>}/>
           <Route path="/bookinfo/:isbn" element={<BookInfo showNavBar={true}/>}/>
           <Route path="/rating" element={<BookRating showNavBar={true}/>}/>
+          <Route path="/bookList" element={<BookList/>}/>
           {/* <Route path="/addbook" element={<AddBook/>}/> */}
           
           </Routes>
