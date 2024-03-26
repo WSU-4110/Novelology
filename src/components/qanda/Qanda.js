@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import {useState} from 'react';
 import { QandaAuthorStrat } from './functions/QandaStart';
 import PostForm from '../submit/PostForm';
-export default function Qanda(t,id,u){
+export default function Qanda({t,id,u}){
     const [formValue, setFormValue] = useState('')
   const [showReply, setShowReply] = useState(false)
     const [strat, setStrat] = useState(null)
@@ -12,7 +12,7 @@ export default function Qanda(t,id,u){
         setStrat(s); 
     }
 }, [formValue, u]);
-console.log('')
+console.log(u)
 
   const toggleDropdown = () => {
     setShowReply(!showReply);

@@ -25,7 +25,7 @@ import Qanda from "../../qanda/Qanda";
     const [authors, setAuthors] = useState([])
     
     useEffect(() => {
-        const subscribe=onSnapshot(ref,(snapshot) => {
+        const subscribe=onSnapshot(queryRef,(snapshot) => {
             setdata(
                 snapshot.docs.map((doc) => ({
                     id: doc.id,
@@ -89,12 +89,15 @@ function Messages({props,id,t,u}){
                             <div class='flex items-center'>
                                                  
                        
-                    
+                    <div>
                         
-                     <div dangerouslySetInnerHTML={{ __html: text }}/>
+                      <div dangerouslySetInnerHTML={{ __html: text }}/>
                         
                     <div dangerouslySetInnerHTML={{ __html: replay }}/>
                         
+                    </div>                    
+                        
+                       
                                        
                         </div>
                          <div class="mt-4">

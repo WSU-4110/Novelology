@@ -1,5 +1,5 @@
 import Form from "../../submit/functions/Form"
-import { setDoc, doc } from "firebase/firestore"
+import { updateDoc, doc } from "firebase/firestore"
 import { db } from "../../../firebase"
 export class QandaAuthorStrat extends Form{
     constructor(formValue, user, messageRef, author, file){
@@ -14,6 +14,6 @@ export class QandaAuthorStrat extends Form{
   
   //      this.payload = Object.assign({}, this.payload, this.post)
     //    return await super.sendMessage(this.payload)
-    return await setDoc(doc(db,'q&a', this.args),this.post.replay)
+    return await updateDoc(doc(db,'q&a', this.args),this.post)
     }
 }
