@@ -1,12 +1,18 @@
-import react from "react";
+import react, {useState} from "react";
 import { FaRegTimesCircle } from "react-icons/fa";
 import {BookList} from "./BookList.js";
+import { useNavigate } from "react-router";
+import { useEffect } from "react";
+import { auth, db } from "../../firebase.js";
+import { doc, getDoc,collection } from "firebase/firestore";
 
 const NewBookListModal = ({ show, onClose, user }) => {
-  if (!show) return null;
+  const navigate = useNavigate();
+  const [isModalClosed, setIsModalClosed] = useState(false);
 
+  
   const CreateNewBookList=(event)=>{
-    // event.preventDefault();
+    event.preventDefault();
     console.log("Creating new book list");
     const bookListName = document.getElementById("bookListName").value;
     const bookListGenre = document.getElementById("genres").value;
@@ -17,7 +23,14 @@ const NewBookListModal = ({ show, onClose, user }) => {
     const NewList = new BookList(bookListName, bookListGenre, userDetails,null);
     NewList.CreateBookList();
     NewList.DisplayBookList();
-    
+
+    onClose();
+    setIsModalClosed(true); 
+    // window.location.href = '/readerProfilePage';
+
+    // if (isModalClosed) {
+    //   navigate("/readerProfilePage");
+    // }
   }
  
   return (

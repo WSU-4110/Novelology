@@ -21,6 +21,7 @@ export default function ReaderProfilePage() {
   var bookData;
   const noShow = () => setShow(false);
 
+  
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -164,8 +165,8 @@ export default function ReaderProfilePage() {
             </div>
             <div className="w-full border-b border-gray-700 mt-4"></div>
 
-            <div className="flex justify-between items-center ml-5 w-full">
-              <div className="flex flex-col justify-center items-center w-full border-r border-gray-700">
+            <div className="flex w-full">
+              <div className="flex flex-col w-full ml-6 ">
                 <div className="flex flex-col">
                   <div>
                     <div>
@@ -186,12 +187,12 @@ export default function ReaderProfilePage() {
                 </div>
               </div>
 
-              <div className="flex flex-col justify-center items-center w-full">
-                <div className="space-x-32">
+              {/* <div className="flex flex-col justify-center items-center w-full"> */}
+                {/* <div className="space-x-32">
                   <button className="text-2xl text-black">Activity</button>
                   <button className="text-2xl text-black">Posts</button>
-                </div>
-              </div>
+                </div> */}
+              {/* </div> */}
             </div>
 
             <div className="flex flex-row"></div>

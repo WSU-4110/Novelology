@@ -13,7 +13,7 @@ import { ToastContainer } from 'react-toastify';
 import ReaderProfilePage from './components/ReaderProfilePage';
 import AuthorProfilePage from './components/AuthorProfilePage';
 import BookRating from './components/BookRating.js';
-
+import BookList from './pages/BookLists.js';
 import SampleHome from './pages/sampleHome.js'
 import SignIn from './pages/Signin.js';
 import Notifications from './pages/Notifications.js';
@@ -72,7 +72,7 @@ const App = () => {
           <Route path="/setup-account" element={<UserOnboarding showNavBar={false}/>}/>
           <Route path="/bookinfo/:isbn" element={<BookInfo showNavBar={true}/>}/>
           <Route path="/rating" element={<BookRating showNavBar={true}/>}/>
-          
+          <Route path="/bookList" element={<BookList/>}/>
           {/* <Route path="/addbook" element={<AddBook/>}/> */}
           
           </Routes>

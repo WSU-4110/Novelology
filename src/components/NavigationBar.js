@@ -77,7 +77,9 @@ export default function NavigationBar() {
         <Link to="/create-post" data-tip="Create a Post" data-for="create-post-tooltip">
           <SideBarItem icon={<FontAwesomeIcon icon={faPlus}/>} text="Create Post" />
         </Link>
+        <Link to="/bookList" data-tip="Open your book lists" data-for="book-lists-tooltip">
           <SideBarItem icon={<FontAwesomeIcon icon={faBookBookmark} />} text="Book Lists" />
+          </Link>
           <SideBarItem icon={<FontAwesomeIcon icon={faPersonCircleQuestion} />} text="Reader Q&A" />
         <Link to="/settings" data-tip="Settings" data-for="settings-tooltip">
           <SideBarItem icon={<FontAwesomeIcon icon={faGear}/>} text="Settings" />
