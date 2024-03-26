@@ -23,7 +23,7 @@ const Card = ({ book }) => {
         let authors = item.volumeInfo.authors || ['Author not available'];
 
         return (
-          <div key={item.id} className="p-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
+          <div key={item.id} className="p-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 max-w-44">
             <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 ease-in-out" >
               {thumbnail ? (
                 <img src={thumbnail} alt={`${item.volumeInfo.title} cover`} className="w-full h-56 object-cover object-center" onClick={() => { setShow(true); setBookItem(item) }}/>

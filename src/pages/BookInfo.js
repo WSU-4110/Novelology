@@ -65,7 +65,6 @@ export default function BookInfo({ showNavBar }) {
   },[]);
   return (
     <>
-      {showNavBar && <NavigationBar />}
       <div className="flex flex-col bg-white">
         <div className="flex flex-col items-center px-5 pt-16 pb-10 w-full bg-[linear-gradient(0deg,#F4F3EE_0%,#F4F3EE_100%,#89023E)] max-md:max-w-full">
           <div className="flex self-center bg-maroon text-white">
