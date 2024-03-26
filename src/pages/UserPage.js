@@ -20,6 +20,7 @@ import { reportUser } from '../functions/reportUser';
 import { requestFollow } from '../functions/requestFollow';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { FollowButton } from '../components/user/FollowButton';
+import { useLocation } from 'react-router-dom';
 
 const UserPage = () => {
   const { username: paramUsername } = useParams();
@@ -42,30 +43,37 @@ const UserPage = () => {
   const [followersFetched, setFollowersFetched] = useState(false);
   const [followingFetched, setFollowingFetched] = useState(false);
   const [uid, setUID] = useState(null);
+  const location = useLocation();
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         setIsLoading(true);
-
-        // Fetch UID using username
-        const fetchedUID = await fetchUIDwithUsername(paramUsername);
+        
+        let fetchedUID = '';
+  
+        // Check if authUser is not null and the pathname is '/profile'
+        if (authUser && location.pathname === '/profile') {
+          fetchedUID = authUser.uid;
+        } else {
+          fetchedUID = await fetchUIDwithUsername(paramUsername);
+        }
         if (!fetchedUID) throw new Error(`No UID found for username: ${paramUsername}`);
-
+  
         setUID(fetchedUID);
-
+  
         // Fetch user data using UID
         const userRef = doc(db, 'users', fetchedUID);
         const userSnapshot = await getDoc(userRef);
-
+  
         if (userSnapshot.exists()) {
           const userData = userSnapshot.data();
           setUserData(userData);
-
+  
           // Fetch profile picture using fetchPFP function with the obtained UID
           const fetchedProfilePicture = await fetchPFP(fetchedUID);
           setProfilePictureURL(fetchedProfilePicture || require('../assets/default-profile-picture.jpg'));
-
+  
           const currentUser = auth.currentUser;
           setIsFollowing(currentUser && userData.followers?.includes(currentUser.uid));
         } else {
@@ -79,10 +87,12 @@ const UserPage = () => {
         setIsLoading(false);
       }
     };
-
-    fetchUserData();
-  }, [paramUsername]);
-
+  
+    if (authUser || loadingAuthUser === false) {
+      fetchUserData();
+    }
+  }, [paramUsername, authUser, loadingAuthUser]);
+  
   useEffect(() => {
     // Check if the user is muted
     const checkIfMuted = async () => {
@@ -237,7 +247,8 @@ const UserPage = () => {
       )
    ) ) : (
       <div>
-        <p>User data not found</p>
+        {/* render currently logged in user's profile */}
+        <ReaderProfilePage userData={auth.currentUser.uid} isFollowing={isFollowing} profilePictureURL={profilePictureURL} />
       </div>
     )
   );
