@@ -18,8 +18,7 @@ const formatTimeDifference = (timestamp, currentTime = Date.now()) => {
   // If the difference is less than 1 minute, return 'Just Now'
   // Otherwise, return the number of minutes ago
   // If the number of minutes is greater than 1, return 'minutes' instead of 'minute'
-  return `${minutes === 0 ? 'Just Now' : minutes} minute${minutes !== 1 ? 's' : ''} ago`;
-
+  return minutes === 0 ? 'Just Now' : `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
 };
 
 export default formatTimeDifference;
