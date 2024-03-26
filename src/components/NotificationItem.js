@@ -56,7 +56,6 @@ class NotificationItem extends Component {
     }
   };
   
-
   handleAccept = async () => {
     if (this.props.type === 'follow_request') {
       const currentUser = auth.currentUser;
@@ -147,20 +146,36 @@ class NotificationItem extends Component {
     }
   };
 
-
+  
   render() {
-    const { read, type} = this.props;
+    const { read, type, timestamp } = this.props;
+    const { username } = this.state;
+    const date = timestamp.toDate(); // Convert to JavaScript Date object
+    const milliseconds = date.getTime(); // Get time in milliseconds
+    const formattedTime = formatTimeDifference(milliseconds);
     const isDeletable = type !== 'follow_request';
+
     return (
-      <div className={`p-4 border m-4 w- border-gray-200 ${read ? 'bg-gray-100' : 'bg-white'}`}>
-        <div className="text-sm text-gray-700">{this.renderNotificationContent()}</div>
-        <div className="flex justify-between">
-          <button className="mt-4 bg-gray-200 rounded-md p-1 text-gray-500 hover:text-gray-800 " onClick={this.handleMarkAsUnread}>Mark as Unread</button>
-          {isDeletable ? (
-          <button className="relative mt-4 bg-gray-100 rounded-md p-1 text-red-400 hover:text-gray-800 " onClick={this.handleDismiss}>
-              <FontAwesomeIcon icon={faTrash} />
+      <div className={`p-4 border m-4 border-gray-200 ${read ? 'bg-gray-100' : 'bg-white'}`}>
+        <div className="flex justify-between items-start">
+          <div className="text-sm text-gray-700">
+            {this.renderNotificationContent()}
+          </div>
+          <div>
+            {isDeletable && (
+              <button className="text-red-400 hover:text-gray-800" onClick={this.handleDismiss}>
+                <FontAwesomeIcon icon={faTrash} />
+              </button>
+            )}
+          </div>
+        </div>
+        <div className="text-xs text-gray-500 text-right mt-2">
+          {formattedTime}
+        </div>
+        <div className="flex justify-end mt-4">
+          <button className="bg-gray-200 rounded-md p-1 text-gray-500 hover:text-gray-800" onClick={this.handleMarkAsUnread}>
+            Mark as Unread
           </button>
-          ) : null}
         </div>
       </div>
     );

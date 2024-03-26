@@ -28,6 +28,7 @@ import {auth } from "../firebase";
 import { doc } from "firebase/firestore";
 import { updateDoc } from "firebase/firestore";
 import { deleteDoc } from "firebase/firestore";
+import createNotification  from "../functions/createNotification";
 
 class Notifications extends Component {
   state = {
@@ -35,6 +36,8 @@ class Notifications extends Component {
     unreadCount: 0,
     totalCount: 0,
   };
+
+  
 
   componentDidMount() {
     const user = auth.currentUser;
@@ -83,6 +86,28 @@ class Notifications extends Component {
       }
     });
   };
+
+  testCreateNotifications = async () => {
+    const notificationTypes = [
+      'follow_request',
+      'like',
+      'comment',
+      'reply',
+      'mention',
+      'post',
+      'repost',
+      'tag'
+    ];
+    const timestamp = new Date(); // Current time as timestamp
+  
+    for (const type of notificationTypes) {
+      // Call the createNotification function for each type
+      await createNotification(auth.currentUser.uid,auth.currentUser.uid, timestamp, type);
+    }
+  
+    // Notify the developer that the test notifications have been created
+    console.log('Test notifications have been created for each type.');
+  };
   
   clearAllNotifications = () => {
     this.state.notifications.forEach((notification) => {
@@ -102,13 +127,15 @@ class Notifications extends Component {
     return (
       <div className='border ml-[15%] max-w-[800px] p-4 mx-auto mt-5'>
         <h2 className="text-2xl font-bold text-maroon mb-4">Notifications</h2>
+        <button className='bg-yellow-300 text-orange'
+        onClick={this.testCreateNotifications}>Test</button>
         <div className="mb-4">
           <span className="text-gray-700">
             <span className='font-bold'>
               Unread:
             </span> {unreadNotifications.length}</span> | 
           <span className="text-gray-700">
-            <span className='font-bold mr-1'>
+            <span className='font-bold '>
             Total: 
             </span>
           {notifications.length}</span>
