@@ -37,14 +37,11 @@ const Card = ({ book }) => {
                 <p className="text-gray-700 text-sm mt-1">
                   {authors.join(', ')}
                 </p>
-                <button onClick={()=>setBookListShow(true)} className="mt-3 text-sm bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded">
-                  Add to Book List
-                </button>
+                
               </div>
             </div>
             {show && bookItem === item && <BookDetailsModal show={show} item={bookItem} onClose={noShow} />}
 
-            {bookListShow && <AddToBookList show={bookListShow} onClose={noBookListShow} />}
             
           </div>
         );

@@ -1,13 +1,38 @@
-import react from "react";
+import react, {useState} from "react";
 import { FaRegTimesCircle } from "react-icons/fa";
+import {BookList} from "./BookList.js";
+import { useNavigate } from "react-router";
+import { useEffect } from "react";
+import { auth, db } from "../../firebase.js";
+import { doc, getDoc,collection } from "firebase/firestore";
 
-const NewBookListModal = ({ show, onClose }) => {
-  if (!show) return null;
+const NewBookListModal = ({ show, onClose, user }) => {
+  const navigate = useNavigate();
+  const [isModalClosed, setIsModalClosed] = useState(false);
 
-  const CreateNewBookList=()=>{
+  
+  const CreateNewBookList=(event)=>{
+    event.preventDefault();
     console.log("Creating new book list");
-    
+    const bookListName = document.getElementById("bookListName").value;
+    const bookListGenre = document.getElementById("genres").value;
+    const userDetails = user;
+    console.log("bookListName: " + bookListName);
+    console.log("bookListGenre: " + bookListGenre);
+    console.log("userDetails: " + userDetails);
+    const NewList = new BookList(bookListName, bookListGenre, userDetails,null);
+    NewList.CreateBookList();
+    NewList.DisplayBookList();
+
+    onClose();
+    setIsModalClosed(true); 
+    // window.location.href = '/readerProfilePage';
+
+    // if (isModalClosed) {
+    //   navigate("/readerProfilePage");
+    // }
   }
+ 
   return (
     <>
       <div className="flex items-center justify-center fixed top-0 left-0 right-0 bottom-0 bg-gradient-to-b from-maroon z-10">
@@ -23,6 +48,7 @@ const NewBookListModal = ({ show, onClose }) => {
             <div>
               <input
                 type="text"
+                id="bookListName"
                 placeholder="New Book List name"
                 className="text-sm p-2"
               />
@@ -31,6 +57,7 @@ const NewBookListModal = ({ show, onClose }) => {
             <div>
               <input
                 type="text"
+                id="genres"
                 placeholder="Enter a genre"
                 className="text-sm p-2"
               />

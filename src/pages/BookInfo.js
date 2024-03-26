@@ -8,15 +8,19 @@ import { auth } from "../firebase";
 import {AddBookToFirestore,CheckDuplicateBook} from "../functions/AddBook.js";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
-import { AddBookRating, DisplayUserBookRating, UserRated } from '../functions/AddRatingToBook';
+import { AddBookRating, DisplayUserBookRating, UserRated, RemoveRating } from '../functions/AddRatingToBook';
+import AddToBookList from '../components/BookStacks/AddToBookList';
 
-
-export default function BookInfo({ showNavBar }) {
+export default function BookInfo() {
   const [user] = useAuthState(auth);
   const { isbn } = useParams();
-
+  const [check, setCheck] = useState(null);
   const [rating, setRating] = useState(null);
+  const [existingRating, setExistingRating] = useState(null);
   const [BookData, setBookData] = useState([]);
+  const [bookListShow, setBookListShow] = useState(false);
+  const noBookListShow = () => setBookListShow(false);
+
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -45,24 +49,48 @@ export default function BookInfo({ showNavBar }) {
 
   const handleChangeInRating = (currentRating) => {
     setRating(currentRating);
-    
+    AddBookRating(currentRating,isbn,user);
   };
   
   useEffect(() => {
     console.log("rating from bookinfo: " + rating);
     const fetchData = async () => {
-      await AddBookRating(rating,isbn,user);}
-    
-    fetchData();
-  }, [rating]);
+      const oldRating = await DisplayUserBookRating(user,isbn);
+      console.log("Existing Rating-1: " + oldRating);
+      setExistingRating(oldRating);
+      console.log("Existing Rating-2: " + existingRating);
+      // console.log("Type of:", typeof existingRating);
+
+    }
+    if (check) {
+      fetchData();
+  }
+  }, [user,check]);
+
+  useEffect(() => {
+    console.log("Existing Rating-3: " + existingRating); 
+    console.log("Type: ", typeof existingRating);
+}, [existingRating]);
 
   useEffect(() => {
     const fetchData = async () => {
-    const check = await UserRated(user,isbn);
+    const isRated = await UserRated(user,isbn);
+    setCheck(isRated);
     console.log("check: ",check);
     }
     fetchData();
-  },[]);
+  },[rating,user]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const isRated = await UserRated(user,isbn);
+      setCheck(isRated);
+      console.log("check: ",check);
+    }
+    fetchData();
+  });
+
+
   return (
     <>
       <div className="flex flex-col bg-white">
@@ -111,6 +139,12 @@ export default function BookInfo({ showNavBar }) {
           <div id="star-rating" className="pt-8">
             <div className="font-semibold">Star rating</div>
           </div>
+          {user?(
+            <div id="add-to-book-list" className="pt-8">
+            <button onClick={()=>setBookListShow(true)} className="font-semibold bg-maroon p-3 rounded-2xl text-white hover:opacity-70">Add to Book List</button>
+            </div>
+          ):(<></>)}
+          
           <div id="description" className="pt-8">
             <div className="text-center font-semibold">Description</div>
             <br />
@@ -176,7 +210,19 @@ export default function BookInfo({ showNavBar }) {
 
             <div id="user-rating" className="pt-8">
               <p className="font-semibold text-center">Your Rating</p>
-              <BookRating RatingChange={handleChangeInRating} />
+              {/* {check ? (<div>User Rating:{check}</div>):(<></>)} */}
+              {existingRating !== null ?(
+                <>
+                <button onClick={()=>RemoveRating(user,isbn)}>Remove Rating</button>
+
+              <BookRating RatingChange={handleChangeInRating} initialRating={existingRating}/>
+                </>
+              )
+                :(<>
+                <BookRating RatingChange={handleChangeInRating} initialRating={0}/>
+
+                </>)}
+
             </div>
           ) : (
             <div></div>
@@ -194,6 +240,8 @@ export default function BookInfo({ showNavBar }) {
             <hr className="h-[0.12em] mt-2 bg-black" />
           </div>
         </div>
+        {bookListShow && <AddToBookList show={bookListShow} onClose={noBookListShow} uniqueBook={BookData}/>}
+
       </div>
     </>
   );

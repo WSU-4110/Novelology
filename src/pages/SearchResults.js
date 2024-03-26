@@ -178,6 +178,7 @@ const SearchResults = () => {
 
     return (
         <div className="flex relative w-fit border">
+
             {/* Display search results */}
             <div className="w-3/4 p-6 ml-20">
                 <h1 className="text-xl font-bold mb-4">Search Results</h1>

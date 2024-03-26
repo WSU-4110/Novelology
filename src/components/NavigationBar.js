@@ -1,4 +1,5 @@
 
+
 import {useState} from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -57,6 +58,9 @@ export default function NavigationBar() {
   const handleSignIn=()=> {
     window.location.href = '/sign_in';
   }
+  const handleSignUp=()=> {
+    window.location.href = '/Register';
+  }
     return (
       <>
       {user ? (
@@ -78,7 +82,9 @@ export default function NavigationBar() {
         <Link to="/create-post" data-tip="Create a Post" data-for="create-post-tooltip">
           <SideBarItem icon={<FontAwesomeIcon icon={faPlus}/>} text="Create Post" />
         </Link>
+        <Link to="/bookList" data-tip="Open your book lists" data-for="book-lists-tooltip">
           <SideBarItem icon={<FontAwesomeIcon icon={faBookBookmark} />} text="Book Lists" />
+          </Link>
           <SideBarItem icon={<FontAwesomeIcon icon={faPersonCircleQuestion} />} text="Reader Q&A" />
         <Link to="/settings" data-tip="Settings" data-for="settings-tooltip">
           <SideBarItem icon={<FontAwesomeIcon icon={faGear}/>} text="Settings" />
@@ -196,6 +202,7 @@ export default function NavigationBar() {
               hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 
               dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 
               dark:focus:ring-gray-700"
+                      onClick={handleSignUp}
                     >
                       Register
                     </button>
