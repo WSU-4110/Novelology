@@ -14,8 +14,9 @@ export default function ReaderProfilePage({ userData, isFollowing, profilePictur
   }
 
   return (
-    <div>
+    <div className="ml-20">
       <div className="flex flex-col bg-lightcolor">
+
         <img src={require('../assets/reader-profile-banner.jpg')} alt="Reader Profile Banner" className="w-full h-60 object-cover" />
         <div className="flex justify-center items-center w-full">
         {profilePictureURL ? ( 
@@ -70,6 +71,13 @@ export default function ReaderProfilePage({ userData, isFollowing, profilePictur
                   <button className="text-2xl text-black">Posts</button>
                 </div>
               </div>
+
+              {/* <div className="flex flex-col justify-center items-center w-full"> */}
+                {/* <div className="space-x-32">
+                  <button className="text-2xl text-black">Activity</button>
+                  <button className="text-2xl text-black">Posts</button>
+                </div> */}
+              {/* </div> */}
             </div>
           </div>
         )}

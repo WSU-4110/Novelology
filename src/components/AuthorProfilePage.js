@@ -5,6 +5,7 @@ import { auth } from "../firebase";
 import DOMPurify from "dompurify";
 import { FollowButton } from "./user/FollowButton";
 
+
 export default function AuthorProfilePage({ userData, isFollowing, profilePictureURL }) {
   const [user] = useAuthState(auth);
   const defaultProfilePicture = require('../assets/default-profile-picture.jpg');
