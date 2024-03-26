@@ -1,4 +1,4 @@
-import * as React from "react";
+
 import {useState} from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -12,12 +12,47 @@ import Searchbar from './shared/Searchbar.js';
 import { handleSearch } from '../functions/searchFunctions';
 import { Tooltip } from 'react-tooltip';
 import { onSnapshot } from 'firebase/firestore';
+import { db } from '../firebase';
+import { useEffect } from 'react';
+import { collection } from 'firebase/firestore';
+
 
 import "../styles/sideBar.css"
 export default function NavigationBar() {
-  const [user] = useAuthState(auth);
+  const [user, setUser] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
   const [searchStatus, setSearchStatus] = useState('');
+  const [newNotifications, setNewNotifications] = useState(false);
+
+  // Fetch notifications from the database
+  // subscribe to the notifications collection of the current user
+  // If there are new notifications, setNewNotifications to true
+  // if there are no new notifications, setNewNotifications to false
+
+  useEffect(() => {
+      const unsubscribe = auth.onAuthStateChanged((user) => {
+          setUser(user);
+      });
+      return () => unsubscribe();
+  }, []);
+
+  if (auth.currentUser) {
+      const subscribe = onSnapshot(collection(db, 'users', auth.currentUser.uid, 'notifications'), (snapshot) => {
+          // if there are notifications where "read" is false, setNewNotifications to true
+          snapshot.forEach((doc) => {
+              if (doc.data().read === false) {
+                  setNewNotifications(true);
+              }
+          });
+
+          if (snapshot.empty) {
+              setNewNotifications(false);
+          }
+
+      });
+  }
+
+
   const handleSignIn=()=> {
     window.location.href = '/sign_in';
   }
@@ -37,7 +72,7 @@ export default function NavigationBar() {
            />
         </Link>
         <Link to="/notifications" data-tip="Notifications" data-for="notifications-tooltip">
-          <SideBarItem icon={<FontAwesomeIcon icon={faBell}/>} text="Notifications" />
+          <SideBarItem icon={<FontAwesomeIcon icon={faBell}/>} text="Notifications"  alert={newNotifications} />
         </Link>
         <Link to="/create-post" data-tip="Create a Post" data-for="create-post-tooltip">
           <SideBarItem icon={<FontAwesomeIcon icon={faPlus}/>} text="Create Post" />
