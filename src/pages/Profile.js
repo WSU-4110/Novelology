@@ -7,6 +7,7 @@ import fetchPFP from '../functions/fetchPFP';
 import fetchUsernameWithUID from '../functions/fetchUsernameWithUID.js';
 import DOMPurify from 'dompurify';
 import NewBookList from '../components/BookStacks/NewBookList.js'
+import RecommandBooks from '../components/Recommandations/RecommandBooks.js';
 const Profile = () => {
     const [user, loading] = useAuthState(auth);
     const [userData, setUserData] = useState(null);
@@ -14,7 +15,13 @@ const Profile = () => {
     const [isLoading, setIsLoading] = useState(false); // Set loading to false initially
     const [show, setShow] = useState(false);
     const noShow = () => setShow(false);
-
+const g = {
+  action: 8.5,
+  comedy: 7.2,
+  drama: 9.1,
+  thriller: 8.0,
+  romance: 7.5
+}
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -119,8 +126,9 @@ const Profile = () => {
         </div>
         <button onClick={()=>setShow(true)}className="bg-sky-100 rounded-full p-3 ml-2 mt-2">Create a new Book List</button>
         {show && <NewBookList show={show} onClose={noShow} />}
-
-        </>
+        <div class='m-auto flex justify-center'> <RecommandBooks genres={g}/>
+</div>
+               </>
     );
 };
 export default Profile;

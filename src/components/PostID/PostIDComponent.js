@@ -7,19 +7,28 @@ const PostIDComponent = ({props} ) => {
  
   return (
     <>
-  
-      {image && <img className="w-20" src={image} alt="Image" />}
+      <div class=''>
+         {image && <img className="w-20" src={image} alt="Image" />}
+         {video && <ReactPlayer url={video} controls loop />}
       
-      {text && text.startsWith("http") ? (
+        {audio && <ReactPlayer url={audio} controls loop />}
+        {text && text.startsWith("http") ? (
         <p>
           <a href={text} target="_blank" rel="noopener noreferrer">
             {text}
           </a>
         </p>
       ) : (
-        <p>{text}</p>
+        <>
+        <div dangerouslySetInnerHTML={{ __html: text }}/>
+           
+        </>
+     
       )}
 
+      </div>
+     
+      
       {/* {other && (
         <div>
           <a href={other}>
@@ -31,9 +40,7 @@ const PostIDComponent = ({props} ) => {
         </div>
       )} */}
 
-      {video && <ReactPlayer url={video} controls loop />}
       
-      {audio && <ReactPlayer url={audio} controls loop />}
     </>
   );
 };

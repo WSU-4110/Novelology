@@ -15,12 +15,17 @@ import AuthorProfilePage from './components/AuthorProfilePage';
 import ReviewerProfilePage from './components/ReviewerProfilePage';
 import ArtistProfilePage from './components/ArtistProfilePage';
 import BookRating from './components/BookRating.js';
+
+import SearchResultsBook from './components/SearchResultsBook.js';
+import ReaderQandA from './components/ReaderQandA.js';
+
 import BookList from './pages/BookLists.js';
 import Registration from './components/user/Registration.js';
 import DeleteAccountPage from './components/user/DeleteAccountPage.js';
 import ChangePassword from './components/user/ChangePassword.js';
 import ArtworkGallery from './components/ArtworkGallery';
 import NavigationBar from './components/NavigationBar.js';
+
 
 // import AddBook from './functions/AddBook.js';
 import SampleHome from './pages/sampleHome.js'
@@ -31,7 +36,7 @@ import BookInfo from "./pages/BookInfo.js"
 // import RenameBookListModal from './components/BookStacks/RenameBookListModal.js';
 // Lazy-loaded components
 const SetUpAccount = React.lazy(() => import('./pages/SetUpAccount'));
-const Submit = React.lazy(() => import('./pages/Submit'));
+const Submit = React.lazy(() => import('./pages/Submit/Submit'));
 const Settings = React.lazy(() => import('./pages/Settings'));
 const UserPage = React.lazy(() => import('./pages/UserPage'));
 const Profile = React.lazy(() => import('./pages/Profile'));
@@ -90,6 +95,9 @@ const App = () => {
           <Route path="/rating" element={<BookRating showNavBar={true}/>}/>
           <Route path="/bookList" element={<BookList/>}/>
           {/* <Route path="/addbook" element={<AddBook/>}/> */}
+          <Route path="/SearchResultsBook" element={<SearchResultsBook />} />
+          <Route path="/ReaderQandA/:aid" element={<ReaderQandA />} />
+
           
           </Routes>
         </Suspense>
