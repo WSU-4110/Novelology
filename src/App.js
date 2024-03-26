@@ -2,7 +2,7 @@
 import './styles/App.css';
 import React, { Fragment, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/shared/navbar';
+import NavigationBar from './components/NavigationBar.js';
 import Home from './pages/Home';
 import Error from './components/shared/Error';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,15 +12,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 import ReaderProfilePage from './components/ReaderProfilePage';
 import AuthorProfilePage from './components/AuthorProfilePage';
-import ReviewerProfilePage from './components/ReviewerProfilePage';
-import ArtistProfilePage from './components/ArtistProfilePage';
 import BookRating from './components/BookRating.js';
-import Registration from './components/user/Registration.js';
-import DeleteAccountPage from './components/user/DeleteAccountPage.js';
-import ChangePassword from './components/user/ChangePassword.js';
 
-
-// import AddBook from './functions/AddBook.js';
 import SampleHome from './pages/sampleHome.js'
 import SignIn from './pages/Signin.js';
 import Notifications from './pages/Notifications.js';
@@ -43,18 +36,20 @@ const App = () => {
     <Router>
       <ToastContainer />
       <Fragment>
-      <div className="flex justify-center align-middle">
-          <img src={require('./assets/novelology_newlogo.png')} alt="Novelology Logo" style={{ height: '12em', width: '12em' }} />
-        </div>
-            {/* <LoggedOutNavBar /> */}
-          <Navbar />
+
+        <NavigationBar />
+        
         <Suspense fallback={<FontAwesomeIcon icon={faSpinner} spin />}>
-          {/* <NavigationBar /> */}
+          
+
+
           <Routes className="flex">
             <Route path="/" element={<Home />} />
+
             <Route element={<PrivateRoute />}>
               <Route path="/onboarding" element={<UserOnboarding />} /> {/* Route for Onboarding component */}
             </Route>
+
             <Route path="/settings" element={<Settings />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/users/:username" element={<UserPage />} />
@@ -69,8 +64,6 @@ const App = () => {
             </Route>
             <Route path="*" element={<Error />} />
             <Route path="/notifications" element={<Notifications />} />
-            <Route path="/delete-account" element={<DeleteAccountPage />} />
-            <Route path="/change-password" element={<ChangePassword />} />
 
             <Route path="/AuthorProfilePage" element={<AuthorProfilePage />} />
             <Route path="/ReaderProfilePage" element={<ReaderProfilePage />} />
