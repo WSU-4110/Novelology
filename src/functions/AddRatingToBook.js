@@ -33,62 +33,62 @@ export const AddBookRating = async (rating, isbn, user) => {
         timestamp: new Date(),
       });
       console.log("Rating added.");
-      try {
-        const bookRef = doc(db, "books", isbn);
-        const docSnap = await getDoc(bookRef);
+      // try {
+      //   const bookRef = doc(db, "books", isbn);
+      //   const docSnap = await getDoc(bookRef);
 
-        if (docSnap.exists()) {
-          if (CheckUserRatedBasedOnChanges(user, isbn)) {
-            console.log("User first rating adding to books data....");
-            const finalRating = docSnap.data().rating;
-            const ratingCount = docSnap.data().NumberOfRatings;
-            const RatingSumDisplay = docSnap.data().RatingSum;
+      //   if (docSnap.exists()) {
+      //     if (CheckUserRatedBasedOnChanges(user, isbn)) {
+      //       console.log("User first rating adding to books data....");
+      //       const finalRating = docSnap.data().rating;
+      //       const ratingCount = docSnap.data().NumberOfRatings;
+      //       const RatingSumDisplay = docSnap.data().RatingSum;
 
-            console.log("Rating: ", finalRating);
-            console.log("Number of Ratings: ", ratingCount);
-            console.log("Ratings Sum: ", RatingSumDisplay);
-            const SumOfRatings = RatingSumDisplay + rating;
-            const tempRating = (finalRating + rating+5) / (ratingCount + 1);
+      //       console.log("Rating: ", finalRating);
+      //       console.log("Number of Ratings: ", ratingCount);
+      //       console.log("Ratings Sum: ", RatingSumDisplay);
+      //       const SumOfRatings = RatingSumDisplay + rating;
+      //       const tempRating = (finalRating + rating+5) / (ratingCount + 1);
 
-            await updateDoc(bookRef, {
-              NumberOfRatings: increment(1),
-              RatingSum: SumOfRatings,
-              rating: tempRating,
-            });
-            await incrementChanges(user, isbn);
+      //       await updateDoc(bookRef, {
+      //         NumberOfRatings: increment(1),
+      //         RatingSum: SumOfRatings,
+      //         rating: tempRating,
+      //       });
+      //       await incrementChanges(user, isbn);
 
-            console.log("Rating successfully added.");
-          } else {
-            console.log("User has already rated this book!");
-            const finalRating = docSnap.data().rating;
-            const ratingCount = docSnap.data().NumberOfRatings;
-            const RatingSumDisplay = docSnap.data().RatingSum;
+      //       console.log("Rating successfully added.");
+      //     } else {
+      //       console.log("User has already rated this book!");
+      //       const finalRating = docSnap.data().rating;
+      //       const ratingCount = docSnap.data().NumberOfRatings;
+      //       const RatingSumDisplay = docSnap.data().RatingSum;
 
-            console.log("Rating: ", finalRating);
-            console.log("Number of Ratings: ", ratingCount);
-            console.log("Ratings Sum: ", RatingSumDisplay);
+      //       console.log("Rating: ", finalRating);
+      //       console.log("Number of Ratings: ", ratingCount);
+      //       console.log("Ratings Sum: ", RatingSumDisplay);
 
-            const currentRating = DisplayUserBookRating(user, isbn);
-            const RemovedRating = RatingSumDisplay - currentRating;
+      //       const currentRating = DisplayUserBookRating(user, isbn);
+      //       const RemovedRating = RatingSumDisplay - currentRating;
 
-            const FinalSumOfRating = RemovedRating + rating;
+      //       const FinalSumOfRating = RemovedRating + rating;
 
-            const tempRating = FinalSumOfRating / ratingCount;
+      //       const tempRating = FinalSumOfRating / ratingCount;
 
-            await updateDoc(bookRef, {
-              RatingSum: FinalSumOfRating,
-              rating: tempRating,
-            });
+      //       await updateDoc(bookRef, {
+      //         RatingSum: FinalSumOfRating,
+      //         rating: tempRating,
+      //       });
 
-            await incrementChanges(user, isbn);
-            console.log("New Rating successfully added.");
-          }
-        } else {
-          console.log("Book document doesn't exist!");
-        }
-      } catch (e) {
-        console.error("Error adding rating to book in books: ", e);
-      }
+      //       await incrementChanges(user, isbn);
+      //       console.log("New Rating successfully added.");
+      //     }
+      //   } else {
+      //     console.log("Book document doesn't exist!");
+      //   }
+      // } catch (e) {
+      //   console.error("Error adding rating to book in books: ", e);
+      // }
     } catch (error) {
       console.error("Error adding rating to book in users:", error);
     }

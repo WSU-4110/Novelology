@@ -6,7 +6,7 @@ const NewBookListModal = ({ show, onClose, user }) => {
   if (!show) return null;
 
   const CreateNewBookList=(event)=>{
-    event.preventDefault();
+    // event.preventDefault();
     console.log("Creating new book list");
     const bookListName = document.getElementById("bookListName").value;
     const bookListGenre = document.getElementById("genres").value;
