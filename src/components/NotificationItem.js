@@ -174,8 +174,11 @@ class NotificationItem extends Component {
         case 'like':
           return (
             <div className="flex items-center gap-2">
+              <Link to={`users/${username}`} className="font-bold flex items-center">
               <img src={pfpURL} className="w-8 h-8 rounded-full mr-2" alt="Profile" />
-              <span className="font-bold">{username}</span> liked your post.
+              <span className="font-bold">{username}</span> 
+              </Link>
+              liked your post.
               <div className="flex items-center justify-center">
                 <Link to={`/posts/${this.props.postId}`} className="text-blue-500 hover:underline">View Post</Link>
               </div>
@@ -184,8 +187,11 @@ class NotificationItem extends Component {
         case 'comment':
           return (
             <div className="flex items-center gap-2">
+              <Link to={`users/${username}`} className="font-bold flex items-center">
               <img src={pfpURL} className="w-8 h-8 rounded-full mr-2" alt="Profile" />
-              <span className="font-bold">{username}</span> commented on your post.
+              <span className="font-bold">{username}</span> 
+              </Link>
+              commented on your post.
               <div className="flex items-center justify-center">
                 <p>{this.props.commentText}</p>
                 <Link to={`/posts/${this.props.postId}`} className="text-blue-500 hover:underline">View Post</Link>
@@ -195,8 +201,11 @@ class NotificationItem extends Component {
         case 'reply':
           return (
             <div className="flex items-center gap-2">
+              <Link to={`users/${username}`} className="font-bold flex items-center">
               <img src={pfpURL} className="w-8 h-8 rounded-full mr-2" alt="Profile" />
-              <span className="font-bold">{username}</span> replied to your comment.
+              <span className="font-bold">{username}</span> 
+              </Link>
+              replied to your comment.
               <div className="flex items-center justify-center">
                 <p>{this.props.replyText}</p>
                 <Link to={`/posts/${this.props.postId}`} className="text-blue-500 hover:underline">View Post</Link>
@@ -206,8 +215,11 @@ class NotificationItem extends Component {
         case 'mention':
           return (
             <div className="flex items-center gap-2">
+              <Link to={`users/${username}`} className="font-bold flex items-center">
               <img src={pfpURL} className="w-8 h-8 rounded-full mr-2" alt="Profile" />
-              <span className="font-bold">{username}</span> mentioned you in a post.
+              <span className="font-bold">{username}</span>
+              </Link>
+               mentioned you in a post.
               <div className="flex items-center justify-center">
                 <Link to={`/posts/${this.props.postId}`} className="text-blue-500 hover:underline">View Post</Link>
               </div>
@@ -216,8 +228,11 @@ class NotificationItem extends Component {
         case 'post':
           return (
             <div className="flex items-center gap-2">
+              <Link to={`users/${username}`} className="font-bold flex items-center">
               <img src={pfpURL} className="w-8 h-8 rounded-full mr-2" alt="Profile" />
-              <span className="font-bold">{username}</span> made a new post.
+              <span className="font-bold">{username}</span>
+              </Link>
+               made a new post.
               <div className="flex items-center justify-center">
                 <Link to={`/posts/${this.props.postId}`} className="text-blue-500 hover:underline">View Post</Link>
               </div>
@@ -226,8 +241,11 @@ class NotificationItem extends Component {
         case 'repost':
           return (
             <div className="flex items-center gap-2">
+              <Link to={`users/${username}`} className="font-bold flex items-center">
               <img src={pfpURL} className="w-8 h-8 rounded-full mr-2" alt="Profile" />
-              <span className="font-bold">{username}</span> reposted your post.
+              <span className="font-bold">{username}</span> 
+              </Link>
+              reposted your post.
               <div className="flex items-center justify-center">
                 <Link to={`/posts/${this.props.postId}`} className="text-blue-500 hover:underline">View Post</Link>
               </div>
@@ -236,8 +254,11 @@ class NotificationItem extends Component {
         case 'tag':
           return (
             <div className="flex items-center gap-2">
+              <Link to={`users/${username}`} className="font-bold flex items-center">
               <img src={pfpURL} className="w-8 h-8 rounded-full mr-2" alt="Profile" />
-              <span className="font-bold">{username}</span> tagged you in a post.
+              <span className="font-bold">{username}</span>
+              </Link>
+               tagged you in a post.
               <div className="flex items-center justify-center">
                 <Link to={`/posts/${this.props.postId}`} className="text-blue-500 hover:underline">View Post</Link>
               </div>
