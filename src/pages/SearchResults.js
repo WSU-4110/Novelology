@@ -101,7 +101,7 @@ const SearchResults = () => {
     
         // based on the filter, set the API URL accordingly
         if (filter === 'all' || filter === 'titles' || filter === 'authors' || filter === 'genre') {
-            apiUrl = `https://www.googleapis.com/books/v1/volumes?q=${encodedQuery}${filter === 'genre' ? '+subject:' + genreQuery : ''}&maxResults=3`;
+            apiUrl = `https://www.googleapis.com/books/v1/volumes?q=${encodedQuery}${filter === 'genre' ? '+subject:' + genreQuery : ''}&maxResults=8`;
             console.log(apiUrl);
             try {
                 const res = await axios.get(apiUrl);
