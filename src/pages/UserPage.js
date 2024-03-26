@@ -19,6 +19,7 @@ import { toggleMute } from '../functions/toggleMute';
 import { reportUser } from '../functions/reportUser';
 import { requestFollow } from '../functions/requestFollow';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { FollowButton } from '../components/user/FollowButton';
 
 const UserPage = () => {
   const { username: paramUsername } = useParams();
@@ -205,6 +206,24 @@ const UserPage = () => {
 
   return (
     userData ? (
+      userData.visibility === 'private' && !isFollowing && userData.UID !== authUser.uid ? (
+        <div className="flex flex-col items-center justify-center h-screen">
+                  <img src={require('../assets/reader-profile-banner.jpg')} alt="Reader Profile Banner" className="w-full h-60 object-cover" />
+        <div className="flex justify-center items-center w-full">
+        {profilePictureURL ? ( 
+          <img src={profilePictureURL} alt="Profile Picture" className="h-40 w-40 rounded-full border-4 border-white -mt-20" />
+      ) : (
+          <img src={defaultProfilePicture} alt="Profile Picture" className="h-40 w-40 rounded-full border-4 border-white -mt-20" />
+      )}
+        </div>
+          <FaLock className="text-9xl text-maroon" />
+          <p className="text-4xl text-center mt-4">This profile is private.</p>
+          <p className="text-4xl text-center">Follow to view content.</p>
+          <FollowButton
+            targetUserId={userData.UID}
+            />
+        </div>
+      ) : (
       userData.role.includes("Reader") ? (
         <ReaderProfilePage userData={userData} isFollowing={isFollowing} profilePictureURL={profilePictureURL}  />
       ) : (
@@ -216,7 +235,7 @@ const UserPage = () => {
           </div>
         )
       )
-    ) : (
+   ) ) : (
       <div>
         <p>User data not found</p>
       </div>
