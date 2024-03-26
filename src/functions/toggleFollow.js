@@ -1,30 +1,38 @@
-import { db } from '../firebase';
-import { doc, arrayRemove, arrayUnion, updateDoc } from 'firebase/firestore';
+import { auth, db } from '../firebase';
+import { doc, arrayRemove, arrayUnion, updateDoc, getDoc } from 'firebase/firestore';
 
-export const toggleFollow = async (currentUserId, userId, isFollowing) => {
+export const toggleFollow = async (targetUserId) => {
     try {
-        if (!currentUserId || !userId) {
+        const currentUserId = auth.currentUser.uid;
+
+        console.log('Current user ID:', currentUserId);
+        console.log('Target user ID:', targetUserId);
+        if (!currentUserId || !targetUserId) {
             throw new Error('Invalid user IDs');
         }
 
-        // Get references to the current user and the user to follow/unfollow
+        // Get references to the current user and the target user
         const currentUserDocRef = doc(db, 'users', currentUserId);
-        const userDocRef = doc(db, 'users', userId);
+        const targetUserDocRef = doc(db, 'users', targetUserId);
+
+        // Check if the current user is already following the target user
+        const currentUserDoc = await getDoc(currentUserDocRef);
+        const isFollowing = currentUserDoc.data().following.includes(targetUserId);
 
         if (isFollowing) {
             // Unfollow user
             await updateDoc(currentUserDocRef, {
-                following: arrayRemove(userId)
+                following: arrayRemove(targetUserId)
             });
-            await updateDoc(userDocRef, {
+            await updateDoc(targetUserDocRef, {
                 followers: arrayRemove(currentUserId)
             });
         } else {
             // Follow user
             await updateDoc(currentUserDocRef, {
-                following: arrayUnion(userId)
+                following: arrayUnion(targetUserId)
             });
-            await updateDoc(userDocRef, {
+            await updateDoc(targetUserDocRef, {
                 followers: arrayUnion(currentUserId)
             });
         }
