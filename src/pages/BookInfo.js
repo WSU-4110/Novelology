@@ -8,9 +8,8 @@ import { auth } from "../firebase";
 import {AddBookToFirestore,CheckDuplicateBook} from "../functions/AddBook.js";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
-import { AddBookRating, DisplayUserBookRating, UserRated } from '../functions/AddRatingToBook';
+import { AddBookRating, DisplayUserBookRating, UserRated, RemoveRating } from '../functions/AddRatingToBook';
 import AddToBookList from '../components/BookStacks/AddToBookList';
-import { RemoveRating } from "../functions/AddRatingToBook";
 
 export default function BookInfo() {
   const [user] = useAuthState(auth);
@@ -50,7 +49,7 @@ export default function BookInfo() {
 
   const handleChangeInRating = (currentRating) => {
     setRating(currentRating);
-    AddBookRating(currentRating,isbn,user)
+    AddBookRating(currentRating,isbn,user);
   };
   
   useEffect(() => {

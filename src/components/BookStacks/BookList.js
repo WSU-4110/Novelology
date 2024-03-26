@@ -17,7 +17,6 @@ export class BookList {
             const subcollectionRef = collection(db, "users", uid, "BookLists");
             const docRef = doc(subcollectionRef);
       
-            // Set document data to the document reference
             await setDoc(docRef, {
               bookListTitle: this.listName,
               genre: this.genre,
