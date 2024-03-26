@@ -23,11 +23,14 @@ function Searchbar({ onSearch }) {
                     value={searchQuery}
                     onChange={(event) => setSearchQuery(event.target.value)}
                     placeholder="Search..."
-                    className="px-1 py-1 border square-l-lg mr-3 focus:outline-none focus:ring focus:border-blue-300 flex-grow"
+                    className="px-1 py-1 border square-l-lg mr-3 bg-lightcolor rounded-xl focus:outline-none focus:ring focus:border-maroon flex-grow"
                 />
                 <button
                     type="submit"
-                    className="px-4 py-1 bg-#F4D0A7-500 text-black square-lg hover:bg-#f7e3cb-600 focus:outline-none focus:bg-#f7e3cb-600"
+                    className="flex text-gray-900 bg-lightcolor border border-gray-300 focus:outline-none 
+                    hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 
+                    dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 
+                    dark:focus:ring-gray-700"
                 >
                     Search
                 </button>

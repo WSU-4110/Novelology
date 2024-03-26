@@ -19,7 +19,7 @@ import Registration from './components/user/Registration.js';
 import DeleteAccountPage from './components/user/DeleteAccountPage.js';
 import ChangePassword from './components/user/ChangePassword.js';
 import ArtworkGallery from './components/ArtworkGallery';
-
+import NavigationBar from './components/NavigationBar.js';
 
 // import AddBook from './functions/AddBook.js';
 import SampleHome from './pages/sampleHome.js'
@@ -44,13 +44,13 @@ const App = () => {
     <Router>
       <ToastContainer />
       <Fragment>
-      <div className="flex justify-center align-middle">
+      {/* <div className="flex justify-center align-middle">
           <img src={require('./assets/novelology_newlogo.png')} alt="Novelology Logo" style={{ height: '12em', width: '12em' }} />
         </div>
             {/* <LoggedOutNavBar /> */}
-          <Navbar />
-        <Suspense fallback={<FontAwesomeIcon icon={faSpinner} spin />}>
-          {/* <NavigationBar /> */}
+          {/* <Navbar /> */}
+        <Suspense fallback={<FontAwesomeIcon icon={faSpinner} spin />}> 
+          <NavigationBar />
           <Routes className="flex">
             <Route path="/" element={<Home />} />
             <Route element={<PrivateRoute />}>
