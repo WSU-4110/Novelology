@@ -10,13 +10,14 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { AddBookRating, DisplayUserBookRating, UserRated } from '../functions/AddRatingToBook';
 import AddToBookList from '../components/BookStacks/AddToBookList';
-
+import { RemoveRating } from "../functions/AddRatingToBook";
 
 export default function BookInfo() {
   const [user] = useAuthState(auth);
   const { isbn } = useParams();
-
+  const [check, setCheck] = useState(null);
   const [rating, setRating] = useState(null);
+  const [existingRating, setExistingRating] = useState(null);
   const [BookData, setBookData] = useState([]);
   const [bookListShow, setBookListShow] = useState(false);
   const noBookListShow = () => setBookListShow(false);
@@ -49,24 +50,48 @@ export default function BookInfo() {
 
   const handleChangeInRating = (currentRating) => {
     setRating(currentRating);
-    
+    AddBookRating(currentRating,isbn,user)
   };
   
   useEffect(() => {
     console.log("rating from bookinfo: " + rating);
     const fetchData = async () => {
-      await AddBookRating(rating,isbn,user);}
-    
-    fetchData();
-  }, [rating]);
+      const oldRating = await DisplayUserBookRating(user,isbn);
+      console.log("Existing Rating-1: " + oldRating);
+      setExistingRating(oldRating);
+      console.log("Existing Rating-2: " + existingRating);
+      // console.log("Type of:", typeof existingRating);
+
+    }
+    if (check) {
+      fetchData();
+  }
+  }, [user,check]);
+
+  useEffect(() => {
+    console.log("Existing Rating-3: " + existingRating); 
+    console.log("Type: ", typeof existingRating);
+}, [existingRating]);
 
   useEffect(() => {
     const fetchData = async () => {
-    const check = await UserRated(user,isbn);
+    const isRated = await UserRated(user,isbn);
+    setCheck(isRated);
     console.log("check: ",check);
     }
     fetchData();
-  },[]);
+  },[rating,user]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const isRated = await UserRated(user,isbn);
+      setCheck(isRated);
+      console.log("check: ",check);
+    }
+    fetchData();
+  });
+
+
   return (
     <>
       <div className="flex flex-col bg-white">
@@ -186,7 +211,19 @@ export default function BookInfo() {
 
             <div id="user-rating" className="pt-8">
               <p className="font-semibold text-center">Your Rating</p>
-              <BookRating RatingChange={handleChangeInRating} />
+              {/* {check ? (<div>User Rating:{check}</div>):(<></>)} */}
+              {existingRating !== null ?(
+                <>
+                <button onClick={()=>RemoveRating(user,isbn)}>Remove Rating</button>
+
+              <BookRating RatingChange={handleChangeInRating} initialRating={existingRating}/>
+                </>
+              )
+                :(<>
+                <BookRating RatingChange={handleChangeInRating} initialRating={0}/>
+
+                </>)}
+
             </div>
           ) : (
             <div></div>
