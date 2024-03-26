@@ -33,6 +33,7 @@ class Form {
             createdAt: serverTimestamp(),
             comments: [],
             uid: user.uid,
+            useName: user.displayName,
             userEmail: user.email,
             likes: 0,
             fileName: ''

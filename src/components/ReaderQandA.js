@@ -11,7 +11,7 @@ export default function ReaderQandA() {
       Reader Q & A
       </div>
 
-      <div className="flex flex-col justify-center items-center w-full mt-10">
+      <div className="flex flex-col justify-center  w-full mt-10">
       <TalkingTo/>
       </div>
 

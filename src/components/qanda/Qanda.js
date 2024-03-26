@@ -1,48 +1,35 @@
-// import {db} from '../../firebase';
-// import {useState} from 'react';
-// import { useNavigate } from "react-router-dom";
-// import {FormGUI} from './Form';
-// import FormContext from './FormContext';
-// import {QandaStrat }from './PostStrats';
+import { useEffect } from 'react';
+import {useState} from 'react';
+import { QandaAuthorStrat } from './functions/QandaStart';
+import PostForm from '../submit/PostForm';
+export default function Qanda(t,id,u){
+    const [formValue, setFormValue] = useState('')
+  const [showReply, setShowReply] = useState(false)
+    const [strat, setStrat] = useState(null)
+  useEffect(() => {
+    if (u) {
+        const s = new QandaAuthorStrat(formValue, u, "q&a", id);
+        setStrat(s); 
+    }
+}, [formValue, u]);
+console.log('')
 
-// export default function Qanda(){
-//   const navigate = useNavigate()
-//   let messageRef = collection(db, 'q&a')
- 
-//   const [formValue, setFormValue] = useState('')
-//   const [showReply, setShowReply] = useState(false)
-
-//   const postStrat = new QandaStrat(formValue, user,messageRef, selectedGenre)
-//   const formContext = new FormContext(postStrat)
-
-//   const sendMessage = async(e) =>{
-//     e.preventDefault()
-//     if (!user || (!formValue )) return
-
-//     const result = formContext.sendMessage()
-//     setFormValue('')
-//     if (result){
-//       navigate('/')
-//     }
-//   }
-
-//   const toggleDropdown = () => {
-//     setShowReply(!showReply);
-// };
-//     return (
-//         <>
-//             <div>
-//                 question
-//                 <button onClick={toggleDropdown}>reply:</button>
-//                 {showReply && (
-//               <div class=" " >
-//                 <button onClick={toggleDropdown}>X</button>
-//                 <FormGUI formValue={formValue} setFormValue={setFormValue} sendMessage={sendMessage}/>
-//             </div>
-//             )}
+  const toggleDropdown = () => {
+    setShowReply(!showReply);
+};
+    return (
+        <>
+            <div>
                 
-//             </div>
-//         </>
-//     )
-// }
+                <button onClick={toggleDropdown}>reply:</button>
+                {showReply && (
+              <div class=" " >
+                <PostForm formValue={formValue} setFormValue={setFormValue} setSelected={t} Strat={strat}/>
+            </div>
+            )}
+                
+            </div>
+        </>
+    )
+}
 
