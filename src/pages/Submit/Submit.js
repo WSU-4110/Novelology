@@ -2,7 +2,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import {auth} from '../../firebase';
 import PostForm from '../../components/submit/PostForm';
 import { useNavigate } from "react-router-dom";
-import {useState} from 'react';
+import {useState,useEffect} from 'react';
 import PostStrat from './PostStart';
 import HotFeed from '../../components/Feeds/HotFeed/HotFeed';
 import RecommandBooks from '../../components/Recommandations/RecommandBooks';
@@ -13,7 +13,13 @@ function Submit() {
   const [formValue, setFormValue] = useState('')
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedGenre, setSelectedGenre] = useState('');
-  const postStrat = new PostStrat(formValue, user,'posts', selectedGenre)
+  const [postStrat,setPostStrat] = useState(null)
+  useEffect(() => {
+    if (user) {
+      const postStratInstance = new PostStrat(formValue, user, 'posts', selectedGenre);
+      setPostStrat(postStratInstance);
+    }
+  }, [user, formValue, selectedGenre])
   const toggleDropdown = () => {
     setShowDropdown(!showDropdown);
 };
