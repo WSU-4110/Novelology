@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import formatTimeDifference from '../functions/formatTimeDifference';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faTimes, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { auth, db } from '../firebase';
 import { doc, setDoc, collection, addDoc, deleteDoc, arrayUnion, arrayRemove, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { toast } from 'react-toastify';
@@ -85,6 +85,7 @@ class NotificationItem extends Component {
           fromUserId: currentUser.uid,
           timestamp: serverTimestamp(),
           read: false,
+          deletable: false,
         });
   
         // Delete the follow request notification
@@ -146,12 +147,21 @@ class NotificationItem extends Component {
     }
   };
 
+
   render() {
-    const { read } = this.props;
+    const { read, type} = this.props;
+    const isDeletable = type !== 'follow_request';
     return (
       <div className={`p-4 border m-4 w- border-gray-200 ${read ? 'bg-gray-100' : 'bg-white'}`}>
         <div className="text-sm text-gray-700">{this.renderNotificationContent()}</div>
-         <button className="mt-4 bg-gray-100 rounded-md p-1 text-gray-500 hover:text-gray-800 " onClick={this.handleDismiss}>Dismiss</button>
+        <div className="flex justify-between">
+          <button className="mt-4 bg-gray-200 rounded-md p-1 text-gray-500 hover:text-gray-800 " onClick={this.handleMarkAsUnread}>Mark as Unread</button>
+          {isDeletable ? (
+          <button className="relative mt-4 bg-gray-100 rounded-md p-1 text-red-400 hover:text-gray-800 " onClick={this.handleDismiss}>
+              <FontAwesomeIcon icon={faTrash} />
+          </button>
+          ) : null}
+        </div>
       </div>
     );
   }

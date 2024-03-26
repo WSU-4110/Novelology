@@ -41,24 +41,31 @@ class Notifications extends Component {
     if (user) {
       this.notificationsRef = collection(db, 'users', user.uid, 'notifications');
   
-      this.unsubscribe = onSnapshot(this.notificationsRef, (snapshot) => {
-        const notifications = [];
-        let unreadCount = 0;
+      this.unsubscribe = onSnapshot(this.notificationsRef,
+        (snapshot) => {
+          const notifications = [];
+          let unreadCount = 0;
   
-        snapshot.forEach((doc) => {
-          const notification = { id: doc.id, ...doc.data() };
-          notifications.push(notification);
-          if (!notification.read) {
-            unreadCount++;
-          }
-        });
+          snapshot.forEach((doc) => {
+            const notification = { id: doc.id, ...doc.data() };
+            notifications.push(notification);
+            if (!notification.read) {
+              unreadCount++;
+            }
+          });
   
-        this.setState({
-          notifications,
-          unreadCount,
-          totalCount: notifications.length,
-        });
-      });
+          this.setState({
+            notifications,
+            unreadCount,
+            totalCount: notifications.length,
+          });
+        },
+        (error) => {
+          console.error("Error fetching notifications: ", error);
+        }
+      );
+    } else {
+      console.log('No user is signed in.');
     }
   }
   
@@ -87,37 +94,65 @@ class Notifications extends Component {
   
 
   render() {
-    const { notifications, unreadCount, totalCount } = this.state;
+    const { notifications } = this.state;
+    // Split the notifications into read and unread
+    const unreadNotifications = notifications.filter(notification => !notification.read);
+    const readNotifications = notifications.filter(notification => notification.read);
 
     return (
-      <div className='border ml-[15%] max-w-[800px] p-4 mx-auto mt-5' >
+      <div className='border ml-[15%] max-w-[800px] p-4 mx-auto mt-5'>
         <h2 className="text-2xl font-bold text-maroon mb-4">Notifications</h2>
-          <div className="mb-4">
-            <span className="text-gray-700">Unread: {unreadCount}</span> | 
-            <span className="text-gray-700">Total: {totalCount}</span>
-          </div>
-          <div className="flex gap-4">
-            <button 
-              onClick={this.markAllAsRead}
-              className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
-            >
-              Mark all as read
-            </button>
-            <button 
-              onClick={this.clearAllNotifications}
-              className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
-            >
-              Clear all
-            </button>
-          </div>
-        <div className="flex-col gap-2">
-          {notifications.map((notification) => (
-            <NotificationItem key={notification.id} {...notification} />
-          ))}
+        <div className="mb-4">
+          <span className="text-gray-700">
+            <span className='font-bold'>
+              Unread:
+            </span> {unreadNotifications.length}</span> | 
+          <span className="text-gray-700">
+            <span className='font-bold mr-1'>
+            Total: 
+            </span>
+          {notifications.length}</span>
         </div>
+        <div className="flex gap-4 mb-4">
+          <button 
+            onClick={this.markAllAsRead}
+            className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
+          >
+            Mark all as read
+          </button>
+          <button 
+            onClick={this.clearAllNotifications}
+            className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
+          >
+            Clear all
+          </button>
+        </div>
+
+        {unreadNotifications.length > 0 && (
+          <>
+            <h3 className="text-xl font-semibold mb-2">Unread</h3>
+            <div className="flex flex-col gap-2 mb-4">
+              {unreadNotifications.map((notification) => (
+                <NotificationItem key={notification.id} {...notification} />
+              ))}
+            </div>
+          </>
+        )}
+
+        {readNotifications.length > 0 && (
+          <>
+            <h3 className="text-xl font-semibold mb-2">Read</h3>
+            <div className="flex flex-col gap-2">
+              {readNotifications.map((notification) => (
+                <NotificationItem key={notification.id} {...notification} />
+              ))}
+            </div>
+          </>
+        )}
       </div>
     );
   }
 }
+
 
 export default Notifications;
