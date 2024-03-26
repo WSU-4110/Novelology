@@ -1,16 +1,17 @@
 import { useAuthState } from 'react-firebase-hooks/auth';
-import {auth} from '../firebase';
-import PostForm from '../components/submit/PostForm';
+import {auth} from '../../firebase';
+import PostForm from '../../components/submit/PostForm';
 import { useNavigate } from "react-router-dom";
 import {useState} from 'react';
-
+import PostStrat from './PostStart';
 function Submit() {
   const [user] = useAuthState(auth)
   const navigate = useNavigate('/')
   const genres = ['Fantasy', 'Science Fiction', 'Mystery', 'Romance', 'Thriller', 'Horror'];
+  const [formValue, setFormValue] = useState('')
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedGenre, setSelectedGenre] = useState('');
-
+  const postStrat = new PostStrat(formValue, user,'posts', selectedGenre)
   const toggleDropdown = () => {
     setShowDropdown(!showDropdown);
 };
@@ -68,13 +69,13 @@ const removeGenre = () => {
                   
               </div>
 							} */}
-                <PostForm user={user} selectedGenre={selectedGenre} setSelectedGenre={setSelectedGenre}
-               
+                <PostForm formValue={formValue} setFormValue={setFormValue} setSelected={setSelectedGenre} Strat = {postStrat}
+                
                 />
             </div>
       
              
-             
+           
 
           <div class="col-span-1"></div>
           </div>
