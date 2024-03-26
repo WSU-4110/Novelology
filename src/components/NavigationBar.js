@@ -24,6 +24,7 @@ export default function NavigationBar() {
   const [searchResults, setSearchResults] = useState([]);
   const [searchStatus, setSearchStatus] = useState('');
   const [newNotifications, setNewNotifications] = useState(false);
+  const location = useLocation();
 
   // Fetch notifications from the database
   // subscribe to the notifications collection of the current user
@@ -105,28 +106,11 @@ export default function NavigationBar() {
                     className="self-stretch aspect-[1.08] w-[85px]"
                   />
         </Link>
-          <div className="flex my-auto text-base gap-3">
-                 
-
-                   <form class="flex flex-col gap-3 md:flex-row w-20">
-                     <select
-                       id="searchType"
-                       name="searchType"
-                       class="w-full h-10 border-2 border-maroon bg-lightcolor focus:outline-none focus:border-maroon text-black rounded-full px-2 md:px-3 py-0 md:py-1 tracking-wider"
-                     >
-                       <option value="All" selected="">
-                         All
-                       </option>
-                       <option value="User">User search</option>
-                       <option value="BookName">Book Name</option>
-                       <option value="ByGenre">Book by Genre</option>
-                       <option value="ByAuthor">Book by Author</option>
-                     </select>
-                     </form>
-                     <Searchbar onSearch={(query) => handleSearch(query, setSearchResults, setSearchStatus)} />
-                
-                  
-          </div>
+        {location.pathname !== '/search/' && (
+                  <div className="flex my-auto text-base gap-3">
+                    <Searchbar onSearch={(query) => handleSearch(query, setSearchResults, setSearchStatus)} />
+                  </div>
+                )}
           <button className="text-gray-900 bg-lightcolor border border-gray-300 focus:outline-none 
             hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 
             dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 
@@ -182,10 +166,7 @@ export default function NavigationBar() {
 
                           <button
                             type="submit"
-                            className="flex text-gray-900 bg-lightcolor border border-gray-300 focus:outline-none 
-              hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 
-              dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 
-              dark:focus:ring-gray-700"
+                            className="flex bg-white border border-gray-300 text-gray-900 rounded-full"
                           >
                             Search
                           </button>

@@ -38,7 +38,7 @@ async function searchUsers(searchQuery) {
 
 const SearchResults = () => {
     // States for search results, search query, selected filter, selected genres, and users
-    const [searchResults, setSearchResults] = useState({ books: [] });
+    const [searchResults, setSearchResults] = useState({ books: [], authors: [] });
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedFilter, setSelectedFilter] = useState('all');
     const [selectedGenres, setSelectedGenres] = useState([]);
@@ -98,10 +98,11 @@ const SearchResults = () => {
         let genreQuery = genres && genres.length > 0 ? genres.join('+') : '';
         let bookResults = [];
         let userResults = [];
+        let authorResults = [];
     
         // based on the filter, set the API URL accordingly
-        if (filter === 'all' || filter === 'titles' || filter === 'authors' || filter === 'genre') {
-            apiUrl = `https://www.googleapis.com/books/v1/volumes?q=${encodedQuery}${filter === 'genre' ? '+subject:' + genreQuery : ''}&maxResults=8`;
+        if (filter === 'all' || filter === 'titles'  || filter === 'genre') {
+            apiUrl = `https://www.googleapis.com/books/v1/volumes?q=${encodedQuery}${filter === 'genre' ? '+subject:' + genreQuery : ''}&maxResults=3`;
             console.log(apiUrl);
             try {
                 const res = await axios.get(apiUrl);
@@ -114,19 +115,56 @@ const SearchResults = () => {
             }
         }
     
+        if (filter === 'all' || filter === 'titles' || filter === 'genre') {
+            apiUrl = `https://www.googleapis.com/books/v1/volumes?q=${encodedQuery}${filter === 'genre' ? '+subject:' + genreQuery : ''}&maxResults=3`;
+            console.log(apiUrl);
+            try {
+                const res = await axios.get(apiUrl);
+                console.log('API response:', res);
+                if (res.data && res.data.items) {
+                    bookResults = res.data.items;
+                }
+            } catch (err) {
+                console.error('Error fetching books:', err);
+            }
+        }
+        
+        if (filter === 'authors' || filter === 'all') {
+            apiUrl = `https://openlibrary.org/search.json?author=${encodedQuery}&limit=3`;
+            try {
+                const res = await axios.get(apiUrl);
+                if (res.data && res.data.docs) {
+                    const uniqueAuthors = new Set();
+                    res.data.docs.forEach(doc => {
+                        if (doc.author_name) {
+                            doc.author_name.forEach(author => uniqueAuthors.add(author));
+                        }
+                    });
+                    authorResults = Array.from(uniqueAuthors);
+                }
+            } catch (err) {
+                console.error('Error fetching authors:', err);
+            }
+        }
+    
+
         if (filter === 'all' || filter === 'users') {
             try {
                 userResults = await searchUsers(query);
+                // Extract UIDs from userResults and store them in the users state
+                setUsers(userResults.map(user => user.UID));
             } catch (err) {
                 console.error('Error fetching users:', err);
             }
         }
     
-        // Save the search results to local storage
-        localStorage.setItem('lastSearchResults', JSON.stringify({ books: bookResults, users: userResults }));
+        localStorage.setItem('lastSearchResults', JSON.stringify({ books: bookResults, authors: authorResults, users: userResults }));
+
+        setSearchResults({ books: bookResults, authors: authorResults, users: userResults }); // Update this line
     
-        setSearchResults({ books: bookResults, users: userResults });
+        console.log("Users in searchResults: ", searchResults.users);
     };
+    
     
     
     const handleFilterChange = event => {
@@ -139,9 +177,10 @@ const SearchResults = () => {
     };
 
     return (
-        <div className="flex ml-20">
+        <div className="flex relative w-fit border">
+
             {/* Display search results */}
-            <div className="w-3/4 p-6">
+            <div className="w-3/4 p-6 ml-20">
                 <h1 className="text-xl font-bold mb-4">Search Results</h1>
                 <form onSubmit={handleSubmit} className="mb-4">
                     <input
@@ -165,14 +204,30 @@ const SearchResults = () => {
 
                 
                 {searchResults && searchResults.users && searchResults.users.length > 0 ? (
-                <div className="flex flex-wrap -m-4">
+                <div className="flex flex-wrap -m-4 mt-8 w-full">
                     {searchResults.users.map((user) => (
-                    <UserCard key={user.UID} user={user} />
+                    <UserCard key={user.UID} userId={user.UID} />
                     ))}
                 </div>
                 ) : (
                 <p>No user search results found.</p>
                 )}
+
+            {searchResults && searchResults.authors && searchResults.authors.length > 0 ? (
+                <div className="mt-8">
+                    <h2 className="text-xl font-bold mb-4">Authors</h2>
+                    <div className="grid grid-cols-3 gap-4">
+                        {searchResults.authors.map((author, index) => (
+                            <div key={index} className="p-4 border rounded-lg shadow-lg">
+                                <div className="text-lg font-semibold">{author}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            ) : (
+                <p>No author search results found.</p>
+            )}
+
             </div>
     
             {/* Sidebar with search filters */}
