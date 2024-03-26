@@ -32,13 +32,7 @@ const handleGenreSelect = (event, genre) => {
 const removeGenre = () => {
     setSelectedGenre('');
 };
-const g = {
-  action: 8.5,
-  comedy: 7.2,
-  drama: 9.1,
-  thriller: 8.0,
-  romance: 7.5
-}
+
   return (
     <>
         {!user ? navigate('/'):
@@ -91,9 +85,7 @@ const g = {
       
              
            
-           <HotFeed/>
-              <RecommandBooks genres={g}/>
-          <div class="col-span-1"></div>
+            <div class="col-span-1"></div>
           </div>
         }
       
