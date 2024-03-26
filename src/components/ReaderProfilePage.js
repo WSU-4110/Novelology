@@ -72,7 +72,7 @@ export default function ReaderProfilePage() {
   
 
   return (
-    <div className="ml-5">
+    <div className="ml-20">
       <div className="flex flex-col bg-lightcolor">
         {/* 1 */}
         {/* 2 */}
@@ -164,7 +164,7 @@ export default function ReaderProfilePage() {
             </div>
             <div className="w-full border-b border-gray-700 mt-4"></div>
 
-            <div className="flex justify-between items-center w-full">
+            <div className="flex justify-between items-center ml-5 w-full">
               <div className="flex flex-col justify-center items-center w-full border-r border-gray-700">
                 <div className="flex flex-col">
                   <div>
