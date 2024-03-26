@@ -13,6 +13,8 @@ import { ToastContainer } from 'react-toastify';
 import ReaderProfilePage from './components/ReaderProfilePage';
 import AuthorProfilePage from './components/AuthorProfilePage';
 import BookRating from './components/BookRating.js';
+import SearchResultsBook from './components/SearchResultsBook.js';
+import ReaderQandA from './components/ReaderQandA.js';
 
 import SampleHome from './pages/sampleHome.js'
 import SignIn from './pages/Signin.js';
@@ -73,6 +75,9 @@ const App = () => {
           <Route path="/bookinfo/:isbn" element={<BookInfo showNavBar={true}/>}/>
           <Route path="/rating" element={<BookRating showNavBar={true}/>}/>
           {/* <Route path="/addbook" element={<AddBook/>}/> */}
+          <Route path="/SearchResultsBook" element={<SearchResultsBook />} />
+          <Route path="/ReaderQandA/:aid" element={<ReaderQandA />} />
+
           
           </Routes>
         </Suspense>
