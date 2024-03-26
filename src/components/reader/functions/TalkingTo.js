@@ -1,15 +1,15 @@
  import { useEffect, useState } from "react";
- import { FormGUI } from "../../submit/functions/Form";
  import { useCollection } from "react-firebase-hooks/firestore";
  import { orderBy, collection, query, getDocs, onSnapshot, where } from "@firebase/firestore";
  import ErrorPage from "../../shared/Error";
  import { db } from "../../../firebase";
  import React from "react";
  import { useParams } from "react-router-dom";
- import { QandaStrat } from "../../submit/functions/PostStrats";
- import PostForm from "../../submit/PostForm";
- import {auth} from '../../../firebase';
  import { useAuthState } from 'react-firebase-hooks/auth';
+ import PostForm from "../../submit/PostForm";
+ import { auth } from "../../../firebase";
+ import QandaStrat from "../functions/QandA"
+ 
 
 
  

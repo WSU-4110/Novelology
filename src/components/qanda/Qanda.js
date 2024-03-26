@@ -12,7 +12,7 @@
 //   const [formValue, setFormValue] = useState('')
 //   const [showReply, setShowReply] = useState(false)
 
-//   const postStrat = new QandaStrat(formValue, messageRef)
+//   const postStrat = new QandaStrat(formValue, user,messageRef, selectedGenre)
 //   const formContext = new FormContext(postStrat)
 
 //   const sendMessage = async(e) =>{
@@ -45,3 +45,4 @@
 //         </>
 //     )
 // }
+

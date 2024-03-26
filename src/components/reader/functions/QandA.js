@@ -1,4 +1,4 @@
-import Form from "../../components/submit/functions/Form";   
+import Form from "../../submit/functions/Form"
 
 export default class QandaStrat extends Form{
     constructor(formValue, user, messageRef, selectedGenre, file){
