@@ -20,75 +20,12 @@ import { reportUser } from '../functions/reportUser';
 import { requestFollow } from '../functions/requestFollow';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
-
-
-
-const FollowButton = ({ isFollowing, toggleFollow, visibility, requestFollow, targetUserId }) => {
-  const [hasRequested, setHasRequested] = useState(false);
-
-  useEffect(() => {
-    const checkRequested = async () => {
-      const currentUserDocRef = doc(db, 'users', auth.currentUser.uid);
-      const currentUserDoc = await getDoc(currentUserDocRef);
-      if (currentUserDoc.exists()) {
-        const currentUserData = currentUserDoc.data();
-        const requested = currentUserData.requested && currentUserData.requested.includes(targetUserId);
-        setHasRequested(requested);
-      }
-    };
-
-    checkRequested();
-  }, [targetUserId, requestFollow]);
-
-  const handleToggleFollow = async () => {
-    if (visibility === 'public') {
-      toggleFollow();
-    } else {
-      const result = await requestFollow(targetUserId);
-      if (result !== null) {
-        setHasRequested(result);
-      }
-    }
-  };
-
-  let buttonText = 'Follow';
-  if (isFollowing) {
-    buttonText = 'Unfollow';
-  } else if (hasRequested) {
-    buttonText = 'Requested';
-  } else if (visibility === 'private') {
-    buttonText = 'Request Follow';
-  }
-
-  return (
-    <button
-      className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}
-      onClick={handleToggleFollow}
-    >
-      {buttonText}
-    </button>
-  );
-};
-
 const UserPage = () => {
   const { username: paramUsername } = useParams();
   const [username, setUsername] = useState(paramUsername);
   const [authUser, loadingAuthUser] = useAuthState(auth);
 
-  useEffect(() => {
-    const fetchUsername = async () => {
-      if (!paramUsername && authUser) {
-        const userRef = doc(db, 'users', authUser.uid);
-        const userSnapshot = await getDoc(userRef);
-        if (userSnapshot.exists()) {
-          const userData = userSnapshot.data();
-          setUsername(userData.username);
-        }
-      }
-    };
 
-    fetchUsername();
-  }, [paramUsername, authUser]);
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
@@ -111,13 +48,13 @@ const UserPage = () => {
         setIsLoading(true);
 
         // Fetch UID using username
-        const fetcheduid = await fetchUIDwithUsername(username);
-        if (!fetcheduid) throw new Error(`No UID found for username: ${username}`);
+        const fetchedUID = await fetchUIDwithUsername(paramUsername);
+        if (!fetchedUID) throw new Error(`No UID found for username: ${paramUsername}`);
 
-        setUID(fetcheduid);
+        setUID(fetchedUID);
 
         // Fetch user data using UID
-        const userRef = doc(db, 'users', fetcheduid);
+        const userRef = doc(db, 'users', fetchedUID);
         const userSnapshot = await getDoc(userRef);
 
         if (userSnapshot.exists()) {
@@ -125,16 +62,13 @@ const UserPage = () => {
           setUserData(userData);
 
           // Fetch profile picture using fetchPFP function with the obtained UID
-          const fetchedProfilePicture = await fetchPFP(fetcheduid);
+          const fetchedProfilePicture = await fetchPFP(fetchedUID);
           setProfilePictureURL(fetchedProfilePicture || require('../assets/default-profile-picture.jpg'));
-
-          setFollowersCount(userData.followers?.length || 0);
-          setFollowingCount(userData.following?.length || 0);
 
           const currentUser = auth.currentUser;
           setIsFollowing(currentUser && userData.followers?.includes(currentUser.uid));
         } else {
-          console.error('User document not found for username:', username);
+          console.error('User document not found for username:', paramUsername);
           setUserData(undefined); // Handle not found case
         }
       } catch (error) {
@@ -146,7 +80,7 @@ const UserPage = () => {
     };
 
     fetchUserData();
-  }, [username]);
+  }, [paramUsername]);
 
   useEffect(() => {
     // Check if the user is muted
@@ -272,10 +206,10 @@ const UserPage = () => {
   return (
     userData ? (
       userData.role.includes("Reader") ? (
-        <ReaderProfilePage />
+        <ReaderProfilePage userData={userData} isFollowing={isFollowing} profilePictureURL={profilePictureURL}  />
       ) : (
         userData.role.includes("Author") ? (
-          <AuthorProfilePage />
+          <AuthorProfilePage userData={userData} isFollowing={isFollowing} profilePictureURL={profilePictureURL} />
         ) : (
           <div>
             <p>User role not recognized</p>
@@ -288,6 +222,7 @@ const UserPage = () => {
       </div>
     )
   );
+  
 }
 
 export default UserPage;
