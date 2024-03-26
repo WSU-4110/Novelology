@@ -161,13 +161,13 @@ function UserOnboarding({ showNavBar }) {
       {showNavBar && <NavigationBar />}
 
       <div className="flex flex-col bg-white">
-        <div className="flex flex-col justify-center items-start px-16 py-2.5 w-full text-3xl text-white bg-maroon max-md:px-5 max-md:max-w-full">
+        {/* <div className="flex flex-col justify-center items-start px-16 py-2.5 w-full text-3xl text-white bg-maroon max-md:px-5 max-md:max-w-full">
           <div className="flex gap-5 justify-between ml-32 max-w-full w-[648px] max-md:flex-wrap">
             <div className="flex justify-center items-center">
               User Onboarding
             </div>
           </div>
-        </div>
+        </div> */}
         <div className="bg-lightcolor">
           <div>
             <form onSubmit={handleSubmitForm} className="flex flex-col items-center px-5 pt-16 w-full max-md:max-w-full">
