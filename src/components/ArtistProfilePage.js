@@ -1,6 +1,7 @@
-
+// ArtistProfilePage.js
 import React from "react";
 import NavigationBar from "./NavigationBar";
+import ArtworkGallery from "./ArtworkGallery"; // Import the ArtworkGallery component
 
 export default function ArtistProfilePage() {
   const [userDetails, setUserDetails] = React.useState({
@@ -66,24 +67,8 @@ export default function ArtistProfilePage() {
           <div className="text-maroon">Recent Activity 2</div>
         </div>
 
-        {/* Artwork Gallery Column */}
-        <div className="w-full md:w-1/4 bg-white p-4 rounded-lg shadow-lg border border-maroon">
-          <h3 className="text-xl font-bold mb-4 text-maroon">Artwork Gallery</h3>
-          <div className="flex flex-wrap -mx-1 lg:-mx-4">
-            {/* Placeholder for Artwork Image */}
-            <div className="my-1 px-1 w-1/2 lg:my-4 lg:px-4">
-              <div className="overflow-hidden rounded-lg shadow-lg bg-gray-200 flex items-center justify-center">
-                <span className="text-maroon">Image 1</span>
-              </div>
-            </div>
-            {/* Placeholder for Artwork Image */}
-            <div className="my-1 px-1 w-1/2 lg:my-4 lg:px-4">
-              <div className="overflow-hidden rounded-lg shadow-lg bg-gray-200 flex items-center justify-center">
-                <span className="text-maroon">Image 2</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Artwork Gallery Column: Now using the ArtworkGallery component */}
+        <ArtworkGallery />
       </div>
     </div>
   );

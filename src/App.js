@@ -18,6 +18,8 @@ import BookRating from './components/BookRating.js';
 import Registration from './components/user/Registration.js';
 import DeleteAccountPage from './components/user/DeleteAccountPage.js';
 import ChangePassword from './components/user/ChangePassword.js';
+import ArtworkGallery from './components/ArtworkGallery';
+import UploadArtwork from './components/UploadArtPage';
 
 
 // import AddBook from './functions/AddBook.js';
@@ -71,6 +73,9 @@ const App = () => {
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/delete-account" element={<DeleteAccountPage />} />
             <Route path="/change-password" element={<ChangePassword />} />
+
+            <Route path="/" exact component={ArtworkGallery} />
+            <Route path="/upload-artwork" component={UploadArtwork} />
 
             <Route path="/AuthorProfilePage" element={<AuthorProfilePage />} />
             <Route path="/ReaderProfilePage" element={<ReaderProfilePage />} />
