@@ -4,6 +4,8 @@ import PostForm from '../../components/submit/PostForm';
 import { useNavigate } from "react-router-dom";
 import {useState} from 'react';
 import PostStrat from './PostStart';
+import HotFeed from '../../components/Feeds/HotFeed/HotFeed';
+import RecommandBooks from '../../components/Recommandations/RecommandBooks';
 function Submit() {
   const [user] = useAuthState(auth)
   const navigate = useNavigate('/')
@@ -24,6 +26,13 @@ const handleGenreSelect = (event, genre) => {
 const removeGenre = () => {
     setSelectedGenre('');
 };
+const g = {
+  action: 8.5,
+  comedy: 7.2,
+  drama: 9.1,
+  thriller: 8.0,
+  romance: 7.5
+}
   return (
     <>
         {!user ? navigate('/'):
@@ -76,7 +85,8 @@ const removeGenre = () => {
       
              
            
-
+           <HotFeed/>
+              <RecommandBooks genres={g}/>
           <div class="col-span-1"></div>
           </div>
         }
