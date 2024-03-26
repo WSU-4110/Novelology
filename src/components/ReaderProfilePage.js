@@ -74,8 +74,7 @@ export default function ReaderProfilePage() {
   return (
     <div>
       <div className="flex flex-col bg-lightcolor">
-        {/* 1 */}
-        <NavigationBar />
+
         {/* 2 */}
 
         <div className="h-80 w-full bg-gray-200" >

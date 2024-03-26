@@ -6,8 +6,7 @@ export default function ReaderProfilePage() {
   return (
     <div>
       <div className="flex flex-col bg-white">
-        {/* 1 */}
-        <NavigationBar />
+
         {/* 2 */}
 
         <div className="h-96 w-full bg-gray-200" >
