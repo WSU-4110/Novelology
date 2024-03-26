@@ -51,7 +51,7 @@ const App = () => {
             </Route>
 
             <Route path="/settings" element={<Settings />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile" element={<UserPage />} />
             <Route path="/users/:username" element={<UserPage />} />
             <Route path="/create-post" element={<Submit />} />
             <Route path="/login/:redirect" element={<Login />} />

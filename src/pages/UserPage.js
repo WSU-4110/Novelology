@@ -14,82 +14,13 @@ import { deleteDoc } from 'firebase/firestore';
 import createNotification from '../functions/createNotification';
 import ReaderProfilePage from "../components/ReaderProfilePage"
 import AuthorProfilePage from "../components/AuthorProfilePage"
+import { UserOptionsModal } from '../components/user/UserOptionsModal';
+import { toggleMute } from '../functions/toggleMute';
+import { reportUser } from '../functions/reportUser';
+import { requestFollow } from '../functions/requestFollow';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
-const OptionsModal = ({ isMuted, toggleMute, reportUser, onClose }) => {
-  return ReactDOM.createPortal(
-    <div className="relative top-0 right-0 bg-white shadow-lg p-4 rounded z-10">
-      <ul>
-        <li className="cursor-pointer mb-2" onClick={toggleMute}>
-          {isMuted ? 'Unmute' : 'Mute'}
-          {/* tooltip to desc what muting a user does muted users cannot send you notifications */}
-          <span className="ml-2 text-gray-500 text-sm">Muted users cannot send you notifications</span>
-        </li>
-        <li className="cursor-pointer" onClick={reportUser}>
-          Report
-        </li>
-      </ul>
-      <button className="mt-4 w-full bg-gray-200 p-2 rounded" onClick={onClose}>
-        Close
-      </button>
-    </div>,
-    document.getElementById('portal')
-  );
-};
 
-const requestFollow = async (targetUserId) => {
-  try {
-    const currentUserDocRef = doc(db, "users", auth.currentUser.uid);
-    const targetUserDocRef = doc(db, "users", targetUserId);
-    const currentUserDoc = await getDoc(currentUserDocRef);
-    const targetUserDoc = await getDoc(targetUserDocRef);
-
-    if (currentUserDoc.exists() && targetUserDoc.exists()) {
-      const currentUserData = currentUserDoc.data();
-      const targetUserData = targetUserDoc.data();
-
-      // Check if the target user has muted the current user
-      const isMuted = targetUserData.muted && targetUserData.muted.includes(auth.currentUser.uid);
-
-      if (currentUserData.requested && currentUserData.requested.includes(targetUserId)) {
-        // Remove the follow request
-        await updateDoc(currentUserDocRef, {
-          requested: arrayRemove(targetUserId)
-        });
-
-        // Delete the corresponding notification
-        const notificationsQuery = query(collection(db, "users", targetUserId, "notifications"), where("type", "==", "follow_request"), where("fromUserId", "==", auth.currentUser.uid));
-        const notificationsSnapshot = await getDocs(notificationsQuery);
-        notificationsSnapshot.forEach(async (doc) => {
-          await deleteDoc(doc.ref);
-        });
-
-        console.log('Follow request removed successfully');
-        toast.success('Follow request removed successfully.');
-        return false;
-      }
-
-      // Add a new follow request
-      await updateDoc(currentUserDocRef, {
-        requested: arrayUnion(targetUserId)
-      });
-
-      // Send a notification only if the target user has not muted the current user
-      if (!isMuted) {
-        createNotification(auth.currentUser.uid, targetUserId, new Date(), "follow_request");
-      }
-
-      console.log('Follow request sent successfully');
-      toast.success('Follow request sent successfully.');
-      return true;
-    } else {
-      console.error("User's document does not exist");
-      return null;
-    }
-  } catch (error) {
-    console.error('Error sending follow request:', error);
-    return null;
-  }
-};
 
 
 const FollowButton = ({ isFollowing, toggleFollow, visibility, requestFollow, targetUserId }) => {
@@ -140,7 +71,24 @@ const FollowButton = ({ isFollowing, toggleFollow, visibility, requestFollow, ta
 };
 
 const UserPage = () => {
-  const { username } = useParams();
+  const { username: paramUsername } = useParams();
+  const [username, setUsername] = useState(paramUsername);
+  const [authUser, loadingAuthUser] = useAuthState(auth);
+
+  useEffect(() => {
+    const fetchUsername = async () => {
+      if (!paramUsername && authUser) {
+        const userRef = doc(db, 'users', authUser.uid);
+        const userSnapshot = await getDoc(userRef);
+        if (userSnapshot.exists()) {
+          const userData = userSnapshot.data();
+          setUsername(userData.username);
+        }
+      }
+    };
+
+    fetchUsername();
+  }, [paramUsername, authUser]);
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
@@ -320,68 +268,6 @@ const UserPage = () => {
   }
 
   const defaultProfilePicture = require('../assets/default-profile-picture.jpg');
-
-  const toggleMute = async () => {
-    try {
-      if (!userData || !userData.UID) {
-        console.error('User data or UID not initialized.');
-        return;
-      }
-
-      const currentUser = auth.currentUser;
-      if (!currentUser) {
-        console.error('Current user not authenticated.');
-        return;
-      }
-
-      const currentUserId = currentUser.uid;
-      const userRef = doc(db, 'users', currentUserId);
-      const userDoc = await getDoc(userRef);
-
-      if (!userDoc.exists()) {
-        console.error('User document not found.');
-        return;
-      }
-
-      const userDocData = userDoc.data();
-      const mutedList = userDocData.muted || [];
-
-      if (mutedList.includes(userData.UID)) {
-        // Unmute the user
-        await updateDoc(userRef, {
-          muted: arrayRemove(userData.UID),
-        });
-        setIsMuted(false);
-        toast.success('User unmuted successfully.');
-        // if they sent a follow request, notify the user of the follow request
-        await createNotification(userData.UID, currentUserId, new Date(), "follow_request");
-      } else {
-        // Mute the user
-        await updateDoc(userRef, {
-          muted: arrayUnion(userData.UID),
-        });
-        setIsMuted(true);
-        toast.success('User muted successfully.');
-
-        //delete all notifications from the user you've muted
-        const notificationsRef = collection(db, 'users', currentUserId, 'notifications');
-        const notificationsSnapshot = await getDocs(notificationsRef);
-        notificationsSnapshot.forEach(async (doc) => {
-          if (doc.data().fromUserId === userData.UID) {
-            await deleteDoc(doc.ref);
-          }
-        });
-      }
-    } catch (error) {
-      console.error('Error muting/unmuting user:', error);
-      toast.error('Error muting/unmuting user.');
-    }
-  };
-
-  const reportUser = () => {
-    // Your reportUser logic
-    toast.info('Reported user.');
-  };
 
   return (
     userData ? (
