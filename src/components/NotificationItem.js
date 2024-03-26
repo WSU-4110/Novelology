@@ -55,6 +55,34 @@ class NotificationItem extends Component {
       console.error('Error dismissing notification: ', error);
     }
   };
+
+  handleMarkAsRead = async () => {
+    const currentUser = auth.currentUser;
+    const notificationId = this.props.id;
+
+    try {
+      const notificationRef = doc(db, 'users', currentUser.uid, 'notifications', notificationId);
+      await updateDoc(notificationRef, {
+        read: true,
+      });
+    } catch (error) {
+      console.error('Error marking notification as read: ', error);
+    }
+  };
+
+  handleMarkAsUnread = async () => {
+    const currentUser = auth.currentUser;
+    const notificationId = this.props.id;
+    
+    try {
+      const notificationRef = doc(db, 'users', currentUser.uid, 'notifications', notificationId);
+      await updateDoc(notificationRef, {
+        read: false,
+      });
+    } catch (error) {
+      console.error('Error marking notification as unread: ', error);
+    }
+  };
   
   handleAccept = async () => {
     if (this.props.type === 'follow_request') {
@@ -103,12 +131,17 @@ class NotificationItem extends Component {
     const formattedTime = formatTimeDifference(timestamp);
     const { showMiniUserCard, username, pfpURL } = this.state;
     
+    const notifText = {
+      follow_request: 'accepted your follow request.',
+      follow_accepted: 'is now following you.',
+      like: 'liked your post.',
+    };
 
     switch (type) {
       case 'follow_request':
         return (
           <div className="flex items-center justify-between">
-            <div className="flex items-center justify-center text-center gap-2">
+            <div className="flex items-center justify-between text-center gap-2">
               <Link to={`users/${username}`} className="font-bold flex items-center">
                 <img src={pfpURL} className="w-8 h-8 rounded-full mr-2" alt="Profile" />
                 {username}
@@ -125,6 +158,7 @@ class NotificationItem extends Component {
             </div>
           </div>
         );
+        
       case 'follow_accepted':
         return (
           <div className="flex items-center justify-between">
@@ -132,18 +166,89 @@ class NotificationItem extends Component {
               <Link to={`users/${username}`} className="font-bold flex items-center">
                 <img src={pfpURL} className="w-8 h-8 rounded-full mr-2" alt="Profile" />
                 {username}
-            </Link>
-             <p>accepted your follow request.</p>
-          </div>
+              </Link>
+              <p>{notifText[type]}</p>
+            </div>
           </div>
         );
-      case 'like':
-        return <div><span className="font-bold">{username}</span> liked your post.</div>;
-      case 'comment':
-        return <div>New comment from <span className="font-bold">{username}</span></div>;
+        case 'like':
+          return (
+            <div className="flex items-center gap-2">
+              <img src={pfpURL} className="w-8 h-8 rounded-full mr-2" alt="Profile" />
+              <span className="font-bold">{username}</span> liked your post.
+              <div className="flex items-center justify-center">
+                <Link to={`/posts/${this.props.postId}`} className="text-blue-500 hover:underline">View Post</Link>
+              </div>
+            </div>
+          );
+        case 'comment':
+          return (
+            <div className="flex items-center gap-2">
+              <img src={pfpURL} className="w-8 h-8 rounded-full mr-2" alt="Profile" />
+              <span className="font-bold">{username}</span> commented on your post.
+              <div className="flex items-center justify-center">
+                <p>{this.props.commentText}</p>
+                <Link to={`/posts/${this.props.postId}`} className="text-blue-500 hover:underline">View Post</Link>
+              </div>
+            </div>
+          );
+        case 'reply':
+          return (
+            <div className="flex items-center gap-2">
+              <img src={pfpURL} className="w-8 h-8 rounded-full mr-2" alt="Profile" />
+              <span className="font-bold">{username}</span> replied to your comment.
+              <div className="flex items-center justify-center">
+                <p>{this.props.replyText}</p>
+                <Link to={`/posts/${this.props.postId}`} className="text-blue-500 hover:underline">View Post</Link>
+              </div>
+            </div>
+          );
+        case 'mention':
+          return (
+            <div className="flex items-center gap-2">
+              <img src={pfpURL} className="w-8 h-8 rounded-full mr-2" alt="Profile" />
+              <span className="font-bold">{username}</span> mentioned you in a post.
+              <div className="flex items-center justify-center">
+                <Link to={`/posts/${this.props.postId}`} className="text-blue-500 hover:underline">View Post</Link>
+              </div>
+            </div>
+          );
+        case 'post':
+          return (
+            <div className="flex items-center gap-2">
+              <img src={pfpURL} className="w-8 h-8 rounded-full mr-2" alt="Profile" />
+              <span className="font-bold">{username}</span> made a new post.
+              <div className="flex items-center justify-center">
+                <Link to={`/posts/${this.props.postId}`} className="text-blue-500 hover:underline">View Post</Link>
+              </div>
+            </div>
+          );
+        case 'repost':
+          return (
+            <div className="flex items-center gap-2">
+              <img src={pfpURL} className="w-8 h-8 rounded-full mr-2" alt="Profile" />
+              <span className="font-bold">{username}</span> reposted your post.
+              <div className="flex items-center justify-center">
+                <Link to={`/posts/${this.props.postId}`} className="text-blue-500 hover:underline">View Post</Link>
+              </div>
+            </div>
+          );
+        case 'tag':
+          return (
+            <div className="flex items-center gap-2">
+              <img src={pfpURL} className="w-8 h-8 rounded-full mr-2" alt="Profile" />
+              <span className="font-bold">{username}</span> tagged you in a post.
+              <div className="flex items-center justify-center">
+                <Link to={`/posts/${this.props.postId}`} className="text-blue-500 hover:underline">View Post</Link>
+              </div>
+            </div>
+          );
       default:
-        return <div>Unknown notification type</div>;
+        return (
+          <div>Unknown notification type</div>
+        );
     }
+    
   };
 
   
@@ -173,9 +278,15 @@ class NotificationItem extends Component {
           {formattedTime}
         </div>
         <div className="flex justify-end mt-4">
+          {read ? (
           <button className="bg-gray-200 rounded-md p-1 text-gray-500 hover:text-gray-800" onClick={this.handleMarkAsUnread}>
             Mark as Unread
           </button>
+          ) : (
+          <button className="bg-green-200 rounded-md p-1 text-green-500 hover:text-green-800" onClick={this.handleMarkAsRead}>
+            Mark as Read
+          </button>
+          )}
         </div>
       </div>
     );
