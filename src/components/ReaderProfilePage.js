@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../firebase.js';
 import DOMPurify from 'dompurify';
@@ -7,6 +7,9 @@ import { FollowButton } from '../components/user/FollowButton';
 
 export default function ReaderProfilePage({ userData, isFollowing, profilePictureURL }) {
   const [user] = useAuthState(auth);
+  const [show, setShow] = useState(false);
+  var bookData;
+  const noShow = () => setShow(false);
   const defaultProfilePicture = require('../assets/default-profile-picture.jpg');
 
   if (!userData) {
@@ -71,15 +74,19 @@ export default function ReaderProfilePage({ userData, isFollowing, profilePictur
                   <button className="text-2xl text-black">Posts</button>
                 </div>
               </div>
-
-              {/* <div className="flex flex-col justify-center items-center w-full"> */}
-                {/* <div className="space-x-32">
-                  <button className="text-2xl text-black">Activity</button>
-                  <button className="text-2xl text-black">Posts</button>
-                </div> */}
-              {/* </div> */}
-            </div>
+              </div>
+              <div>
+                      <button
+                        onClick={() => setShow(true)}
+                        className="bg-maroon rounded-full p-3 mt-2 text-white"
+                      >
+                        + Create a new Book List
+                      </button>
+                      {show && <NewBookList show={show} onClose={noShow} user={user} />}
+                    </div>
+            
           </div>
+          
         )}
       </div>
     </div>

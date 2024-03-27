@@ -52,7 +52,7 @@ export const FollowButton = ({ targetUserId }) => {
 
     return (
         <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="bg-maroon hover:bg-opacity-50 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             onClick={handleToggleFollow}
             disabled={hasRequested || (visibility === 'private' && isFollowing)}
         >

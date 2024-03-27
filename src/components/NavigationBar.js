@@ -166,7 +166,7 @@ export default function NavigationBar() {
 
                           <button
                             type="submit"
-                            className="flex bg-white border border-gray-300 text-gray-900 rounded-full"
+                            className="flex bg-white border border-gray-300 p-4 text-gray-900 rounded-full"
                           >
                             Search
                           </button>
